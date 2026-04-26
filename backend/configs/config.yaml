@@ -1,0 +1,42 @@
+app:
+  name: "房产中介系统"
+  env: "development"
+  port: 8080
+  jwt_secret: "your-jwt-secret-change-in-production"
+  jwt_expire_hours: 72
+
+admin:
+  username: "admin"
+  password: "admin123"
+
+database:
+  host: "127.0.0.1"
+  port: 3306
+  user: "root"
+  password: "123456"
+  name: "fangchan"
+  max_open_conns: 20
+  max_idle_conns: 10
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: "123456"
+  db: 0
+
+wechat:
+  app_id: "your-wechat-app-id"
+  app_secret: "your-wechat-app-secret"
+  token: "your-wechat-token"
+  encoding_aes_key: ""
+  oauth_redirect_url: "https://yourdomain.com/api/auth/wechat/callback"
+
+storage:
+  type: "local"  # local or cos
+  local_path: "./uploads"
+  base_url: "http://localhost:8080/uploads"
+  cos:
+    secret_id: ""
+    secret_key: ""
+    bucket: ""
+    region: ""

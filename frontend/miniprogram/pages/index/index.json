@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "房源",
+  "usingComponents": {
+    "property-card": "/components/property-card/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

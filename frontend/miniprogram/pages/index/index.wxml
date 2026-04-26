@@ -1,0 +1,75 @@
+<view class="page">
+  <!-- 顶部搜索栏 -->
+  <view class="search-bar" bindtap="onSearchTap">
+    <image class="search-icon" src="/assets/icons/search.png" />
+    <text class="search-placeholder">搜索小区、地址、房源</text>
+  </view>
+
+  <!-- 轮播图 -->
+  <swiper wx:if="{{banners.length}}" class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <image class="banner-img" src="{{item.imageUrl}}" mode="aspectFill" bindtap="onBannerTap" data-item="{{item}}" />
+    </swiper-item>
+  </swiper>
+
+  <!-- 快捷入口 -->
+  <view class="quick-nav">
+    <view class="nav-item" bindtap="onNavTap" data-type="住宅">
+      <image class="nav-icon" src="/assets/icons/house.png" />
+      <text>住宅</text>
+    </view>
+    <view class="nav-item" bindtap="onNavTap" data-type="租房">
+      <image class="nav-icon" src="/assets/icons/rent.png" />
+      <text>租房</text>
+    </view>
+    <view class="nav-item" bindtap="onNavTap" data-type="公寓">
+      <image class="nav-icon" src="/assets/icons/apt.png" />
+      <text>公寓</text>
+    </view>
+    <view class="nav-item" bindtap="onNavTap" data-type="别墅">
+      <image class="nav-icon" src="/assets/icons/villa.png" />
+      <text>别墅</text>
+    </view>
+    <view class="nav-item" bindtap="onMapTap">
+      <image class="nav-icon" src="/assets/icons/map.png" />
+      <text>地图找房</text>
+    </view>
+    <view class="nav-item" bindtap="onCalcTap">
+      <image class="nav-icon" src="/assets/icons/calc.png" />
+      <text>贷款计算</text>
+    </view>
+  </view>
+
+  <!-- 推荐房源 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">推荐房源</text>
+      <text class="section-more" bindtap="onMoreTap">更多 ></text>
+    </view>
+    <block wx:if="{{hotProperties.length}}">
+      <property-card
+        wx:for="{{hotProperties}}"
+        wx:key="id"
+        property="{{item}}"
+      />
+    </block>
+    <empty-state wx:elif="{{!loading}}" text="暂无推荐房源" />
+  </view>
+
+  <!-- 最新资讯 -->
+  <view wx:if="{{articles.length}}" class="section">
+    <view class="section-header">
+      <text class="section-title">最新资讯</text>
+      <text class="section-more" bindtap="onArticleMoreTap">更多 ></text>
+    </view>
+    <view class="article-list">
+      <view class="article-item" wx:for="{{articles}}" wx:key="id" bindtap="onArticleTap" data-id="{{item.id}}">
+        <image wx:if="{{item.cover_image}}" class="article-thumb" src="{{item.coverImageUrl}}" mode="aspectFill" />
+        <view class="article-info">
+          <view class="article-title">{{item.title}}</view>
+          <view class="article-date">{{item.publishedAt}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

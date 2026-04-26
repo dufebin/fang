@@ -1,0 +1,45 @@
+.page { background: #f5f5f5; min-height: 100vh; }
+
+.read-all {
+  text-align: right;
+  padding: 16rpx 28rpx;
+  font-size: 24rpx;
+  color: #E84040;
+}
+
+.notif-item {
+  background: #fff;
+  padding: 24rpx 28rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  position: relative;
+}
+
+.unread::before {
+  content: '';
+  position: absolute;
+  top: 28rpx;
+  right: 28rpx;
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: #E84040;
+}
+
+.notif-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #222;
+}
+
+.notif-content {
+  font-size: 26rpx;
+  color: #666;
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
+.notif-time {
+  font-size: 22rpx;
+  color: #bbb;
+  margin-top: 8rpx;
+}

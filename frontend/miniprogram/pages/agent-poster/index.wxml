@@ -1,0 +1,35 @@
+<view class="page">
+  <!-- 名片预览 -->
+  <view class="poster-card" id="posterCard">
+    <view class="poster-bg">
+      <view class="poster-agent">
+        <image class="poster-avatar" src="{{avatarUrl}}" mode="aspectFill" />
+        <view class="poster-info">
+          <view class="poster-name">{{agent.name}}</view>
+          <view class="poster-title">{{agent.title || '房产经纪人'}}</view>
+          <view class="poster-phone">{{agent.phone}}</view>
+        </view>
+      </view>
+      <view class="poster-slogan">专业房产服务，诚信为本</view>
+      <view class="poster-qr-area">
+        <image class="poster-qr" src="{{qrCode}}" mode="aspectFit" />
+        <view class="poster-qr-hint">扫码看我的房源</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="actions">
+    <button class="save-btn" bindtap="onSavePoster">保存名片</button>
+    <button class="share-btn" open-type="share">分享给好友</button>
+  </view>
+
+  <!-- 分享链接 -->
+  <view class="link-section">
+    <view class="link-label">专属推广链接</view>
+    <view class="link-row">
+      <text class="link-text" selectable>{{shareLink}}</text>
+      <view class="copy-btn" bindtap="onCopyLink">复制</view>
+    </view>
+  </view>
+</view>

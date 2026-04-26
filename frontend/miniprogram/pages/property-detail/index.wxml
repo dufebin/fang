@@ -1,0 +1,116 @@
+<view wx:if="{{property}}" class="page">
+  <!-- 图片轮播 -->
+  <view class="swiper-wrap">
+    <swiper class="img-swiper" circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" bindchange="onSwiperChange">
+      <swiper-item wx:for="{{images}}" wx:key="index">
+        <image class="swiper-img" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-index="{{index}}" />
+      </swiper-item>
+    </swiper>
+    <view class="img-count">{{swiperCurrent+1}}/{{images.length}}</view>
+    <!-- 标签 -->
+    <view class="tag-type">{{property.property_type}}</view>
+    <view wx:if="{{property.is_verified}}" class="tag-verified">已核验</view>
+  </view>
+
+  <!-- 价格与标题 -->
+  <view class="price-block">
+    <view class="price-row">
+      <text class="price-num">{{priceText}}</text>
+      <view wx:if="{{isFav}}" class="fav-btn fav-active" bindtap="onToggleFav">♥</view>
+      <view wx:else class="fav-btn" bindtap="onToggleFav">♡</view>
+    </view>
+    <view class="property-title">{{property.title}}</view>
+    <view class="property-meta">
+      <text>{{layoutText}}</text>
+      <text class="dot">·</text>
+      <text>{{areaText}}</text>
+      <text class="dot">·</text>
+      <text>{{floorText}}</text>
+      <text class="dot">·</text>
+      <text>{{property.district}}</text>
+    </view>
+    <view wx:if="{{tags.length}}" class="tag-list">
+      <text class="prop-tag" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="section">
+    <view class="section-title">基本信息</view>
+    <view class="info-grid">
+      <view class="info-item">
+        <text class="info-label">建筑面积</text>
+        <text class="info-val">{{areaText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">户型</text>
+        <text class="info-val">{{layoutText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">楼层</text>
+        <text class="info-val">{{floorText}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">朝向</text>
+        <text class="info-val">{{property.orientation || '--'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">装修</text>
+        <text class="info-val">{{property.decoration || '--'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">电梯</text>
+        <text class="info-val">{{property.has_elevator ? '有' : '无'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">车位</text>
+        <text class="info-val">{{property.parking != null ? property.parking + '个' : '--'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">楼龄</text>
+        <text class="info-val">{{property.building_age != null ? property.building_age + '年' : '--'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 房源描述 -->
+  <view wx:if="{{property.description}}" class="section">
+    <view class="section-title">房源描述</view>
+    <view class="description-text">{{property.description}}</view>
+  </view>
+
+  <!-- 贷款计算入口 -->
+  <view class="loan-entry" bindtap="onLoanCalc">
+    <text>月供估算</text>
+    <text class="loan-val">{{monthlyText}}</text>
+    <text class="loan-hint">点击计算 ></text>
+  </view>
+
+  <!-- 经纪人信息 -->
+  <view class="section">
+    <view class="section-title">经纪人</view>
+    <agent-card agent="{{agent}}" showActions="{{true}}" />
+  </view>
+
+  <!-- 预约看房 -->
+  <view class="section">
+    <view class="section-title">预约看房</view>
+    <view class="appt-row">
+      <picker mode="date" value="{{apptDate}}" bindchange="onDateChange">
+        <view class="appt-picker">{{apptDate || '选择日期'}}</view>
+      </picker>
+      <picker mode="time" value="{{apptTime}}" bindchange="onTimeChange">
+        <view class="appt-picker">{{apptTime || '选择时间'}}</view>
+      </picker>
+    </view>
+    <view class="appt-note-wrap">
+      <textarea class="appt-note" placeholder="备注（选填）" value="{{apptNote}}" bindinput="onNoteInput" maxlength="200" />
+    </view>
+    <view class="appt-btn" bindtap="onSubmitAppt">提交预约</view>
+  </view>
+
+  <!-- 底部安全区 -->
+  <view class="safe-bottom" />
+</view>
+
+<view wx:else class="loading-page">加载中...</view>

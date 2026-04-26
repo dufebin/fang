@@ -1,0 +1,15 @@
+<view wx:if="{{article}}" class="page">
+  <image wx:if="{{article.coverImageUrl}}" class="cover" src="{{article.coverImageUrl}}" mode="aspectFill" />
+  <view class="content-wrap">
+    <view class="article-title">{{article.title}}</view>
+    <view class="article-meta">
+      <text>{{article.category}}</text>
+      <text class="dot">·</text>
+      <text>{{article.publishedAt}}</text>
+      <text class="dot">·</text>
+      <text>{{article.view_count}}次阅读</text>
+    </view>
+    <rich-text class="article-content" nodes="{{article.content}}" />
+  </view>
+</view>
+<view wx:else class="loading-page">加载中...</view>

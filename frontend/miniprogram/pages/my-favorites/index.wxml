@@ -1,0 +1,7 @@
+<view class="page">
+  <block wx:if="{{list.length}}">
+    <property-card wx:for="{{list}}" wx:key="id" property="{{item.property}}" />
+    <view wx:if="{{noMore}}" class="no-more">没有更多了</view>
+  </block>
+  <empty-state wx:elif="{{!loading}}" text="暂无收藏房源" btn-text="去找房" bindaction="onFindHouse" />
+</view>

@@ -1,0 +1,42 @@
+.page { background: #fff; min-height: 100vh; }
+
+.loading-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 28rpx;
+  color: #bbb;
+}
+
+.cover {
+  width: 100%;
+  height: 380rpx;
+  display: block;
+  background: #f0f0f0;
+}
+
+.content-wrap {
+  padding: 32rpx 28rpx;
+}
+
+.article-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.5;
+}
+
+.article-meta {
+  font-size: 22rpx;
+  color: #bbb;
+  margin: 16rpx 0 28rpx;
+}
+
+.dot { margin: 0 6rpx; }
+
+.article-content {
+  font-size: 28rpx;
+  color: #444;
+  line-height: 1.9;
+}

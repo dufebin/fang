@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "地图找房",
+  "usingComponents": {
+    "property-card": "/components/property-card/index",
+    "filter-drawer": "/components/filter-drawer/index"
+  }
+}

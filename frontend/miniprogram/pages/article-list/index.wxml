@@ -1,0 +1,19 @@
+<view class="page">
+  <block wx:if="{{list.length}}">
+    <view class="article-item" wx:for="{{list}}" wx:key="id" bindtap="onTap" data-id="{{item.id}}">
+      <image wx:if="{{item.coverImageUrl}}" class="article-thumb" src="{{item.coverImageUrl}}" mode="aspectFill" />
+      <view class="article-info">
+        <view class="article-title">{{item.title}}</view>
+        <view class="article-meta">
+          <text>{{item.category}}</text>
+          <text class="dot">·</text>
+          <text>{{item.publishedAt}}</text>
+          <text class="dot">·</text>
+          <text>{{item.view_count}}次阅读</text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{noMore}}" class="no-more">没有更多了</view>
+  </block>
+  <empty-state wx:elif="{{!loading}}" text="暂无资讯" />
+</view>

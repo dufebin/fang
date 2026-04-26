@@ -1,0 +1,15 @@
+<view wx:if="{{agent}}" class="page">
+  <agent-card agent="{{agent}}" showActions="{{true}}" />
+  <view class="section-title">在售房源（{{total}}套）</view>
+  <block wx:if="{{list.length}}">
+    <property-card
+      wx:for="{{list}}"
+      wx:key="id"
+      property="{{item}}"
+      agentCode="{{agentCode}}"
+    />
+    <view wx:if="{{noMore}}" class="no-more">没有更多了</view>
+  </block>
+  <empty-state wx:elif="{{!loading}}" text="暂无房源" />
+</view>
+<view wx:else class="loading-page">加载中...</view>

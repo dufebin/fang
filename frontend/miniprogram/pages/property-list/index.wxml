@@ -1,0 +1,48 @@
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-row">
+    <view class="search-box">
+      <image class="search-icon" src="/assets/icons/search.png" />
+      <input
+        class="search-input"
+        placeholder="搜索小区、地址"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+      <view wx:if="{{keyword}}" class="search-clear" bindtap="onClearSearch">×</view>
+    </view>
+    <view class="filter-btn" bindtap="onFilterTap">
+      <image class="filter-icon" src="/assets/icons/filter.png" />
+      <text>筛选</text>
+    </view>
+  </view>
+
+  <!-- 排序 tabs -->
+  <view class="sort-bar">
+    <view
+      wx:for="{{sortOptions}}"
+      wx:key="value"
+      class="sort-item {{sort === item.value ? 'sort-active' : ''}}"
+      data-val="{{item.value}}"
+      bindtap="onSortTap"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 房源列表 -->
+  <view class="list-wrap">
+    <block wx:if="{{list.length}}">
+      <property-card
+        wx:for="{{list}}"
+        wx:key="id"
+        property="{{item}}"
+      />
+    </block>
+    <empty-state wx:elif="{{!loading}}" text="没有找到符合条件的房源" btn-text="清除筛选" bindaction="onClearFilter" />
+    <view wx:if="{{loading && !list.length}}" class="loading-tip">加载中...</view>
+    <view wx:if="{{noMore && list.length}}" class="no-more">没有更多了</view>
+  </view>
+
+  <filter-drawer show="{{showFilter}}" bind:close="onFilterClose" bind:confirm="onFilterConfirm" />
+</view>

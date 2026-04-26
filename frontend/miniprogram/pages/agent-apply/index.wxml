@@ -1,0 +1,28 @@
+<view class="page">
+  <view wx:if="{{applied}}" class="status-card">
+    <view class="status-icon">{{statusIcon}}</view>
+    <view class="status-text">{{statusText}}</view>
+    <view class="status-hint">{{statusHint}}</view>
+  </view>
+
+  <view wx:else class="form-card">
+    <view class="form-item">
+      <text class="form-label">真实姓名</text>
+      <input class="form-input" placeholder="请输入真实姓名" value="{{form.name}}" bindinput="onInput" data-field="name" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">联系电话</text>
+      <input class="form-input" type="number" placeholder="请输入手机号" value="{{form.phone}}" bindinput="onInput" data-field="phone" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">从业年限</text>
+      <input class="form-input" type="number" placeholder="请输入从业年限" value="{{form.years}}" bindinput="onInput" data-field="years" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">个人简介</text>
+      <textarea class="form-textarea" placeholder="简单介绍自己和擅长的区域..." value="{{form.bio}}" bindinput="onInput" data-field="bio" maxlength="200" />
+    </view>
+    <view class="submit-btn" bindtap="onSubmit" wx:if="{{!loading}}">提交申请</view>
+    <view class="submit-btn btn-disabled" wx:else>提交中...</view>
+  </view>
+</view>

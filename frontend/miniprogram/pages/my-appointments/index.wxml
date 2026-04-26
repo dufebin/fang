@@ -1,0 +1,16 @@
+<view class="page">
+  <block wx:if="{{list.length}}">
+    <view class="appt-card" wx:for="{{list}}" wx:key="id">
+      <view class="appt-title">{{item.property_title}}</view>
+      <view class="appt-meta">
+        <text class="appt-time">{{item.scheduledAt}}</text>
+        <view class="appt-status status-{{item.status}}">{{item.statusText}}</view>
+      </view>
+      <view wx:if="{{item.note}}" class="appt-note">备注：{{item.note}}</view>
+      <view wx:if="{{item.status === 'pending'}}" class="appt-actions">
+        <view class="action-cancel" bindtap="onCancel" data-id="{{item.id}}">取消预约</view>
+      </view>
+    </view>
+  </block>
+  <empty-state wx:elif="{{!loading}}" text="暂无预约记录" btn-text="去找房" bindaction="onFindHouse" />
+</view>

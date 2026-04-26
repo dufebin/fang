@@ -1,0 +1,61 @@
+<view wx:if="{{show}}" class="drawer-wrap">
+  <view class="drawer-mask" bindtap="onMaskTap" />
+  <view class="drawer-panel">
+    <view class="drawer-title">筛选条件</view>
+
+    <scroll-view class="drawer-body" scroll-y>
+      <!-- 房源类型 -->
+      <view class="filter-section">
+        <view class="section-label">房源类型</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{propertyTypes}}"
+            wx:key="*this"
+            class="filter-tag {{(filter.property_type === item || (filter.property_type === '' && item === '不限')) ? 'tag-active' : ''}}"
+            data-val="{{item}}"
+            bindtap="onTypeSelect"
+          >{{item}}</view>
+        </view>
+      </view>
+
+      <!-- 户型 -->
+      <view class="filter-section">
+        <view class="section-label">户型</view>
+        <view class="tag-list">
+          <view
+            wx:for="{{bedroomOptions}}"
+            wx:key="*this"
+            class="filter-tag {{(filter.bedrooms === item.replace('室','') || (filter.bedrooms === '' && item === '不限')) ? 'tag-active' : ''}}"
+            data-val="{{item}}"
+            bindtap="onBedroomSelect"
+          >{{item}}</view>
+        </view>
+      </view>
+
+      <!-- 价格区间 -->
+      <view class="filter-section">
+        <view class="section-label">价格区间（万元）</view>
+        <view class="range-row">
+          <input class="range-input" type="digit" placeholder="最低" value="{{filter.min_price}}" data-field="min_price" bindinput="onInputChange" />
+          <text class="range-sep">—</text>
+          <input class="range-input" type="digit" placeholder="最高" value="{{filter.max_price}}" data-field="max_price" bindinput="onInputChange" />
+        </view>
+      </view>
+
+      <!-- 面积区间 -->
+      <view class="filter-section">
+        <view class="section-label">面积（㎡）</view>
+        <view class="range-row">
+          <input class="range-input" type="digit" placeholder="最小" value="{{filter.min_area}}" data-field="min_area" bindinput="onInputChange" />
+          <text class="range-sep">—</text>
+          <input class="range-input" type="digit" placeholder="最大" value="{{filter.max_area}}" data-field="max_area" bindinput="onInputChange" />
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="drawer-footer">
+      <view class="footer-btn btn-reset" bindtap="onReset">重置</view>
+      <view class="footer-btn btn-confirm" bindtap="onConfirm">确定</view>
+    </view>
+  </view>
+</view>

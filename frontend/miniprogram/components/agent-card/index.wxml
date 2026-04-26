@@ -1,0 +1,16 @@
+<view class="agent-card">
+  <view class="agent-info" bindtap="onViewHome">
+    <image class="agent-avatar" src="{{avatarUrl}}" mode="aspectFill" />
+    <view class="agent-detail">
+      <view class="agent-name">{{agent.name}}</view>
+      <view wx:if="{{agent.title}}" class="agent-title">{{agent.title}}</view>
+      <view wx:if="{{agent.bio}}" class="agent-bio">{{agent.bio}}</view>
+    </view>
+  </view>
+  <view wx:if="{{showActions && agent.phone}}" class="agent-actions">
+    <view class="action-btn btn-call" bindtap="onCall">
+      <image class="action-icon" src="/assets/icons/phone.png" />
+      <text>电话咨询</text>
+    </view>
+  </view>
+</view>

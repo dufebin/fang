@@ -1,0 +1,82 @@
+<view class="page">
+  <!-- 数据概览 -->
+  <view class="stats-card">
+    <view class="stats-title">本月数据</view>
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-num">{{stats.property_count || 0}}</text>
+        <text class="stat-label">房源</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.total_views || 0}}</text>
+        <text class="stat-label">浏览量</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.appointment_count || 0}}</text>
+        <text class="stat-label">预约</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.favorite_count || 0}}</text>
+        <text class="stat-label">收藏</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="action-row">
+    <view class="action-item" bindtap="onAddProperty">
+      <text class="action-icon-text">+</text>
+      <text>发布房源</text>
+    </view>
+    <view class="action-item" bindtap="onViewAppointments">
+      <text class="action-icon-text">📅</text>
+      <text>我的预约</text>
+    </view>
+    <view class="action-item" bindtap="onEditProfile">
+      <text class="action-icon-text">✎</text>
+      <text>编辑资料</text>
+    </view>
+    <view class="action-item" bindtap="onSharePoster">
+      <text class="action-icon-text">⇧</text>
+      <text>分享名片</text>
+    </view>
+  </view>
+
+  <!-- Tabs -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'my' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="my">我的房源</view>
+    <view class="tab-item {{activeTab === 'claimed' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="claimed">推广中</view>
+    <view class="tab-item {{activeTab === 'appt' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="appt">待处理预约</view>
+  </view>
+
+  <!-- 房源列表 -->
+  <view wx:if="{{activeTab !== 'appt'}}" class="list-wrap">
+    <block wx:if="{{propertyList.length}}">
+      <property-card
+        wx:for="{{propertyList}}"
+        wx:key="id"
+        property="{{item}}"
+        showStatus="{{true}}"
+      />
+    </block>
+    <empty-state wx:else text="暂无房源" btn-text="发布房源" bindaction="onAddProperty" />
+  </view>
+
+  <!-- 预约列表 -->
+  <view wx:else class="appt-list">
+    <block wx:if="{{apptList.length}}">
+      <view class="appt-card" wx:for="{{apptList}}" wx:key="id">
+        <view class="appt-info">
+          <view class="appt-user">{{item.user_name}}</view>
+          <view class="appt-prop">{{item.property_title}}</view>
+          <view class="appt-time">{{item.scheduledAt}}</view>
+        </view>
+        <view class="appt-btns">
+          <view class="appt-btn-confirm" bindtap="onConfirmAppt" data-id="{{item.id}}">确认</view>
+          <view class="appt-btn-cancel" bindtap="onRejectAppt" data-id="{{item.id}}">拒绝</view>
+        </view>
+      </view>
+    </block>
+    <empty-state wx:else text="暂无待处理预约" />
+  </view>
+</view>

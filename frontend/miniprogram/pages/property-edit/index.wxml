@@ -1,0 +1,91 @@
+<view class="page">
+  <view class="form-card">
+    <view class="section-title">基本信息</view>
+
+    <view class="form-item">
+      <text class="form-label">房源标题 *</text>
+      <input class="form-input" placeholder="如：朝阳区三居室精装修" value="{{form.title}}" bindinput="onInput" data-field="title" maxlength="60" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">房源类型 *</text>
+      <view class="tag-row">
+        <view
+          wx:for="{{propertyTypes}}"
+          wx:key="*this"
+          class="form-tag {{form.property_type === item ? 'tag-active' : ''}}"
+          data-val="{{item}}"
+          bindtap="onTypeSelect"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">总价（万元）*</text>
+      <input class="form-input" type="digit" placeholder="请输入" value="{{form.total_price}}" bindinput="onInput" data-field="total_price" />
+    </view>
+
+    <view class="form-item row-3">
+      <view class="sub-item">
+        <text class="form-label">卧室</text>
+        <input class="form-input" type="number" placeholder="0" value="{{form.bedrooms}}" bindinput="onInput" data-field="bedrooms" />
+      </view>
+      <view class="sub-item">
+        <text class="form-label">客厅</text>
+        <input class="form-input" type="number" placeholder="0" value="{{form.living_rooms}}" bindinput="onInput" data-field="living_rooms" />
+      </view>
+      <view class="sub-item">
+        <text class="form-label">卫生间</text>
+        <input class="form-input" type="number" placeholder="0" value="{{form.bathrooms}}" bindinput="onInput" data-field="bathrooms" />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">建筑面积（㎡）</text>
+      <input class="form-input" type="digit" placeholder="请输入" value="{{form.area}}" bindinput="onInput" data-field="area" />
+    </view>
+
+    <view class="form-item row-2">
+      <view class="sub-item">
+        <text class="form-label">所在楼层</text>
+        <input class="form-input" type="number" placeholder="0" value="{{form.floor}}" bindinput="onInput" data-field="floor" />
+      </view>
+      <view class="sub-item">
+        <text class="form-label">总楼层</text>
+        <input class="form-input" type="number" placeholder="0" value="{{form.total_floors}}" bindinput="onInput" data-field="total_floors" />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">所在区域</text>
+      <input class="form-input" placeholder="如：朝阳区" value="{{form.district}}" bindinput="onInput" data-field="district" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">详细地址</text>
+      <input class="form-input" placeholder="如：XX路XX小区XX号" value="{{form.address}}" bindinput="onInput" data-field="address" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">房源描述</text>
+      <textarea class="form-textarea" placeholder="描述房源特点、周边配套、交通等..." value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="1000" />
+    </view>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="form-card">
+    <view class="section-title">房源图片</view>
+    <view class="img-list">
+      <view class="img-item" wx:for="{{images}}" wx:key="index">
+        <image class="img-preview" src="{{item}}" mode="aspectFill" />
+        <view class="img-del" bindtap="onDelImage" data-index="{{index}}">×</view>
+      </view>
+      <view wx:if="{{images.length < 9}}" class="img-add" bindtap="onAddImage">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-btn" bindtap="onSubmit">{{isEdit ? '保存修改' : '发布房源'}}</view>
+</view>

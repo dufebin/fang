@@ -1,0 +1,244 @@
+.page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.loading-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 28rpx;
+  color: #bbb;
+}
+
+/* 图片轮播 */
+.swiper-wrap {
+  position: relative;
+  width: 100%;
+  height: 480rpx;
+  background: #111;
+}
+
+.img-swiper {
+  width: 100%;
+  height: 480rpx;
+}
+
+.swiper-img {
+  width: 100%;
+  height: 480rpx;
+}
+
+.img-count {
+  position: absolute;
+  bottom: 20rpx;
+  right: 24rpx;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+
+.tag-type {
+  position: absolute;
+  top: 20rpx;
+  left: 20rpx;
+  background: rgba(232,64,64,0.9);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+}
+
+.tag-verified {
+  position: absolute;
+  top: 20rpx;
+  left: 120rpx;
+  background: rgba(82,196,26,0.9);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+}
+
+/* 价格块 */
+.price-block {
+  background: #fff;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price-num {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #E84040;
+}
+
+.fav-btn {
+  font-size: 48rpx;
+  color: #ccc;
+  line-height: 1;
+}
+
+.fav-active {
+  color: #E84040;
+}
+
+.property-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #222;
+  margin-top: 12rpx;
+}
+
+.property-meta {
+  font-size: 26rpx;
+  color: #888;
+  margin-top: 12rpx;
+}
+
+.dot {
+  margin: 0 8rpx;
+  color: #ddd;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.prop-tag {
+  font-size: 22rpx;
+  color: #E84040;
+  background: #fff0f0;
+  border-radius: 4rpx;
+  padding: 4rpx 12rpx;
+}
+
+/* 通用 section */
+.section {
+  background: #fff;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 20rpx;
+}
+
+/* 信息网格 */
+.info-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  width: 50%;
+  padding: 10rpx 0;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 20rpx;
+}
+
+.info-label {
+  font-size: 26rpx;
+  color: #888;
+}
+
+.info-val {
+  font-size: 26rpx;
+  color: #333;
+}
+
+/* 描述 */
+.description-text {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.8;
+}
+
+/* 贷款入口 */
+.loan-entry {
+  background: #fff;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.loan-val {
+  color: #E84040;
+  font-weight: 600;
+  flex: 1;
+}
+
+.loan-hint {
+  font-size: 24rpx;
+  color: #888;
+}
+
+/* 预约 */
+.appt-row {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.appt-picker {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 26rpx;
+  color: #333;
+  text-align: center;
+}
+
+.appt-note-wrap {
+  margin-bottom: 20rpx;
+}
+
+.appt-note {
+  width: 100%;
+  min-height: 120rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.appt-btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #E84040;
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.safe-bottom {
+  height: env(safe-area-inset-bottom);
+}

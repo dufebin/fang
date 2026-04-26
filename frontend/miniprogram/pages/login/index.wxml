@@ -1,0 +1,12 @@
+<view class="page">
+  <image class="logo" src="/assets/icons/logo.png" mode="aspectFit" />
+  <view class="app-name">房产经纪</view>
+  <view class="slogan">专业的房源信息平台</view>
+
+  <view class="login-btn-wrap">
+    <button class="login-btn" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo" loading="{{loading}}">
+      微信一键登录
+    </button>
+    <view class="login-tip">登录即表示同意《用户协议》和《隐私政策》</view>
+  </view>
+</view>

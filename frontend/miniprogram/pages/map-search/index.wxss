@@ -1,0 +1,89 @@
+.page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 100vh;
+}
+
+.top-bar {
+  position: absolute;
+  top: 20rpx;
+  left: 24rpx;
+  right: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: #fff;
+  border-radius: 40rpx;
+  padding: 14rpx 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.12);
+  font-size: 26rpx;
+  color: #333;
+  position: relative;
+}
+
+.filter-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #E84040;
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+}
+
+.location-btn {
+  width: 72rpx;
+  height: 72rpx;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.12);
+}
+
+.loc-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.bottom-panel {
+  position: absolute;
+  bottom: -400rpx;
+  left: 0;
+  right: 0;
+  background: transparent;
+  padding: 0 24rpx;
+  transition: bottom 0.3s ease;
+}
+
+.panel-show {
+  bottom: calc(20rpx + env(safe-area-inset-bottom));
+}
+
+.panel-handle {
+  width: 60rpx;
+  height: 6rpx;
+  background: rgba(0,0,0,0.2);
+  border-radius: 3rpx;
+  margin: 0 auto 16rpx;
+}
+
+.panel-card {
+  background: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.12);
+}

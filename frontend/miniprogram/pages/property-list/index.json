@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "找房",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "property-card": "/components/property-card/index",
+    "filter-drawer": "/components/filter-drawer/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

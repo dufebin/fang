@@ -1,0 +1,128 @@
+.page {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 24rpx;
+}
+
+.poster-card {
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 24rpx rgba(0,0,0,0.12);
+  margin-bottom: 32rpx;
+}
+
+.poster-bg {
+  background: linear-gradient(135deg, #E84040 0%, #c0392b 100%);
+  padding: 48rpx 36rpx 40rpx;
+}
+
+.poster-agent {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.poster-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.2);
+}
+
+.poster-info { flex: 1; }
+
+.poster-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.poster-title, .poster-phone {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.8);
+  margin-top: 6rpx;
+}
+
+.poster-slogan {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  margin-bottom: 28rpx;
+  font-style: italic;
+}
+
+.poster-qr-area {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.poster-qr {
+  width: 120rpx;
+  height: 120rpx;
+  flex-shrink: 0;
+}
+
+.poster-qr-hint {
+  font-size: 24rpx;
+  color: #555;
+}
+
+.actions {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 28rpx;
+}
+
+.save-btn, .share-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+}
+
+.save-btn { background: #f5f5f5; color: #555; }
+.share-btn { background: #E84040; color: #fff; }
+
+.link-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.link-label {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 12rpx;
+}
+
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.link-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #333;
+  word-break: break-all;
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  padding: 8rpx 20rpx;
+  background: #E84040;
+  color: #fff;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}

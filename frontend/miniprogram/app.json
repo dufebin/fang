@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/property-list/index",
+    "pages/property-detail/index",
+    "pages/map-search/index",
+    "pages/agent-home/index",
+    "pages/appointment/index",
+    "pages/loan-calculator/index",
+    "pages/article-list/index",
+    "pages/article-detail/index",
+    "pages/my/index",
+    "pages/my-favorites/index",
+    "pages/my-appointments/index",
+    "pages/my-history/index",
+    "pages/my-notifications/index",
+    "pages/agent-workbench/index",
+    "pages/agent-poster/index",
+    "pages/login/index"
+  ],
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#E84040",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/property-list/index",
+        "text": "找房",
+        "iconPath": "assets/icons/search.png",
+        "selectedIconPath": "assets/icons/search-active.png"
+      },
+      {
+        "pagePath": "pages/map-search/index",
+        "text": "地图",
+        "iconPath": "assets/icons/map.png",
+        "selectedIconPath": "assets/icons/map-active.png"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的",
+        "iconPath": "assets/icons/my.png",
+        "selectedIconPath": "assets/icons/my-active.png"
+      }
+    ]
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#E84040",
+    "navigationBarTitleText": "房产",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {}
+}

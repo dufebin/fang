@@ -1,0 +1,61 @@
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.info {
+  flex: 1;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.bio {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  height: 40px;
+  font-size: 14px;
+}
+
+.qrSection {
+  margin-top: 14px;
+  text-align: center;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.qrTip {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.qrCode {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}

@@ -1,0 +1,92 @@
+<view class="page">
+  <!-- 输入区 -->
+  <view class="card">
+    <view class="card-title">贷款计算</view>
+
+    <view class="form-item">
+      <text class="form-label">房屋总价（万元）</text>
+      <input class="form-input" type="digit" placeholder="请输入" value="{{totalPrice}}" bindinput="onInput" data-field="totalPrice" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">首付比例</text>
+      <view class="ratio-row">
+        <view
+          wx:for="{{downRatios}}"
+          wx:key="*this"
+          class="ratio-tag {{downRatio === item ? 'ratio-active' : ''}}"
+          data-val="{{item}}"
+          bindtap="onRatioTap"
+        >{{item*100}}%</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="label-row">
+        <text class="form-label">贷款金额</text>
+        <text class="loan-amount-val">{{loanAmount}}万元</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">贷款年限（年）</text>
+      <view class="ratio-row">
+        <view
+          wx:for="{{yearOptions}}"
+          wx:key="*this"
+          class="ratio-tag {{years === item ? 'ratio-active' : ''}}"
+          data-val="{{item}}"
+          bindtap="onYearsTap"
+        >{{item}}年</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">年利率（%）</text>
+      <input class="form-input" type="digit" placeholder="3.95" value="{{rate}}" bindinput="onInput" data-field="rate" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">还款方式</text>
+      <view class="ratio-row">
+        <view class="ratio-tag {{repayType === 'equal_installment' ? 'ratio-active' : ''}}" data-val="equal_installment" bindtap="onTypeTap">等额本息</view>
+        <view class="ratio-tag {{repayType === 'equal_principal' ? 'ratio-active' : ''}}" data-val="equal_principal" bindtap="onTypeTap">等额本金</view>
+      </view>
+    </view>
+
+    <view class="calc-btn" bindtap="onCalc">开始计算</view>
+  </view>
+
+  <!-- 结果区 -->
+  <view wx:if="{{result}}" class="card result-card">
+    <view class="result-row">
+      <view class="result-item">
+        <text class="result-label">{{repayType === 'equal_installment' ? '每月还款' : '首月还款'}}</text>
+        <text class="result-val">{{result.monthlyText}}</text>
+      </view>
+      <view class="result-item">
+        <text class="result-label">还款总额</text>
+        <text class="result-val">{{result.totalText}}</text>
+      </view>
+      <view class="result-item">
+        <text class="result-label">支付利息</text>
+        <text class="result-val red">{{result.interestText}}</text>
+      </view>
+    </view>
+
+    <!-- 年度明细 -->
+    <view class="schedule-title">还款明细（年度）</view>
+    <view class="schedule-header">
+      <text>年份</text>
+      <text>年还款</text>
+      <text>年利息</text>
+      <text>剩余本金</text>
+    </view>
+    <view class="schedule-row" wx:for="{{result.schedule}}" wx:key="year">
+      <text>第{{item.year}}年</text>
+      <text>{{item.yearlyText}}</text>
+      <text class="red">{{item.interestText}}</text>
+      <text>{{item.remainingText}}</text>
+    </view>
+  </view>
+</view>

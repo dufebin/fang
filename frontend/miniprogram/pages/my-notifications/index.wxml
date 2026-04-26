@@ -1,0 +1,11 @@
+<view class="page">
+  <view wx:if="{{list.length}}" class="read-all" bindtap="onReadAll">全部标为已读</view>
+  <block wx:if="{{list.length}}">
+    <view class="notif-item {{item.is_read ? '' : 'unread'}}" wx:for="{{list}}" wx:key="id" bindtap="onRead" data-id="{{item.id}}">
+      <view class="notif-title">{{item.title}}</view>
+      <view class="notif-content">{{item.content}}</view>
+      <view class="notif-time">{{item.createdAt}}</view>
+    </view>
+  </block>
+  <empty-state wx:elif="{{!loading}}" text="暂无通知" />
+</view>

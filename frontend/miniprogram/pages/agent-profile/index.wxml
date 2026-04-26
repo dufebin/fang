@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="avatar-row" bindtap="onChangeAvatar">
+    <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" />
+    <text class="avatar-hint">点击更换头像</text>
+  </view>
+
+  <view class="form-card">
+    <view class="form-item">
+      <text class="form-label">姓名</text>
+      <input class="form-input" placeholder="请输入姓名" value="{{form.name}}" bindinput="onInput" data-field="name" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">职称</text>
+      <input class="form-input" placeholder="如：高级经纪人" value="{{form.title}}" bindinput="onInput" data-field="title" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">联系电话</text>
+      <input class="form-input" type="number" placeholder="客户可见" value="{{form.phone}}" bindinput="onInput" data-field="phone" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">个人简介</text>
+      <textarea class="form-textarea" placeholder="介绍您的服务特色..." value="{{form.bio}}" bindinput="onInput" data-field="bio" maxlength="300" />
+    </view>
+  </view>
+
+  <view class="save-btn" bindtap="onSave">保存</view>
+</view>

@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "经纪人主页",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "agent-card": "/components/agent-card/index",
+    "property-card": "/components/property-card/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

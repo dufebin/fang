@@ -1,0 +1,35 @@
+<view class="page">
+  <!-- 地图 -->
+  <map
+    id="propertyMap"
+    class="map"
+    latitude="{{center.lat}}"
+    longitude="{{center.lng}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    show-location
+    bindmarkertap="onMarkerTap"
+    bindregionchange="onRegionChange"
+  />
+
+  <!-- 顶部筛选 -->
+  <view class="top-bar">
+    <view class="filter-btn" bindtap="onFilterTap">
+      <text>筛选</text>
+      <view wx:if="{{hasFilter}}" class="filter-dot" />
+    </view>
+    <view class="location-btn" bindtap="onLocate">
+      <image class="loc-icon" src="/assets/icons/locate.png" />
+    </view>
+  </view>
+
+  <!-- 底部房源卡片 -->
+  <view class="bottom-panel {{selectedProperty ? 'panel-show' : ''}}">
+    <view class="panel-handle" bindtap="onClosePanel" />
+    <view wx:if="{{selectedProperty}}" class="panel-card">
+      <property-card property="{{selectedProperty}}" />
+    </view>
+  </view>
+
+  <filter-drawer show="{{showFilter}}" bind:close="onFilterClose" bind:confirm="onFilterConfirm" />
+</view>

@@ -1,0 +1,31 @@
+<view class="property-card" bindtap="onTap">
+  <view class="card-image-wrap">
+    <image
+      class="card-image"
+      src="{{coverImage}}"
+      mode="aspectFill"
+      lazy-load
+    />
+    <view class="card-type-tag">{{property.property_type}}</view>
+    <view wx:if="{{showStatus}}" class="card-status-tag {{statusCls}}">{{statusText}}</view>
+  </view>
+
+  <view class="card-body">
+    <view class="card-title">{{property.title}}</view>
+    <view class="card-meta">
+      <text>{{layoutText}}</text>
+      <text class="dot">·</text>
+      <text>{{areaText}}</text>
+      <text class="dot">·</text>
+      <text>{{property.district}}</text>
+    </view>
+    <view class="card-bottom">
+      <view class="card-price">
+        <text class="price-num">{{priceText}}</text>
+      </view>
+      <view class="card-views">
+        <text class="views-text">{{property.view_count}}次浏览</text>
+      </view>
+    </view>
+  </view>
+</view>
