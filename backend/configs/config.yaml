@@ -1,8 +1,8 @@
 app:
   name: "房产中介系统"
   env: "development"
-  port: 8080
-  jwt_secret: "your-jwt-secret-change-in-production"
+  port: 9080
+  jwt_secret: "fangchan-super-secret-jwt-key-2024-production!"
   jwt_expire_hours: 72
 
 admin:

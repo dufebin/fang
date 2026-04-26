@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -18,13 +19,32 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-var jwtSecret []byte
+var jwtSecret = []byte("fangchan-super-secret-jwt-key-2024-production!")
 
 func SetJWTSecret(secret string) {
+	fmt.Printf("DEBUG: SetJWTSecret called with: '%s' (len=%d)\n", secret, len(secret))
+	if len(secret) < 10 {
+		fmt.Println("DEBUG: Secret too short, keeping hardcoded value")
+		return
+	}
 	jwtSecret = []byte(secret)
+	fmt.Printf("DEBUG: jwtSecret updated to: '%s' (len=%d)\n", string(jwtSecret), len(jwtSecret))
 }
 
 func GenerateToken(userID uint64, openID string, role model.Role) (string, error) {
+	// 调试：打印 jwtSecret 的每个字节
+	fmt.Printf("DEBUG GenerateToken: jwtSecret len=%d, content bytes:", len(jwtSecret))
+	for i, b := range jwtSecret {
+		fmt.Printf(" %02x", b)
+		if (i+1) % 16 == 0 {
+			fmt.Printf("\n")
+		}
+	}
+	fmt.Printf("\n")
+	
+	if len(jwtSecret) == 0 {
+		return "", fmt.Errorf("JWT secret is not set")
+	}
 	claims := Claims{
 		UserID: userID,
 		OpenID: openID,
@@ -35,7 +55,13 @@ func GenerateToken(userID uint64, openID string, role model.Role) (string, error
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		fmt.Printf("DEBUG: SignedString error: %v\n", err)
+		return "", err
+	}
+	fmt.Printf("DEBUG: Generated token: '%s' (len=%d)\n", tokenString, len(tokenString))
+	return tokenString, nil
 }
 
 func ParseToken(tokenStr string) (*Claims, error) {

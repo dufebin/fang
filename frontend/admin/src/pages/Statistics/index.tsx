@@ -51,7 +51,7 @@ export default function StatisticsPage() {
 
   if (loading) return <Spin size="large" style={{ display: 'block', margin: '80px auto' }} />
 
-  const maxViews = Math.max(...viewTrend.map(d => d.views), 1)
+  const maxViews = Math.max(...(viewTrend || []).map(d => d.views), 1)
 
   return (
     <div>
@@ -85,7 +85,7 @@ export default function StatisticsPage() {
         <Col xs={24} md={14}>
           <Card title="近7日浏览趋势" size="small">
             <div style={{ padding: '8px 0' }}>
-              {viewTrend.map(d => (
+              {(viewTrend || []).map(d => (
                 <div key={d.date} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                   <div style={{ width: 80, fontSize: 12, color: '#888', flexShrink: 0 }}>{d.date}</div>
                   <Progress
@@ -105,13 +105,13 @@ export default function StatisticsPage() {
         <Col xs={24} md={10}>
           <Card title="房源类型分布" size="small">
             <div style={{ padding: '8px 0' }}>
-              {typeDist.map(d => (
+              {(typeDist || []).map(d => (
                 <div key={d.property_type} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                   <div style={{ width: 64, fontSize: 12, flexShrink: 0 }}>
                     <Tag color="blue">{d.property_type}</Tag>
                   </div>
                   <Progress
-                    percent={Math.round((d.count / (typeDist.reduce((s, x) => s + x.count, 0) || 1)) * 100)}
+                    percent={Math.round((d.count / ((typeDist || []).reduce((s, x) => s + x.count, 0) || 1)) * 100)}
                     format={() => `${d.count}套`}
                     strokeColor="#52c41a"
                     style={{ flex: 1 }}
@@ -146,7 +146,7 @@ export default function StatisticsPage() {
         <Col xs={24} md={10}>
           <Card title="用户转化漏斗" size="small">
             <div style={{ padding: '8px 0' }}>
-              {funnel.map((f, i) => (
+              {(funnel || []).map((f, i) => (
                 <div key={f.stage} style={{ marginBottom: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                     <span style={{ fontSize: 13 }}>{f.stage}</span>

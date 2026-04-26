@@ -20,7 +20,7 @@ type Article struct {
 	ID          uint64          `gorm:"primaryKey;autoIncrement" json:"id"`
 	Title       string          `gorm:"size:200;not null" json:"title"`
 	Summary     string          `gorm:"size:500;default:''" json:"summary"`
-	Content     string          `gorm:"type:longtext;default:''" json:"content,omitempty"`
+	Content     string          `gorm:"type:longtext" json:"content,omitempty"`
 	CoverImage  string          `gorm:"size:512;default:''" json:"cover_image"`
 	Category    ArticleCategory `gorm:"type:enum('news','policy','guide','market');not null;default:'news'" json:"category"`
 	Author      string          `gorm:"size:50;default:''" json:"author"`

@@ -96,16 +96,16 @@ function AdminLayout() {
       colorPrimary="#1677ff"
     >
       <Routes>
-        <Route path="/admin" element={<Dashboard />} />
-        <Route path="/admin/statistics" element={<StatisticsPage />} />
-        <Route path="/admin/properties" element={<PropertiesPage />} />
-        <Route path="/admin/agents" element={<AgentsPage />} />
-        <Route path="/admin/agent-applications" element={<AgentApplicationsPage />} />
-        <Route path="/admin/articles" element={<ArticlesPage />} />
-        <Route path="/admin/banners" element={<BannersPage />} />
-        <Route path="/admin/appointments" element={<AppointmentsPage />} />
-        <Route path="/admin/users" element={<UsersPage />} />
-        <Route path="/admin/notifications" element={<NotificationsPage />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="statistics" element={<StatisticsPage />} />
+        <Route path="properties" element={<PropertiesPage />} />
+        <Route path="agents" element={<AgentsPage />} />
+        <Route path="agent-applications" element={<AgentApplicationsPage />} />
+        <Route path="articles" element={<ArticlesPage />} />
+        <Route path="banners" element={<BannersPage />} />
+        <Route path="appointments" element={<AppointmentsPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </ProLayout>

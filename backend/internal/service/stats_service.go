@@ -34,7 +34,7 @@ func (s *StatsService) ViewTrend(days int) ([]repository.ViewTrend, error) {
 	return s.repo.ViewTrend(days)
 }
 
-func (s *StatsService) ConversionFunnel() (*repository.FunnelStats, error) {
+func (s *StatsService) ConversionFunnel() ([]repository.FunnelStage, error) {
 	return s.repo.ConversionFunnel()
 }
 

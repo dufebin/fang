@@ -17,7 +17,7 @@ type AgentApplication struct {
 	IDCard       string            `gorm:"size:20;default:''" json:"id_card"`
 	LicenseNo    string            `gorm:"size:50;default:''" json:"license_no"`
 	Company      string            `gorm:"size:100;default:''" json:"company"`
-	Intro        string            `gorm:"type:text;default:''" json:"intro"`
+	Intro        string            `gorm:"type:text" json:"intro"`
 	Status       ApplicationStatus `gorm:"type:enum('pending','approved','rejected');not null;default:'pending';index" json:"status"`
 	RejectReason string            `gorm:"size:500;default:''" json:"reject_reason"`
 	ReviewedBy   *uint64           `json:"reviewed_by"`

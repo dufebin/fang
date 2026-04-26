@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"strconv"
 
 	"fangchan/internal/service"
@@ -21,6 +22,7 @@ func NewStatsHandler(statsSvc *service.StatsService) *StatsHandler {
 func (h *StatsHandler) Overview(c *gin.Context) {
 	data, err := h.statsSvc.Overview()
 	if err != nil {
+		log.Printf("stats Overview error: %v", err)
 		response.ServerError(c, err)
 		return
 	}
@@ -31,6 +33,7 @@ func (h *StatsHandler) Overview(c *gin.Context) {
 func (h *StatsHandler) PropertyTypeDistribution(c *gin.Context) {
 	data, err := h.statsSvc.PropertyTypeDistribution()
 	if err != nil {
+		log.Printf("stats PropertyTypeDistribution error: %v", err)
 		response.ServerError(c, err)
 		return
 	}
@@ -42,6 +45,7 @@ func (h *StatsHandler) AgentRanking(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
 	data, err := h.statsSvc.AgentRanking(limit)
 	if err != nil {
+		log.Printf("stats AgentRanking error: %v", err)
 		response.ServerError(c, err)
 		return
 	}
@@ -53,6 +57,7 @@ func (h *StatsHandler) ViewTrend(c *gin.Context) {
 	days, _ := strconv.Atoi(c.DefaultQuery("days", "30"))
 	data, err := h.statsSvc.ViewTrend(days)
 	if err != nil {
+		log.Printf("stats ViewTrend error: %v", err)
 		response.ServerError(c, err)
 		return
 	}
@@ -63,8 +68,10 @@ func (h *StatsHandler) ViewTrend(c *gin.Context) {
 func (h *StatsHandler) ConversionFunnel(c *gin.Context) {
 	data, err := h.statsSvc.ConversionFunnel()
 	if err != nil {
+		log.Printf("stats ConversionFunnel error: %v", err)
 		response.ServerError(c, err)
 		return
 	}
+	log.Printf("ConversionFunnel data type: %T, value: %+v", data, data)
 	response.Success(c, data)
 }

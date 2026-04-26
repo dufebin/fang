@@ -67,7 +67,7 @@ type Notification struct {
 	UserID    uint64           `gorm:"not null;index" json:"user_id"`
 	Type      NotificationType `gorm:"type:enum('appointment','system','property');not null" json:"type"`
 	Title     string           `gorm:"size:100;not null" json:"title"`
-	Content   string           `gorm:"type:text;default:''" json:"content"`
+	Content   string           `gorm:"type:text" json:"content"`
 	IsRead    bool             `gorm:"not null;default:false" json:"is_read"`
 	RelatedID *uint64          `json:"related_id"`
 	CreatedAt time.Time        `gorm:"index" json:"created_at"`

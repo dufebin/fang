@@ -50,7 +50,10 @@ func (r *StatsRepo) PropertyTypeDistribution() ([]PropertyTypeStat, error) {
 		Where("status != 'offline'").
 		Group("property_type").
 		Scan(&result).Error
-	return result, err
+	if result == nil {
+	result = []PropertyTypeStat{}
+}
+return result, err
 }
 
 type AgentRankItem struct {
@@ -65,17 +68,20 @@ type AgentRankItem struct {
 func (r *StatsRepo) AgentRanking(limit int) ([]AgentRankItem, error) {
 	var result []AgentRankItem
 	err := r.db.Table("agents a").
-		Select(`a.id as agent_id, a.name as agent_name, a.agent_code,
-			COALESCE(v.views, 0) as views,
-			COALESCE(c.claims, 0) as claims,
-			COALESCE(ap.appointments, 0) as appointments`).
-		Joins("LEFT JOIN (SELECT agent_id, COUNT(*) as views FROM browse_histories GROUP BY agent_id) v ON v.agent_id = a.id").
+		Select(`a.id as agent_id, a.name as name,
+			COALESCE(v.views, 0) as total_views,
+			COALESCE(c.claims, 0) as favorite_count,
+			COALESCE(ap.appointments, 0) as appointment_count`).
+		Joins("LEFT JOIN (SELECT agent_code, COUNT(*) as views FROM browse_histories GROUP BY agent_code) v ON v.agent_code COLLATE utf8mb4_0900_ai_ci = a.agent_code").
 		Joins("LEFT JOIN (SELECT agent_id, COUNT(*) as claims FROM agent_properties GROUP BY agent_id) c ON c.agent_id = a.id").
 		Joins("LEFT JOIN (SELECT agent_id, COUNT(*) as appointments FROM appointments GROUP BY agent_id) ap ON ap.agent_id = a.id").
 		Where("a.status = 'active'").
-		Order("views DESC").
+		Order("total_views DESC").
 		Limit(limit).
 		Scan(&result).Error
+	if result == nil {
+		result = []AgentRankItem{}
+	}
 	return result, err
 }
 
@@ -92,21 +98,27 @@ func (r *StatsRepo) ViewTrend(days int) ([]ViewTrend, error) {
 		Group("DATE(viewed_at)").
 		Order("date ASC").
 		Scan(&result).Error
-	return result, err
+	if result == nil {
+	result = []ViewTrend{}
+}
+return result, err
 }
 
-type FunnelStats struct {
-	Views        int64 `json:"views"`
-	Favorites    int64 `json:"favorites"`
-	Appointments int64 `json:"appointments"`
+type FunnelStage struct {
+	Stage string `json:"stage"`
+	Count int64  `json:"count"`
 }
 
-func (r *StatsRepo) ConversionFunnel() (*FunnelStats, error) {
-	s := &FunnelStats{}
-	r.db.Table("browse_histories").Count(&s.Views)
-	r.db.Table("favorites").Count(&s.Favorites)
-	r.db.Table("appointments").Count(&s.Appointments)
-	return s, nil
+func (r *StatsRepo) ConversionFunnel() ([]FunnelStage, error) {
+	var views, favorites, appointments int64
+	r.db.Table("browse_histories").Count(&views)
+	r.db.Table("favorites").Count(&favorites)
+	r.db.Table("appointments").Count(&appointments)
+	return []FunnelStage{
+		{Stage: "浏览", Count: views},
+		{Stage: "收藏", Count: favorites},
+		{Stage: "预约", Count: appointments},
+	}, nil
 }
 
 type AgentStats struct {
