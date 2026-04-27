@@ -50,11 +50,11 @@ export default function Banner() {
   // 自动轮播
   useEffect(() => {
     if (banners.length <= 1) return
-
+  
     const timer = setInterval(() => {
       setCurrentIndex(prev => (prev + 1) % banners.length)
     }, 4000) // 4秒切换
-
+  
     return () => clearInterval(timer)
   }, [banners.length])
 
@@ -62,11 +62,15 @@ export default function Banner() {
     if (banner.link_type === 'none') return
     
     if (banner.link_type === 'property') {
-      // 跳转到房源详情
+      // link_value是房源ID，跳转到房源详情页
       navigate(`/p/${banner.link_value}`)
     } else if (banner.link_type === 'external') {
-      // 外部链接
-      window.open(banner.link_value, '_blank')
+      // 外部链接或前端路由路径
+      if (banner.link_value.startsWith('http')) {
+        window.open(banner.link_value, '_blank')
+      } else {
+        navigate(banner.link_value)
+      }
     }
   }, [navigate])
 
