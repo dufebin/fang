@@ -28,23 +28,23 @@ func NewPropertyService(
 }
 
 type CreatePropertyReq struct {
-	Title        string                `form:"title" binding:"required"`
-	PropertyType string                `form:"property_type" binding:"required"`
-	City         string                `form:"city" binding:"required"`
-	District     string                `form:"district" binding:"required"`
-	Address      string                `form:"address"`
-	TotalPrice   *float64              `form:"total_price"`
-	UnitPrice    *float64              `form:"unit_price"`
-	MonthlyRent  *float64              `form:"monthly_rent"`
-	Area         float64               `form:"area" binding:"required,gt=0"`
-	Bedrooms     uint8                 `form:"bedrooms"`
-	LivingRooms  uint8                 `form:"living_rooms"`
-	Bathrooms    uint8                 `form:"bathrooms"`
-	Floor        *int16                `form:"floor"`
-	TotalFloors  *int16                `form:"total_floors"`
-	Decoration   string                `form:"decoration"`
-	Direction    string                `form:"direction"`
-	Description  string                `form:"description"`
+	Title        string                `form:"title" json:"title" binding:"required"`
+	PropertyType string                `form:"property_type" json:"property_type" binding:"required"`
+	City         string                `form:"city" json:"city" binding:"required"`
+	District     string                `form:"district" json:"district" binding:"required"`
+	Address      string                `form:"address" json:"address"`
+	TotalPrice   *float64              `form:"total_price" json:"total_price"`
+	UnitPrice    *float64              `form:"unit_price" json:"unit_price"`
+	MonthlyRent  *float64              `form:"monthly_rent" json:"monthly_rent"`
+	Area         float64               `form:"area" json:"area" binding:"required,gt=0"`
+	Bedrooms     uint8                 `form:"bedrooms" json:"bedrooms"`
+	LivingRooms  uint8                 `form:"living_rooms" json:"living_rooms"`
+	Bathrooms    uint8                 `form:"bathrooms" json:"bathrooms"`
+	Floor        *int16                `form:"floor" json:"floor"`
+	TotalFloors  *int16                `form:"total_floors" json:"total_floors"`
+	Decoration   string                `form:"decoration" json:"decoration"`
+	Direction    string                `form:"direction" json:"direction"`
+	Description  string                `form:"description" json:"description"`
 }
 
 type PropertyDetailResp struct {

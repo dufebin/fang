@@ -31,14 +31,14 @@ const menuRoutes = [
   {
     name: '房源中心',
     icon: <HomeOutlined />,
-    routes: [
+    children: [
       { path: '/admin/properties', name: '房源管理', icon: <HomeOutlined /> },
     ],
   },
   {
     name: '经纪人中心',
     icon: <TeamOutlined />,
-    routes: [
+    children: [
       { path: '/admin/agents', name: '销售员管理', icon: <TeamOutlined /> },
       { path: '/admin/agent-applications', name: '申请审核', icon: <CheckCircleOutlined /> },
     ],
@@ -46,7 +46,7 @@ const menuRoutes = [
   {
     name: '内容管理',
     icon: <FileTextOutlined />,
-    routes: [
+    children: [
       { path: '/admin/articles', name: '文章资讯', icon: <FileTextOutlined /> },
       { path: '/admin/banners', name: '横幅管理', icon: <PictureOutlined /> },
     ],
@@ -76,7 +76,7 @@ function AdminLayout() {
     <ProLayout
       title="房产管理后台"
       logo={<span style={{ fontSize: 20 }}>🏠</span>}
-      route={{ path: '/admin', routes: menuRoutes }}
+      route={{ path: '/admin', children: menuRoutes }}
       location={{ pathname: location.pathname }}
       onMenuHeaderClick={() => navigate('/admin')}
       menuItemRender={(item, dom) => (

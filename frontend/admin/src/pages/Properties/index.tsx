@@ -211,10 +211,12 @@ export default function PropertiesPage() {
         <ProFormDigit name="area" label="建筑面积(㎡)" rules={[{ required: true }]} colProps={{ span: 8 }} />
         <ProFormDigit name="total_price" label="总价(万元)" colProps={{ span: 8 }} />
         <ProFormDigit name="monthly_rent" label="月租金(元)" colProps={{ span: 8 }} />
-        <ProFormDigit name="bedrooms" label="卧室" initialValue={2} colProps={{ span: 6 }} />
-        <ProFormDigit name="living_rooms" label="客厅" initialValue={1} colProps={{ span: 6 }} />
-        <ProFormDigit name="bathrooms" label="卫生间" initialValue={1} colProps={{ span: 6 }} />
-        <ProFormDigit name="area" label="面积" colProps={{ span: 6 }} />
+        <ProFormDigit name="unit_price" label="单价(元/㎡)" colProps={{ span: 8 }} />
+        <ProFormDigit name="bedrooms" label="卧室(间)" initialValue={2} colProps={{ span: 8 }} />
+        <ProFormDigit name="living_rooms" label="客厅(间)" initialValue={1} colProps={{ span: 8 }} />
+        <ProFormDigit name="bathrooms" label="卫生间" initialValue={1} colProps={{ span: 8 }} />
+        <ProFormDigit name="floor" label="所在楼层" colProps={{ span: 8 }} />
+        <ProFormDigit name="total_floors" label="总楼层" colProps={{ span: 8 }} />
         <ProFormSelect
           name="decoration"
           label="装修"

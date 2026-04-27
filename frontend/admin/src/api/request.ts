@@ -29,7 +29,8 @@ request.interceptors.response.use(
     return data
   },
   (err) => {
-    message.error(err.message || '网络错误')
+    const msg = err.response?.data?.message || err.message || '网络错误'
+    message.error(msg)
     return Promise.reject(err)
   }
 )

@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
 	"strconv"
 
 	"fangchan/internal/middleware"
@@ -10,7 +12,44 @@ import (
 	"fangchan/pkg/response"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
+
+var fieldNamesCN = map[string]string{
+	"Title":        "房源标题",
+	"PropertyType": "房源类型",
+	"City":         "城市",
+	"District":     "区域",
+	"Area":         "建筑面积",
+}
+
+func friendlyValidationError(err error) string {
+	var ve validator.ValidationErrors
+	if !errors.As(err, &ve) {
+		return err.Error()
+	}
+	msgs := make([]string, 0, len(ve))
+	for _, fe := range ve {
+		name := fe.Field()
+		if cn, ok := fieldNamesCN[name]; ok {
+			name = cn
+		}
+		switch fe.Tag() {
+		case "required":
+			msgs = append(msgs, fmt.Sprintf("%s不能为空", name))
+		case "gt":
+			msgs = append(msgs, fmt.Sprintf("%s必须大于%s", name, fe.Param()))
+		case "gte":
+			msgs = append(msgs, fmt.Sprintf("%s必须大于等于%s", name, fe.Param()))
+		default:
+			msgs = append(msgs, fmt.Sprintf("%s格式不正确", name))
+		}
+	}
+	if len(msgs) == 0 {
+		return err.Error()
+	}
+	return msgs[0]
+}
 
 type AdminHandler struct {
 	propertySvc   *service.PropertyService
@@ -108,7 +147,7 @@ func (h *AdminHandler) ListProperties(c *gin.Context) {
 func (h *AdminHandler) CreateProperty(c *gin.Context) {
 	var req service.CreatePropertyReq
 	if err := c.ShouldBind(&req); err != nil {
-		response.BadRequest(c, err.Error())
+		response.BadRequest(c, friendlyValidationError(err))
 		return
 	}
 
