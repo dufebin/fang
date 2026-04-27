@@ -11,10 +11,6 @@ interface Props {
 export default function PropertyCard({ property, agentCode }: Props) {
   const navigate = useNavigate()
 
-  const coverImage = property.cover_image ||
-    (property.images && property.images[0]?.url) ||
-    '/default-house.png'
-
   const priceText = property.property_type === '租房'
     ? property.monthly_rent ? `${property.monthly_rent}元/月` : '价格面议'
     : property.total_price ? `${property.total_price}万` : '价格面议'
@@ -30,8 +26,8 @@ export default function PropertyCard({ property, agentCode }: Props) {
 
   return (
     <div className={styles.card} onClick={handleClick}>
-      <img src={coverImage} alt={property.title} className={styles.image} loading="lazy" />
-      <div className={styles.content}>
+      {/* 暂时不显示图片，排除图片加载问题 */}
+      <div style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
         <div className={styles.title}>{property.title}</div>
         <div className={styles.tags}>
           <span className={styles.tag}>{property.property_type}</span>

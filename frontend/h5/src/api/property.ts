@@ -62,8 +62,9 @@ export interface ApiResult<T> {
   data: T
 }
 
+// H5公开接口（无需认证）
 export const getPropertyDetail = (id: number, agentCode?: string) =>
-  request.get<unknown, ApiResult<Property>>(`/h5/property/${id}`, {
+  request.get<unknown, ApiResult<Property>>(`/api/h5/property/${id}`, {
     params: agentCode ? { a: agentCode } : {},
   })
 
@@ -75,33 +76,34 @@ export const getPropertyList = (params: {
   keyword?: string
   min_price?: number
   max_price?: number
-}) => request.get<unknown, PageResult<Property>>('/h5/properties', { params })
+}) => request.get<unknown, PageResult<Property>>('/api/h5/properties', { params })
 
 export const getAgentProperties = (agentCode: string, params?: { page?: number; limit?: number }) =>
-  request.get<unknown, PageResult<Property>>(`/h5/agent/${agentCode}`, { params })
+  request.get<unknown, PageResult<Property>>(`/api/h5/agent/${agentCode}`, { params })
 
+// 经纪人/管理员接口（需要认证）
 export const claimProperty = (propertyId: number) =>
-  request.post(`/agent/properties/${propertyId}/claim`)
+  request.post(`/api/agent/properties/${propertyId}/claim`)
 
 export const unclaimProperty = (propertyId: number) =>
-  request.delete(`/agent/properties/${propertyId}/claim`)
+  request.delete(`/api/agent/properties/${propertyId}/claim`)
 
 export const getMyProperties = (params?: { page?: number; limit?: number }) =>
-  request.get<unknown, PageResult<Property>>('/agent/properties', { params })
+  request.get<unknown, PageResult<Property>>('/api/agent/properties', { params })
 
 export const getAllProperties = (params?: {
   page?: number
   limit?: number
   type?: string
   keyword?: string
-}) => request.get<unknown, PageResult<Property>>('/agent/all-properties', { params })
+}) => request.get<unknown, PageResult<Property>>('/api/agent/all-properties', { params })
 
 export const createProperty = (data: FormData) =>
-  request.post<unknown, ApiResult<Property>>('/agent/properties', data, {
+  request.post<unknown, ApiResult<Property>>('/api/agent/properties', data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
 
 export const uploadPropertyImage = (propertyId: number, data: FormData) =>
-  request.post(`/agent/properties/${propertyId}/images`, data, {
+  request.post(`/api/agent/properties/${propertyId}/images`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })

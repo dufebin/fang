@@ -1,9 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { SearchBar, Tabs, InfiniteScroll, NavBar } from 'antd-mobile'
+import React, { useEffect, useState } from 'react'
+import { SearchBar, Tabs, NavBar } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
-import { Property, getPropertyList, getAllProperties } from '../../api/property'
-import PropertyCard from '../../components/PropertyCard'
-import { useAuthStore } from '../../store/auth'
+import Banner from '../../components/Banner'
 import styles from './index.module.css'
 
 const PROPERTY_TYPES = [
@@ -16,50 +14,63 @@ const PROPERTY_TYPES = [
 
 export default function PropertyList() {
   const navigate = useNavigate()
-  const { isAgent } = useAuthStore()
-  const [list, setList] = useState<Property[]>([])
-  const [hasMore, setHasMore] = useState(true)
-  const [page, setPage] = useState(1)
+  const [list, setList] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [activeType, setActiveType] = useState('')
   const [keyword, setKeyword] = useState('')
 
-  const reset = () => {
-    setList([])
-    setPage(1)
-    setHasMore(true)
-  }
-
-  const loadMore = useCallback(async () => {
-    const fetchFn = isAgent() ? getAllProperties : getPropertyList
-    const res = await fetchFn({ page, limit: 10, type: activeType || undefined, keyword: keyword || undefined })
-
-    if (res.code === 0) {
-      const data = res.data
-      setList(prev => [...prev, ...data.list])
-      setPage(prev => prev + 1)
-      setHasMore(data.list.length >= 10 && data.list.length + (page - 1) * 10 < data.total)
-    } else {
-      setHasMore(false)
-    }
-  }, [page, activeType, keyword, isAgent])
-
+  // 直接用fetch，在useEffect内部
   useEffect(() => {
-    reset()
+    let cancelled = false
+    setLoading(true)
+    
+    const params = new URLSearchParams()
+    params.set('page', '1')
+    params.set('limit', '100')
+    if (activeType) params.set('type', activeType)
+    if (keyword) params.set('keyword', keyword)
+    
+    const url = `/api/h5/properties?${params.toString()}`
+    console.log('请求URL:', url)
+    
+    fetch(url)
+      .then(r => r.json())
+      .then(d => {
+        if (cancelled) return
+        console.log('API返回:', d)
+        if (d.code === 0 && d.data && d.data.list) {
+          console.log('设置房源数据:', d.data.list.length, '条')
+          setList(d.data.list)
+        } else {
+          console.error('API错误:', d.message)
+          setList([])
+        }
+      })
+      .catch(e => {
+        if (cancelled) return
+        console.error('请求失败:', e)
+        setList([])
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    
+    // 清理函数：组件卸载时取消请求
+    return () => { cancelled = true }
   }, [activeType, keyword])
-
-  const handleSearch = (val: string) => {
-    setKeyword(val)
-  }
 
   return (
     <div className={styles.page}>
       <NavBar back={null} className={styles.nav}>房源列表</NavBar>
 
+      {/* Banner 轮播 */}
+      <Banner />
+
       <div className={styles.searchBar}>
         <SearchBar
           placeholder="搜索楼盘名称、地址"
-          onSearch={handleSearch}
-          onClear={() => handleSearch('')}
+          onSearch={(val) => setKeyword(val)}
+          onClear={() => setKeyword('')}
         />
       </div>
 
@@ -73,11 +84,20 @@ export default function PropertyList() {
         ))}
       </Tabs>
 
-      <div className={styles.list}>
-        {list.map(item => (
-          <PropertyCard key={item.id} property={item} />
-        ))}
-        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+      <div className={styles.list} id="property-list">
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>
+        ) : list.length > 0 ? (
+          list.map((item: any) => (
+            <div key={item.id} style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
+              <div><strong>{item.title}</strong></div>
+              <div>{item.city} {item.district} {item.property_type}</div>
+              <div>{item.total_price}万 / {item.area}㎡</div>
+            </div>
+          ))
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px' }}>暂无房源数据</div>
+        )}
       </div>
 
       <div className={styles.bottomNav}>

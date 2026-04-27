@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { NavBar, Tag, Divider, Toast, Button } from 'antd-mobile'
-import { getPropertyDetail, Property } from '../../api/property'
-import { claimProperty, unclaimProperty } from '../../api/property'
 import ImageGallery from '../../components/ImageGallery'
 import AgentCard from '../../components/AgentCard'
-import { useWechatShare } from '../../hooks/useWechatShare'
-import { useAuthStore } from '../../store/auth'
 import styles from './index.module.css'
 
 const statusMap: Record<string, { text: string; color: string }> = {
@@ -16,41 +12,75 @@ const statusMap: Record<string, { text: string; color: string }> = {
   offline: { text: '已下架', color: 'default' },
 }
 
+interface Property {
+  id: number
+  title: string
+  property_type: string
+  city: string
+  district: string
+  address: string
+  total_price: number | null
+  unit_price: number | null
+  monthly_rent: number | null
+  area: number
+  bedrooms: number
+  living_rooms: number
+  bathrooms: number
+  floor: number | null
+  total_floors: number | null
+  decoration: string
+  direction: string
+  description: string
+  cover_image: string
+  status: string
+  images: any[]
+  agent?: any
+}
+
 export default function PropertyDetail() {
   const { id } = useParams<{ id: string }>()
   const [searchParams] = useSearchParams()
   const agentCode = searchParams.get('a') || ''
+  
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [claimed, setClaimed] = useState(false)
-  const { isAgent } = useAuthStore()
 
+  // 用原生fetch，绕过所有封装
   useEffect(() => {
     if (!id) return
-    getPropertyDetail(Number(id), agentCode)
-      .then((res) => {
-        if (res.code === 0) setProperty(res.data)
+    setLoading(true)
+    
+    const url = agentCode 
+      ? `/api/h5/property/${id}?a=${agentCode}`
+      : `/api/h5/property/${id}`
+    
+    console.log('请求房源详情:', url)
+    
+    fetch(url)
+      .then(r => r.json())
+      .then(d => {
+        console.log('房源详情API响应:', d)
+        if (d.code === 0 && d.data) {
+          setProperty(d.data)
+        } else {
+          console.error('API返回错误:', d.message)
+          setProperty(null)
+        }
       })
-      .finally(() => setLoading(false))
+      .catch(e => {
+        console.error('请求失败:', e)
+        setProperty(null)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [id, agentCode])
-
-  const shareConfig = {
-    title: property?.agent
-      ? `${property.agent.name}为您推荐：${property?.title || ''}`
-      : (property?.title || ''),
-    desc: property
-      ? `${property.area}㎡ | ${property.total_price ? property.total_price + '万' : property.monthly_rent + '元/月'} | ${property.district}`
-      : '',
-    link: window.location.href,
-    imgUrl: property?.cover_image || '',
-  }
-
-  useWechatShare(shareConfig)
 
   const handleClaim = async () => {
     if (!id) return
     try {
-      await claimProperty(Number(id))
+      await fetch(`/api/agent/properties/${id}/claim`, { method: 'POST' })
       setClaimed(true)
       Toast.show({ content: '认领成功！现在分享给客户吧', icon: 'success' })
     } catch {
@@ -61,7 +91,7 @@ export default function PropertyDetail() {
   const handleUnclaim = async () => {
     if (!id) return
     try {
-      await unclaimProperty(Number(id))
+      await fetch(`/api/agent/properties/${id}/claim`, { method: 'DELETE' })
       setClaimed(false)
       Toast.show({ content: '已取消认领', icon: 'success' })
     } catch {
@@ -70,9 +100,7 @@ export default function PropertyDetail() {
   }
 
   const getShareLink = () => {
-    const authStore = useAuthStore.getState()
-    // 实际使用时，需要从后端获取当前用户的agent_code
-    return window.location.origin + `/p/${id}?a=${authStore.userId || ''}`
+    return window.location.origin + `/p/${id}?a=${agentCode || ''}`
   }
 
   const handleCopyLink = () => {
@@ -95,6 +123,7 @@ export default function PropertyDetail() {
   }
 
   const statusInfo = statusMap[property.status] || { text: '未知', color: 'default' }
+  
   const priceText = property.property_type === '租房'
     ? property.monthly_rent ? `${property.monthly_rent}元/月` : '价格面议'
     : property.total_price ? `${property.total_price}万` : '价格面议'
@@ -154,7 +183,7 @@ export default function PropertyDetail() {
 
         <Divider />
 
-        {/* 销售员名片（核心功能）*/}
+        {/* 经纪人名片 */}
         {property.agent ? (
           <div className={styles.section}>
             <div className={styles.sectionTitle}>联系经纪人</div>
@@ -167,27 +196,25 @@ export default function PropertyDetail() {
         )}
 
         {/* 销售员操作区 */}
-        {isAgent() && (
-          <div className={styles.agentActions}>
-            <Divider />
-            <div className={styles.sectionTitle}>销售员操作</div>
-            <div className={styles.actionBtns}>
-              {claimed ? (
-                <Button color="default" fill="outline" onClick={handleUnclaim} className={styles.actionBtn}>
-                  取消认领
-                </Button>
-              ) : (
-                <Button color="primary" onClick={handleClaim} className={styles.actionBtn}>
-                  认领此房源
-                </Button>
-              )}
-              <Button color="success" onClick={handleCopyLink} className={styles.actionBtn}>
-                复制分享链接
+        <div className={styles.agentActions}>
+          <Divider />
+          <div className={styles.sectionTitle}>销售员操作</div>
+          <div className={styles.actionBtns}>
+            {claimed ? (
+              <Button color="default" fill="outline" onClick={handleUnclaim} className={styles.actionBtn}>
+                取消认领
               </Button>
-            </div>
-            <p className={styles.actionTip}>认领后，将链接发给客户，客户看到的是您的名片</p>
+            ) : (
+              <Button color="primary" onClick={handleClaim} className={styles.actionBtn}>
+                认领此房源
+              </Button>
+            )}
+            <Button color="success" onClick={handleCopyLink} className={styles.actionBtn}>
+              复制分享链接
+            </Button>
           </div>
-        )}
+          <p className={styles.actionTip}>认领后，将链接发给客户，客户看到的是您的名片</p>
+        </div>
 
         <div className={styles.bottomSafe} />
       </div>

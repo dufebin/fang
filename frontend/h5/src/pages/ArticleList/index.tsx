@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from 'react'
-import { NavBar, Tabs, InfiniteScroll } from 'antd-mobile'
+import React, { useState, useCallback, useEffect } from 'react'
+import { NavBar, Tabs } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
-import { getArticleList, Article } from '../../api/content'
 import styles from './index.module.css'
 
 const CATEGORIES = [
@@ -11,6 +10,15 @@ const CATEGORIES = [
   { key: '政策解读', label: '政策解读' },
   { key: '装修百科', label: '装修百科' },
 ]
+
+interface Article {
+  id: number
+  title: string
+  category: string
+  cover_image: string
+  view_count: number
+  published_at: string
+}
 
 function formatDate(s: string) {
   if (!s) return ''
@@ -31,17 +39,40 @@ export default function ArticleList() {
     setCategory(cat)
   }
 
+  // 用原生fetch加载数据
   const loadMore = useCallback(async () => {
-    const res = await getArticleList({ page, page_size: 15, category: category || undefined })
-    if (res.code === 0) {
-      const items: Article[] = res.data.list || []
-      setList(prev => [...prev, ...items])
-      setPage(p => p + 1)
-      setHasMore(items.length >= 15)
-    } else {
+    const params = new URLSearchParams()
+    params.set('page', String(page))
+    params.set('page_size', '15')
+    if (category) params.set('category', category)
+    
+    const url = `/api/h5/articles?${params.toString()}`
+    console.log('请求文章列表:', url)
+    
+    try {
+      const res = await fetch(url).then(r => r.json())
+      console.log('文章列表响应:', res)
+      
+      if (res.code === 0) {
+        const items: Article[] = res.data.list || []
+        setList(prev => [...prev, ...items])
+        setPage(p => p + 1)
+        setHasMore(items.length >= 15)
+      } else {
+        console.error('API返回错误:', res.message)
+        setHasMore(false)
+      }
+    } catch (err) {
+      console.error('请求失败:', err)
       setHasMore(false)
     }
   }, [page, category])
+
+  // 初始加载
+  useEffect(() => {
+    loadMore()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category])
 
   return (
     <div className={styles.page}>
@@ -50,7 +81,7 @@ export default function ArticleList() {
       <div className={styles.tabs}>
         <Tabs
           activeKey={category}
-          onChange={reset}
+          onChange={(key) => reset(key)}
           style={{ '--active-title-color': '#E84040', '--active-line-color': '#E84040' } as React.CSSProperties}
         >
           {CATEGORIES.map(c => <Tabs.Tab key={c.key} title={c.label} />)}
@@ -75,7 +106,31 @@ export default function ArticleList() {
             </div>
           </div>
         ))}
-        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+        
+        {hasMore ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <button onClick={loadMore}>加载更多</button>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px', color: '#999' }}>
+            没有更多了
+          </div>
+        )}
+      </div>
+
+      <div className={styles.bottomNav}>
+        <div className={styles.bottomNavItem}>
+          <span className={styles.bottomNavIcon}>🏠</span>
+          <span>找房</span>
+        </div>
+        <div className={styles.bottomNavItem} onClick={() => navigate('/articles')}>
+          <span className={styles.bottomNavIcon}>📰</span>
+          <span>资讯</span>
+        </div>
+        <div className={styles.bottomNavItem} onClick={() => navigate('/loan-calculator')}>
+          <span className={styles.bottomNavIcon}>🧮</span>
+          <span>贷款计算</span>
+        </div>
       </div>
     </div>
   )

@@ -13,7 +13,8 @@ Page({
   async onLoad() {
     try {
       const profile = await getProfile()
-      const shareLink = `${BASE_URL.replace('/api', '')}/h5/agent/${profile.agent_code}`
+      const { H5_BASE_URL } = require('../../utils/config')
+      const shareLink = `${H5_BASE_URL}/agent/${profile.agent_code}`
       this.setData({
         agent: profile,
         avatarUrl: profile.avatar ? fullImageURL(profile.avatar) : '/assets/icons/default-avatar.png',
