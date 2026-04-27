@@ -26,8 +26,15 @@ export default function PropertyCard({ property, agentCode }: Props) {
 
   return (
     <div className={styles.card} onClick={handleClick}>
-      {/* 暂时不显示图片，排除图片加载问题 */}
-      <div style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
+      {property.cover_image && (
+        <img
+          src={property.cover_image}
+          alt={property.title}
+          className={styles.image}
+          loading="lazy"
+        />
+      )}
+      <div className={styles.content}>
         <div className={styles.title}>{property.title}</div>
         <div className={styles.tags}>
           <span className={styles.tag}>{property.property_type}</span>

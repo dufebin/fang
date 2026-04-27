@@ -13,8 +13,6 @@ interface Banner {
   is_active: boolean
 }
 
-const BACKEND_URL = 'http://localhost:9080' // 开发环境后端地址
-
 export default function Banner() {
   const navigate = useNavigate()
   const [banners, setBanners] = useState<Banner[]>([])
@@ -83,11 +81,7 @@ export default function Banner() {
   }
 
   const currentBanner = banners[currentIndex]
-  
-  // 处理图片URL
-  const imageUrl = currentBanner.image_url.startsWith('/') 
-    ? BACKEND_URL + currentBanner.image_url 
-    : currentBanner.image_url
+  const imageUrl = currentBanner.image_url
 
   return (
     <div className={styles.bannerContainer}>

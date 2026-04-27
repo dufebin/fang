@@ -75,7 +75,7 @@ function AdminLayout() {
   return (
     <ProLayout
       title="房产管理后台"
-      logo={<span style={{ fontSize: 20 }}>🏠</span>}
+      logo={<HomeOutlined style={{ fontSize: 20, color: '#1677ff' }} />}
       route={{ path: '/admin', children: menuRoutes }}
       location={{ pathname: location.pathname }}
       onMenuHeaderClick={() => navigate('/admin')}

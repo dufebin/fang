@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { NavBar, Tag, Divider, Toast, Button } from 'antd-mobile'
+import { MapPin } from 'lucide-react'
 import ImageGallery from '../../components/ImageGallery'
 import AgentCard from '../../components/AgentCard'
+import { useAuthStore } from '../../store/auth'
 import styles from './index.module.css'
 
 const statusMap: Record<string, { text: string; color: string }> = {
@@ -42,6 +44,7 @@ export default function PropertyDetail() {
   const [searchParams] = useSearchParams()
   const agentCode = searchParams.get('a') || ''
   
+  const isAgent = useAuthStore(state => state.isAgent())
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [claimed, setClaimed] = useState(false)
@@ -166,7 +169,8 @@ export default function PropertyDetail() {
         <div className={styles.section}>
           <div className={styles.sectionTitle}>房源位置</div>
           <div className={styles.address}>
-            📍 {[property.city, property.district, property.address].filter(Boolean).join(' ')}
+            <MapPin size={14} style={{ verticalAlign: 'middle', marginRight: 4, flexShrink: 0 }} />
+            {[property.city, property.district, property.address].filter(Boolean).join(' ')}
           </div>
         </div>
 
@@ -195,26 +199,28 @@ export default function PropertyDetail() {
           </div>
         )}
 
-        {/* 销售员操作区 */}
-        <div className={styles.agentActions}>
-          <Divider />
-          <div className={styles.sectionTitle}>销售员操作</div>
-          <div className={styles.actionBtns}>
-            {claimed ? (
-              <Button color="default" fill="outline" onClick={handleUnclaim} className={styles.actionBtn}>
-                取消认领
+        {/* 销售员操作区：仅登录的销售员/管理员可见 */}
+        {isAgent && (
+          <div className={styles.agentActions}>
+            <Divider />
+            <div className={styles.sectionTitle}>销售员操作</div>
+            <div className={styles.actionBtns}>
+              {claimed ? (
+                <Button color="default" fill="outline" onClick={handleUnclaim} className={styles.actionBtn}>
+                  取消认领
+                </Button>
+              ) : (
+                <Button color="primary" onClick={handleClaim} className={styles.actionBtn}>
+                  认领此房源
+                </Button>
+              )}
+              <Button color="success" onClick={handleCopyLink} className={styles.actionBtn}>
+                复制分享链接
               </Button>
-            ) : (
-              <Button color="primary" onClick={handleClaim} className={styles.actionBtn}>
-                认领此房源
-              </Button>
-            )}
-            <Button color="success" onClick={handleCopyLink} className={styles.actionBtn}>
-              复制分享链接
-            </Button>
+            </div>
+            <p className={styles.actionTip}>认领后，将链接发给客户，客户看到的是您的名片</p>
           </div>
-          <p className={styles.actionTip}>认领后，将链接发给客户，客户看到的是您的名片</p>
-        </div>
+        )}
 
         <div className={styles.bottomSafe} />
       </div>

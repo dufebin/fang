@@ -49,6 +49,9 @@ export const createProperty = (data: FormData) =>
     headers: { 'Content-Type': 'multipart/form-data' },
   })
 
+export const updateProperty = (id: number, data: Partial<Omit<Property, 'id' | 'view_count' | 'created_at' | 'updated_at'>>) =>
+  request.put(`/admin/properties/${id}`, data)
+
 export const updatePropertyStatus = (id: number, status: string) =>
   request.put(`/admin/properties/${id}/status`, { status })
 

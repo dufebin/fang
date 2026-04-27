@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { NavBar, Tabs } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
+import BottomNav from '../../components/BottomNav'
 import styles from './index.module.css'
 
 const CATEGORIES = [
@@ -108,30 +109,13 @@ export default function ArticleList() {
         ))}
         
         {hasMore ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <button onClick={loadMore}>加载更多</button>
-          </div>
+          <div className={styles.loadMore} onClick={loadMore}>加载更多</div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px', color: '#999' }}>
-            没有更多了
-          </div>
+          <div className={styles.noMore}>没有更多了</div>
         )}
       </div>
 
-      <div className={styles.bottomNav}>
-        <div className={styles.bottomNavItem}>
-          <span className={styles.bottomNavIcon}>🏠</span>
-          <span>找房</span>
-        </div>
-        <div className={styles.bottomNavItem} onClick={() => navigate('/articles')}>
-          <span className={styles.bottomNavIcon}>📰</span>
-          <span>资讯</span>
-        </div>
-        <div className={styles.bottomNavItem} onClick={() => navigate('/loan-calculator')}>
-          <span className={styles.bottomNavIcon}>🧮</span>
-          <span>贷款计算</span>
-        </div>
-      </div>
+      <BottomNav />
     </div>
   )
 }

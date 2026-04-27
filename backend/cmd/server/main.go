@@ -225,6 +225,7 @@ func registerRoutes(
 		admin.GET("/properties", adminH.ListProperties)
 		admin.POST("/properties", adminH.CreateProperty)
 		admin.POST("/properties/:id/images", adminH.UploadPropertyImage)
+		admin.PUT("/properties/:id", propertyH.UpdateProperty)
 		admin.PUT("/properties/:id/status", adminH.UpdatePropertyStatus)
 		// 经纪人
 		admin.GET("/agents", adminH.ListAgents)

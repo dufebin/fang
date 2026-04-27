@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { SearchBar, Tabs, NavBar } from 'antd-mobile'
-import { useNavigate } from 'react-router-dom'
 import Banner from '../../components/Banner'
+import PropertyCard from '../../components/PropertyCard'
+import BottomNav from '../../components/BottomNav'
 import styles from './index.module.css'
 
 const PROPERTY_TYPES = [
@@ -13,7 +14,6 @@ const PROPERTY_TYPES = [
 ]
 
 export default function PropertyList() {
-  const navigate = useNavigate()
   const [list, setList] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeType, setActiveType] = useState('')
@@ -86,34 +86,26 @@ export default function PropertyList() {
 
       <div className={styles.list} id="property-list">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>加载中...</div>
-        ) : list.length > 0 ? (
-          list.map((item: any) => (
-            <div key={item.id} style={{ padding: '10px', borderBottom: '1px solid #eee' }}>
-              <div><strong>{item.title}</strong></div>
-              <div>{item.city} {item.district} {item.property_type}</div>
-              <div>{item.total_price}万 / {item.area}㎡</div>
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={styles.skeleton}>
+              <div className={styles.skeletonImage} />
+              <div className={styles.skeletonBody}>
+                <div className={styles.skeletonLine} />
+                <div className={styles.skeletonLineShort} />
+                <div className={styles.skeletonPrice} />
+              </div>
             </div>
           ))
+        ) : list.length > 0 ? (
+          list.map((item: any) => (
+            <PropertyCard key={item.id} property={item} />
+          ))
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px' }}>暂无房源数据</div>
+          <div className={styles.empty}>暂无房源数据</div>
         )}
       </div>
 
-      <div className={styles.bottomNav}>
-        <div className={styles.bottomNavItem}>
-          <span className={styles.bottomNavIcon}>🏠</span>
-          <span>找房</span>
-        </div>
-        <div className={styles.bottomNavItem} onClick={() => navigate('/articles')}>
-          <span className={styles.bottomNavIcon}>📰</span>
-          <span>资讯</span>
-        </div>
-        <div className={styles.bottomNavItem} onClick={() => navigate('/loan-calculator')}>
-          <span className={styles.bottomNavIcon}>🧮</span>
-          <span>贷款计算</span>
-        </div>
-      </div>
+      <BottomNav />
     </div>
   )
 }

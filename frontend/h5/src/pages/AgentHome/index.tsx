@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { NavBar, Avatar } from 'antd-mobile'
+import { Phone } from 'lucide-react'
 import PropertyCard from '../../components/PropertyCard'
+import { Property } from '../../api/property'
 import styles from './index.module.css'
 
 interface Agent {
@@ -13,20 +15,6 @@ interface Agent {
   avatar_url: string
   bio: string
   agent_code: string
-}
-
-interface Property {
-  id: number
-  title: string
-  property_type: string
-  city: string
-  district: string
-  total_price: number | null
-  area: number
-  bedrooms: number
-  living_rooms: number
-  cover_image: string
-  status: string
 }
 
 export default function AgentHome() {
@@ -122,7 +110,7 @@ export default function AgentHome() {
           <div className={styles.info}>
             <div className={styles.name}>{agent.name}</div>
             <div className={styles.bio}>{agent.bio || '专业房产顾问'}</div>
-            <div className={styles.phone}>📞 {agent.phone}</div>
+            <div className={styles.phone}><Phone size={13} style={{ verticalAlign: 'middle', marginRight: 4 }} />{agent.phone}</div>
           </div>
         </div>
       )}
@@ -145,9 +133,7 @@ export default function AgentHome() {
         )}
 
         {hasMore && !loading && (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <button onClick={loadMore}>加载更多</button>
-          </div>
+          <div className={styles.loadMore} onClick={loadMore}>加载更多</div>
         )}
       </div>
 

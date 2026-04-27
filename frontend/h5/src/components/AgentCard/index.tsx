@@ -1,5 +1,6 @@
 import React from 'react'
 import { Avatar, Button } from 'antd-mobile'
+import { Phone, MessageCircle } from 'lucide-react'
 import { AgentCard as AgentCardType } from '../../api/property'
 import styles from './index.module.css'
 
@@ -41,7 +42,8 @@ export default function AgentCard({ agent }: Props) {
           className={styles.btn}
           onClick={handleCall}
         >
-          📞 立即致电
+          <Phone size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+          立即致电
         </Button>
         {agent.wechat_id && (
           <Button
@@ -49,7 +51,8 @@ export default function AgentCard({ agent }: Props) {
             className={styles.btn}
             onClick={handleWechat}
           >
-            💬 微信咨询
+            <MessageCircle size={14} style={{ verticalAlign: 'middle', marginRight: 4 }} />
+            微信咨询
           </Button>
         )}
       </div>
