@@ -17,6 +17,7 @@
   font-weight: 700;
   color: #111;
   line-height: 1.5;
+  margin-bottom: 12px;
 }
 
 .meta {
@@ -25,6 +26,7 @@
   margin: 10px 0 20px;
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .content {
@@ -33,4 +35,108 @@
   line-height: 1.9;
 }
 
-.content img { max-width: 100%; border-radius: 8px; }
+/* 富文本样式 - wangeditor 输出 */
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+  margin: 1.2em 0 0.6em;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #222;
+}
+
+.content h1 { font-size: 1.6em; }
+.content h2 { font-size: 1.4em; }
+.content h3 { font-size: 1.2em; }
+.content h4 { font-size: 1.1em; }
+
+.content p {
+  margin: 0.8em 0;
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.5em;
+  margin: 0.8em 0;
+}
+
+.content li {
+  margin: 0.4em 0;
+}
+
+.content blockquote {
+  margin: 1em 0;
+  padding: 12px 16px;
+  border-left: 4px solid #1677ff;
+  background: #f6f6f6;
+  color: #666;
+  border-radius: 0 6px 6px 0;
+}
+
+.content code {
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: #e74c3c;
+}
+
+.content pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.8em 0;
+}
+
+.content a {
+  color: #1677ff;
+  text-decoration: none;
+}
+
+.content a:hover {
+  text-decoration: underline;
+}
+
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+.content table th,
+.content table td {
+  border: 1px solid #e8e8e8;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.content table th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.content hr {
+  border: none;
+  border-top: 1px solid #e8e8e8;
+  margin: 1.5em 0;
+}
