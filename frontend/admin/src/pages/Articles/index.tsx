@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ProTable, ProColumns } from '@ant-design/pro-components'
-import { Button, Tag, message, Popconfirm, Modal, Form, Input, Select } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { Button, Tag, Popconfirm, Modal, Form, Input, Select, Image, App } from 'antd'
+import { PlusOutlined, EyeOutlined } from '@ant-design/icons'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css'
@@ -52,12 +52,7 @@ function ArticleFormModal({
 }) {
   const [form] = Form.useForm()
   const [submitting, setSubmitting] = useState(false)
-
-  useEffect(() => {
-    if (open) {
-      form.setFieldsValue(initial || { status: 'draft', content: '' })
-    }
-  }, [open, initial])
+  const { message } = App.useApp()
 
   const handleOk = async () => {
     try {
@@ -79,6 +74,11 @@ function ArticleFormModal({
     }
   }
 
+  // initialValues feeds into Form on fresh mount (destroyOnHidden ensures remount each open)
+  const initialValues = initial
+    ? { ...initial }
+    : { status: 'draft', content: '' }
+
   return (
     <Modal
       title={initial ? '编辑文章' : '新建文章'}
@@ -88,10 +88,10 @@ function ArticleFormModal({
       okText="保存"
       cancelText="取消"
       confirmLoading={submitting}
-      width={860}
-      destroyOnClose
+      width={900}
+      destroyOnHidden
     >
-      <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+      <Form form={form} layout="vertical" initialValues={initialValues} style={{ marginTop: 16 }}>
         <Form.Item name="title" label="标题" rules={[{ required: true, message: '请输入标题' }]}>
           <Input placeholder="请输入文章标题" />
         </Form.Item>
@@ -103,7 +103,7 @@ function ArticleFormModal({
             <Select options={[{ label: '草稿', value: 'draft' }, { label: '发布', value: 'published' }]} />
           </Form.Item>
         </div>
-        <Form.Item name="cover_image" label="封面图片URL">
+        <Form.Item name="cover_image" label="封面图片URL" extra="填入图片地址，留空则无封面">
           <Input placeholder="https://..." />
         </Form.Item>
         <Form.Item name="content" label="正文内容" rules={[{ required: true, message: '请输入正文内容' }]}>
@@ -118,10 +118,23 @@ export default function ArticlesPage() {
   const [tableKey, setTableKey] = useState(0)
   const [editTarget, setEditTarget] = useState<Article | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
+  const { message } = App.useApp()
   const refresh = () => setTableKey(k => k + 1)
 
   const columns: ProColumns<Article>[] = [
-    { title: '标题', dataIndex: 'title', ellipsis: true },
+    {
+      title: '封面',
+      dataIndex: 'cover_image',
+      search: false,
+      width: 80,
+      render: (_, r) =>
+        r.cover_image ? (
+          <Image src={r.cover_image} width={60} height={40} style={{ objectFit: 'cover', borderRadius: 4 }} preview={{ mask: <EyeOutlined /> }} />
+        ) : (
+          <div style={{ width: 60, height: 40, background: '#f5f5f5', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#bbb' }}>无图</div>
+        ),
+    },
+    { title: '标题', dataIndex: 'title', ellipsis: true, copyable: true },
     {
       title: '分类',
       dataIndex: 'category',
@@ -140,11 +153,19 @@ export default function ArticlesPage() {
         </Tag>
       ),
     },
-    { title: '浏览量', dataIndex: 'view_count', search: false },
-    { title: '发布时间', dataIndex: 'published_at', search: false, valueType: 'dateTime', render: (v) => v || '--' },
+    { title: '浏览量', dataIndex: 'view_count', search: false, sorter: true },
+    {
+      title: '发布时间',
+      dataIndex: 'published_at',
+      search: false,
+      valueType: 'dateTime',
+      width: 160,
+      render: (v) => v || '--',
+    },
     {
       title: '操作',
       valueType: 'option',
+      width: 120,
       render: (_, record) => [
         <Button key="edit" type="link" size="small" onClick={() => setEditTarget(record)}>编辑</Button>,
         <Popconfirm
@@ -175,6 +196,7 @@ export default function ArticlesPage() {
             新建文章
           </Button>,
         ]}
+        scroll={{ x: 900 }}
       />
 
       <ArticleFormModal open={createOpen} onClose={() => setCreateOpen(false)} onSaved={refresh} />

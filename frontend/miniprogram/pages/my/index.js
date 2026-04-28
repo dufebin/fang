@@ -14,9 +14,6 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function') {
-      this.getTabBar().setData({ selected: 3 })
-    }
     const loggedIn = isLoggedIn()
     this.setData({ isLoggedIn: loggedIn })
     if (loggedIn) {

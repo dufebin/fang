@@ -1,8 +1,8 @@
 const ENV = {
   development: {
-    BASE_URL: 'http://localhost:9080/api',
-    UPLOAD_BASE: 'http://localhost:9080',
-    H5_BASE_URL: 'http://localhost:3001', // H5前端地址
+    BASE_URL: 'http://10.8.51.73:9080/api',
+    UPLOAD_BASE: 'http://10.8.51.73:9080',
+    H5_BASE_URL: 'http://10.8.51.73:3001', // H5前端地址
   },
   production: {
     BASE_URL: 'https://your-domain.com/api',

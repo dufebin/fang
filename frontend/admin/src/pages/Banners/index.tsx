@@ -8,11 +8,12 @@ import {
   ProFormDigit,
   ProFormSwitch,
 } from '@ant-design/pro-components'
-import { Button, Image, Tag, message, Popconfirm, Space } from 'antd'
+import { Button, Image, Tag, Popconfirm, Space, App } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { getBanners, createBanner, updateBanner, deleteBanner, Banner } from '../../api/content'
 
 export default function BannersPage() {
+  const { message } = App.useApp()
   const [tableKey, setTableKey] = useState(0)
   const [editTarget, setEditTarget] = useState<Banner | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
@@ -99,7 +100,7 @@ export default function BannersPage() {
         return true
       }}
       layout="vertical"
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
     >
       <ProFormText name="title" label="标题" rules={[{ required: true }]} />
       <ProFormText name="image_url" label="图片URL" rules={[{ required: true }]} />

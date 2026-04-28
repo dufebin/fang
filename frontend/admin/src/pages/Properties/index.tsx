@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   ProTable,
   ProColumns,
@@ -6,10 +6,12 @@ import {
   ProFormText,
   ProFormSelect,
   ProFormDigit,
-  ProFormTextArea,
 } from '@ant-design/pro-components'
-import { Button, Space, Tag, message, Upload, Popconfirm, Drawer, Form, Input, Select, InputNumber, Row, Col } from 'antd'
-import { PlusOutlined, UploadOutlined, EditOutlined } from '@ant-design/icons'
+import { Button, Space, Tag, Upload, Popconfirm, Drawer, Form, Input, Select, InputNumber, Row, Col, Image, App } from 'antd'
+import { PlusOutlined, UploadOutlined, EditOutlined, PictureOutlined } from '@ant-design/icons'
+import { Editor, Toolbar } from '@wangeditor/editor-for-react'
+import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
+import '@wangeditor/editor/dist/css/style.css'
 import {
   getProperties,
   createProperty,
@@ -29,12 +31,27 @@ const STATUS_MAP: Record<string, { text: string; color: string }> = {
 const PROPERTY_TYPES = ['新房', '二手房', '租房', '商铺']
 const DECORATIONS = ['毛坯', '简装', '精装', '豪华装修']
 
+const toolbarConfig: Partial<IToolbarConfig> = {}
+const editorConfig: Partial<IEditorConfig> = { placeholder: '请输入房源描述...' }
+
+function RichEditor({ value, onChange }: { value?: string; onChange?: (v: string) => void }) {
+  const [editor, setEditor] = useState<IDomEditor | null>(null)
+  useEffect(() => { return () => { editor?.destroy() } }, [editor])
+  return (
+    <div style={{ border: '1px solid #d9d9d9', borderRadius: 6, overflow: 'hidden' }}>
+      <Toolbar editor={editor} defaultConfig={toolbarConfig} mode="default" style={{ borderBottom: '1px solid #d9d9d9' }} />
+      <Editor defaultConfig={editorConfig} value={value} onCreated={setEditor} onChange={e => onChange?.(e.getHtml())} mode="default" style={{ minHeight: 240, overflowY: 'auto' }} />
+    </div>
+  )
+}
+
 export default function PropertiesPage() {
+  const { message } = App.useApp()
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [uploadModalOpen, setUploadModalOpen] = useState(false)
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Property | null>(null)
-  const [currentId, setCurrentId] = useState<number | null>(null)
+  const [uploadTarget, setUploadTarget] = useState<Property | null>(null)
   const [tableKey, setTableKey] = useState(0)
   const [editForm] = Form.useForm()
   const refresh = () => setTableKey(k => k + 1)
@@ -43,6 +60,11 @@ export default function PropertiesPage() {
     setEditTarget(record)
     editForm.setFieldsValue(record)
     setEditDrawerOpen(true)
+  }
+
+  const openUpload = (record: Property) => {
+    setUploadTarget(record)
+    setUploadModalOpen(true)
   }
 
   const handleEditSubmit = async () => {
@@ -66,9 +88,9 @@ export default function PropertiesPage() {
       width: 80,
       render: (_, record) =>
         record.cover_image ? (
-          <img src={record.cover_image} style={{ width: 60, height: 45, objectFit: 'cover', borderRadius: 4 }} />
+          <Image src={record.cover_image} width={60} height={45} style={{ objectFit: 'cover', borderRadius: 4 }} />
         ) : (
-          <div style={{ width: 60, height: 45, background: '#f0f0f0', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#999' }}>
+          <div style={{ width: 60, height: 45, background: '#f5f5f5', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#bbb' }}>
             无图
           </div>
         ),
@@ -111,9 +133,10 @@ export default function PropertiesPage() {
           key="images"
           type="link"
           size="small"
-          onClick={() => { setCurrentId(record.id); setUploadModalOpen(true) }}
+          icon={<PictureOutlined />}
+          onClick={() => openUpload(record)}
         >
-          上传图片
+          图片
         </Button>,
         record.status !== 'offline' ? (
           <Popconfirm
@@ -149,11 +172,13 @@ export default function PropertiesPage() {
   }
 
   const handleUploadImage = async (file: File) => {
-    if (!currentId) return false
+    if (!uploadTarget) return false
     const fd = new FormData()
     fd.append('image', file)
-    await uploadPropertyImage(currentId, fd)
+    await uploadPropertyImage(uploadTarget.id, fd)
     message.success('图片上传成功')
+    // refresh so cover_image updates in table
+    refresh()
     return false
   }
 
@@ -190,7 +215,7 @@ export default function PropertiesPage() {
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
         onFinish={handleCreate}
-        modalProps={{ destroyOnClose: true }}
+        modalProps={{ destroyOnHidden: true }}
         layout="vertical"
         grid
       >
@@ -199,6 +224,7 @@ export default function PropertiesPage() {
         <ProFormText name="city" label="城市" rules={[{ required: true }]} colProps={{ span: 12 }} />
         <ProFormText name="district" label="区域" rules={[{ required: true }]} colProps={{ span: 12 }} />
         <ProFormText name="address" label="详细地址" colProps={{ span: 12 }} />
+        <ProFormText name="cover_image" label="封面图片URL" placeholder="https://... 或留空后续上传" colProps={{ span: 24 }} />
         <ProFormDigit name="area" label="建筑面积(㎡)" rules={[{ required: true }]} colProps={{ span: 8 }} />
         <ProFormDigit name="total_price" label="总价(万元)" colProps={{ span: 8 }} />
         <ProFormDigit name="monthly_rent" label="月租金(元)" colProps={{ span: 8 }} />
@@ -210,7 +236,9 @@ export default function PropertiesPage() {
         <ProFormDigit name="total_floors" label="总楼层" colProps={{ span: 8 }} />
         <ProFormSelect name="decoration" label="装修" options={DECORATIONS.map(v => ({ label: v, value: v }))} initialValue="精装" colProps={{ span: 12 }} />
         <ProFormText name="direction" label="朝向" colProps={{ span: 12 }} />
-        <ProFormTextArea name="description" label="房源描述" colProps={{ span: 24 }} fieldProps={{ rows: 4 }} />
+        <Form.Item name="description" label="房源描述" style={{ gridColumn: 'span 2' }}>
+          <RichEditor />
+        </Form.Item>
       </ModalForm>
 
       {/* 编辑房源抽屉 */}
@@ -231,6 +259,15 @@ export default function PropertiesPage() {
           <Form.Item name="title" label="房源标题" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
+          <Form.Item name="cover_image" label="封面图片URL" extra="留空则使用上传的第一张图片">
+            <Input placeholder="https://..." />
+          </Form.Item>
+          {editTarget?.cover_image && (
+            <div style={{ marginBottom: 16 }}>
+              <img src={editTarget.cover_image} alt="当前封面" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 6, border: '1px solid #f0f0f0' }} />
+              <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>当前封面</div>
+            </div>
+          )}
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="property_type" label="房源类型" rules={[{ required: true }]}>
@@ -277,6 +314,11 @@ export default function PropertiesPage() {
           </Row>
           <Row gutter={16}>
             <Col span={8}>
+              <Form.Item name="unit_price" label="单价(元/㎡)">
+                <InputNumber style={{ width: '100%' }} min={0} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
               <Form.Item name="bedrooms" label="卧室(间)">
                 <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
@@ -286,13 +328,13 @@ export default function PropertiesPage() {
                 <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
             </Col>
+          </Row>
+          <Row gutter={16}>
             <Col span={8}>
               <Form.Item name="bathrooms" label="卫生间">
                 <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={16}>
             <Col span={8}>
               <Form.Item name="floor" label="所在楼层">
                 <InputNumber style={{ width: '100%' }} />
@@ -303,26 +345,31 @@ export default function PropertiesPage() {
                 <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item name="direction" label="朝向">
-                <Input />
-              </Form.Item>
-            </Col>
           </Row>
+          <Form.Item name="direction" label="朝向">
+            <Input />
+          </Form.Item>
           <Form.Item name="description" label="房源描述">
-            <Input.TextArea rows={5} />
+            <RichEditor />
           </Form.Item>
         </Form>
       </Drawer>
 
       {/* 上传图片弹窗 */}
       <ModalForm
-        title="上传房源图片"
+        title={uploadTarget ? `上传图片 — ${uploadTarget.title}` : '上传房源图片'}
         open={uploadModalOpen}
-        onOpenChange={setUploadModalOpen}
+        onOpenChange={(v) => { if (!v) { setUploadModalOpen(false); setUploadTarget(null) } }}
         onFinish={async () => true}
         submitter={false}
+        modalProps={{ destroyOnHidden: true }}
       >
+        {uploadTarget?.cover_image && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 13, color: '#666', marginBottom: 6 }}>当前封面</div>
+            <img src={uploadTarget.cover_image} alt="封面" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 6, border: '1px solid #f0f0f0' }} />
+          </div>
+        )}
         <Upload.Dragger multiple beforeUpload={handleUploadImage} accept="image/*" listType="picture">
           <p><UploadOutlined style={{ fontSize: 32, color: '#1677ff' }} /></p>
           <p>点击或拖拽图片到此区域上传</p>

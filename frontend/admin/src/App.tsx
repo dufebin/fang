@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { ProLayout, DefaultFooter } from '@ant-design/pro-components'
+import { App as AntdApp } from 'antd'
 import {
   HomeOutlined,
   TeamOutlined,
@@ -114,19 +115,21 @@ function AdminLayout() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/admin/login" element={<LoginPage />} />
-        <Route
-          path="/admin/*"
-          element={
-            <RequireAuth>
-              <AdminLayout />
-            </RequireAuth>
-          }
-        />
-        <Route path="*" element={<Navigate to="/admin" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <AntdApp>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/admin/login" element={<LoginPage />} />
+          <Route
+            path="/admin/*"
+            element={
+              <RequireAuth>
+                <AdminLayout />
+              </RequireAuth>
+            }
+          />
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AntdApp>
   )
 }

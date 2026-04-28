@@ -31,9 +31,6 @@ Page({
   },
 
   onShow() {
-    if (typeof this.getTabBar === 'function') {
-      this.getTabBar().setData({ selected: 1 })
-    }
   },
 
   async _loadList(reset = false) {
