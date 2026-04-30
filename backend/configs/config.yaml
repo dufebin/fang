@@ -10,11 +10,11 @@ admin:
   password: "admin123"
 
 database:
-  host: "127.0.0.1"
+  host: "111.229.9.22"
   port: 3306
-  user: "root"
-  password: "123456"
-  name: "fangchan"
+  user: "fang"
+  password: "2TmhER82A3mSawH5"
+  name: "fang"
   max_open_conns: 20
   max_idle_conns: 10
 
@@ -34,7 +34,7 @@ wechat:
 storage:
   type: "local"  # local or cos
   local_path: "./uploads"
-  base_url: "http://localhost:8080/uploads"
+  base_url: "http://localhost:9080/uploads"
   cos:
     secret_id: ""
     secret_key: ""
