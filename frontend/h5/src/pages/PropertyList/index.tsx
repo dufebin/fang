@@ -3,6 +3,7 @@ import { SearchBar, Tabs, NavBar } from 'antd-mobile'
 import Banner from '../../components/Banner'
 import PropertyCard from '../../components/PropertyCard'
 import BottomNav from '../../components/BottomNav'
+import { getPropertyList } from '../../api/property'
 import styles from './index.module.css'
 
 const PROPERTY_TYPES = [
@@ -24,31 +25,17 @@ export default function PropertyList() {
     let cancelled = false
     setLoading(true)
     
-    const params = new URLSearchParams()
-    params.set('page', '1')
-    params.set('limit', '100')
-    if (activeType) params.set('type', activeType)
-    if (keyword) params.set('keyword', keyword)
-    
-    const url = `/api/h5/properties?${params.toString()}`
-    console.log('请求URL:', url)
-    
-    fetch(url)
-      .then(r => r.json())
+    getPropertyList({ page: 1, limit: 100, type: activeType || undefined, keyword: keyword || undefined })
       .then(d => {
         if (cancelled) return
-        console.log('API返回:', d)
         if (d.code === 0 && d.data && d.data.list) {
-          console.log('设置房源数据:', d.data.list.length, '条')
           setList(d.data.list)
         } else {
-          console.error('API错误:', d.message)
           setList([])
         }
       })
-      .catch(e => {
+      .catch(() => {
         if (cancelled) return
-        console.error('请求失败:', e)
         setList([])
       })
       .finally(() => {

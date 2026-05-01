@@ -21,15 +21,15 @@ export interface ApiResult<T> {
 }
 
 export const getMyProfile = () =>
-  request.get<unknown, ApiResult<Agent>>('/agent/profile')
+  request.get<unknown, ApiResult<Agent>>('/api/agent/profile')
 
 export const updateMyProfile = (data: Partial<Agent>) =>
-  request.put<unknown, ApiResult<Agent>>('/agent/profile', data)
+  request.put<unknown, ApiResult<Agent>>('/api/agent/profile', data)
 
 export const getJSSDKConfig = (url: string) =>
-  request.get('/h5/wechat/jssdk-config', { params: { url } })
+  request.get('/api/h5/wechat/jssdk-config', { params: { url } })
 
 export const wechatLogin = (code: string) =>
   request.get<unknown, ApiResult<{ token: string; user: { role: string; user_id: number } }>>(
-    `/auth/wechat/callback?code=${code}`
+    `/api/auth/wechat/callback?code=${code}`
   )

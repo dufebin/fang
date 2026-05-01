@@ -4,6 +4,7 @@ import { NavBar, Tag, Divider, Toast, Button } from 'antd-mobile'
 import { MapPin } from 'lucide-react'
 import ImageGallery from '../../components/ImageGallery'
 import AgentCard from '../../components/AgentCard'
+import { getPropertyDetail, claimProperty, unclaimProperty, Property } from '../../api/property'
 import { useAuthStore } from '../../store/auth'
 import styles from './index.module.css'
 
@@ -12,31 +13,6 @@ const statusMap: Record<string, { text: string; color: string }> = {
   sold: { text: '已售', color: 'default' },
   rented: { text: '已租', color: 'default' },
   offline: { text: '已下架', color: 'default' },
-}
-
-interface Property {
-  id: number
-  title: string
-  property_type: string
-  city: string
-  district: string
-  address: string
-  total_price: number | null
-  unit_price: number | null
-  monthly_rent: number | null
-  area: number
-  bedrooms: number
-  living_rooms: number
-  bathrooms: number
-  floor: number | null
-  total_floors: number | null
-  decoration: string
-  direction: string
-  description: string
-  cover_image: string
-  status: string
-  images: any[]
-  agent?: any
 }
 
 export default function PropertyDetail() {
@@ -49,41 +25,25 @@ export default function PropertyDetail() {
   const [loading, setLoading] = useState(true)
   const [claimed, setClaimed] = useState(false)
 
-  // 用原生fetch，绕过所有封装
   useEffect(() => {
     if (!id) return
     setLoading(true)
-    
-    const url = agentCode 
-      ? `/api/h5/property/${id}?a=${agentCode}`
-      : `/api/h5/property/${id}`
-    
-    console.log('请求房源详情:', url)
-    
-    fetch(url)
-      .then(r => r.json())
+    getPropertyDetail(Number(id), agentCode || undefined)
       .then(d => {
-        console.log('房源详情API响应:', d)
         if (d.code === 0 && d.data) {
           setProperty(d.data)
         } else {
-          console.error('API返回错误:', d.message)
           setProperty(null)
         }
       })
-      .catch(e => {
-        console.error('请求失败:', e)
-        setProperty(null)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+      .catch(() => setProperty(null))
+      .finally(() => setLoading(false))
   }, [id, agentCode])
 
   const handleClaim = async () => {
     if (!id) return
     try {
-      await fetch(`/api/agent/properties/${id}/claim`, { method: 'POST' })
+      await claimProperty(Number(id))
       setClaimed(true)
       Toast.show({ content: '认领成功！现在分享给客户吧', icon: 'success' })
     } catch {
@@ -94,7 +54,7 @@ export default function PropertyDetail() {
   const handleUnclaim = async () => {
     if (!id) return
     try {
-      await fetch(`/api/agent/properties/${id}/claim`, { method: 'DELETE' })
+      await unclaimProperty(Number(id))
       setClaimed(false)
       Toast.show({ content: '已取消认领', icon: 'success' })
     } catch {

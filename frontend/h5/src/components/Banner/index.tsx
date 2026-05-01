@@ -1,17 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getBanners, type Banner } from '../../api/content'
 import styles from './index.module.css'
-
-interface Banner {
-  id: number
-  title: string
-  image_url: string
-  link_type: 'property' | 'external' | 'none'
-  link_value: string
-  position: string
-  sort_order: number
-  is_active: boolean
-}
 
 export default function Banner() {
   const navigate = useNavigate()
@@ -22,25 +12,18 @@ export default function Banner() {
   useEffect(() => {
     let cancelled = false
 
-    fetch('/api/h5/banners')
-      .then(r => r.json())
+    getBanners()
       .then(d => {
         if (cancelled) return
         if (d.code === 0 && Array.isArray(d.data)) {
-          // 过滤出首页banner并按sort_order排序
           const homeBanners = d.data
             .filter((b: Banner) => b.position === 'home' && b.is_active)
             .sort((a: Banner, b: Banner) => a.sort_order - b.sort_order)
           setBanners(homeBanners)
         }
       })
-      .catch(e => {
-        if (cancelled) return
-        console.error('获取Banner失败:', e)
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
+      .catch(() => { if (!cancelled) setLoading(false) })
+      .finally(() => { if (!cancelled) setLoading(false) })
 
     return () => { cancelled = true }
   }, [])

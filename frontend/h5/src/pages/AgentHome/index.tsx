@@ -3,19 +3,8 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { NavBar, Avatar } from 'antd-mobile'
 import { Phone } from 'lucide-react'
 import PropertyCard from '../../components/PropertyCard'
-import { Property } from '../../api/property'
+import { getAgentProperties, Property, AgentCard as Agent } from '../../api/property'
 import styles from './index.module.css'
-
-interface Agent {
-  id: number
-  name: string
-  phone: string
-  wechat_id: string
-  wechat_qr_url: string
-  avatar_url: string
-  bio: string
-  agent_code: string
-}
 
 export default function AgentHome() {
   const { agent_code } = useParams<{ agent_code: string }>()
@@ -36,13 +25,7 @@ export default function AgentHome() {
     }
 
     try {
-      // 请求经纪人房源列表（这个接口返回房源，房源里包含 agent 信息）
-      const url = `/api/h5/agent/${code}?page=${pageNum}&limit=10`
-      console.log('请求经纪人房源:', url)
-      
-      const res = await fetch(url).then(r => r.json())
-      console.log('经纪人房源响应:', res)
-      
+      const res = await getAgentProperties(code, { page: pageNum, limit: 10 })
       if (res.code === 0 && res.data) {
         const newProps = res.data.list || []
         

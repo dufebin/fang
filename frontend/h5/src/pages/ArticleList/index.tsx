@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { NavBar, Tabs } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
+import { getArticleList, Article } from '../../api/content'
 import BottomNav from '../../components/BottomNav'
 import styles from './index.module.css'
 
@@ -11,15 +12,6 @@ const CATEGORIES = [
   { key: '政策解读', label: '政策解读' },
   { key: '装修百科', label: '装修百科' },
 ]
-
-interface Article {
-  id: number
-  title: string
-  category: string
-  cover_image: string
-  view_count: number
-  published_at: string
-}
 
 function formatDate(s: string) {
   if (!s) return ''
@@ -40,31 +32,18 @@ export default function ArticleList() {
     setCategory(cat)
   }
 
-  // 用原生fetch加载数据
   const loadMore = useCallback(async () => {
-    const params = new URLSearchParams()
-    params.set('page', String(page))
-    params.set('page_size', '15')
-    if (category) params.set('category', category)
-    
-    const url = `/api/h5/articles?${params.toString()}`
-    console.log('请求文章列表:', url)
-    
     try {
-      const res = await fetch(url).then(r => r.json())
-      console.log('文章列表响应:', res)
-      
+      const res = await getArticleList({ page, page_size: 15, category: category || undefined })
       if (res.code === 0) {
         const items: Article[] = res.data.list || []
         setList(prev => [...prev, ...items])
         setPage(p => p + 1)
         setHasMore(items.length >= 15)
       } else {
-        console.error('API返回错误:', res.message)
         setHasMore(false)
       }
-    } catch (err) {
-      console.error('请求失败:', err)
+    } catch {
       setHasMore(false)
     }
   }, [page, category])

@@ -11,10 +11,25 @@ export interface Article {
   published_at: string
 }
 
+export interface Banner {
+  id: number
+  title: string
+  image_url: string
+  link_type: 'property' | 'external' | 'none'
+  link_value: string
+  position: string
+  sort_order: number
+  is_active: boolean
+}
+
+export function getBanners() {
+  return request.get<unknown, ApiResult<Banner[]>>('/api/h5/banners')
+}
+
 export function getArticleList(params: { page: number; page_size: number; category?: string }) {
-  return request.get<unknown, PageResult<Article>>('/h5/articles', { params })
+  return request.get<unknown, PageResult<Article>>('/api/h5/articles', { params })
 }
 
 export function getArticleDetail(id: number) {
-  return request.get<unknown, ApiResult<Article>>(`/h5/articles/${id}`)
+  return request.get<unknown, ApiResult<Article>>(`/api/h5/articles/${id}`)
 }

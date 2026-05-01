@@ -32,9 +32,9 @@ export default function App() {
           {/* 微信登录回调 */}
           <Route path="/login" element={<Login />} />
 
-          {/* 默认跳转 */}
-          <Route path="/" element={<Navigate to="/properties" replace />} />
-          <Route path="*" element={<Navigate to="/properties" replace />} />
+          {/* 默认展示房源列表 */}
+          <Route path="/" element={<PropertyList />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
     </BrowserRouter>

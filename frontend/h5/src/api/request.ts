@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const request = axios.create({
-  baseURL: 'https://fapi.deephealth.net/api',
+  baseURL: 'https://fapi.deephealth.net',
   timeout: 10000,
 })
 
