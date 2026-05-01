@@ -1,67 +1,106 @@
 .card {
-  background: #fff;
-  border-radius: 10px;
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius-md, 12px);
   overflow: hidden;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm, 0 1px 6px rgba(0,0,0,0.06));
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
   margin-bottom: 12px;
+  border: 1px solid var(--color-border-light, #f5f6f8);
 }
 
 .card:active {
-  transform: scale(0.98);
+  transform: scale(0.985);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #eef0f3;
 }
 
 .image {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
-  background: #f0f0f0;
   display: block;
 }
 
+.imagePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #eef0f3 0%, #e4e7ec 100%);
+}
+
+.typeBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs, 4px);
+  letter-spacing: 0.2px;
+}
+
 .content {
-  padding: 12px;
+  padding: 12px 14px 14px;
 }
 
 .title {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text, #1a1a1a);
   margin-bottom: 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: -0.1px;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 5px;
+  margin-bottom: 12px;
 }
 
 .tag {
-  background: #f5f5f5;
-  color: #666;
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  background: var(--color-border-light, #f5f6f8);
+  color: var(--color-text-secondary, #555);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs, 4px);
+  border: 1px solid var(--color-border, #eceef2);
 }
 
 .footer {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  justify-content: space-between;
+}
+
+.priceWrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
 }
 
 .price {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  color: #ff4d4f;
+  color: var(--color-primary, #E84040);
+  letter-spacing: -0.5px;
 }
 
 .unitPrice {
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-muted, #999);
 }

@@ -1,18 +1,32 @@
 .page {
-  background: #f5f5f5;
+  background: var(--color-bg, #f6f7f9);
   min-height: 100vh;
 }
 
 .nav {
-  background: #fff;
+  background: var(--color-primary, #E84040);
+  --adm-color-text: #fff;
+  --adm-color-fill-content: transparent;
 }
 
 .profile {
-  background: linear-gradient(135deg, #1677ff, #0958d9);
-  padding: 20px 16px;
+  background: linear-gradient(160deg, #c0392b 0%, #E84040 50%, #e05252 100%);
+  padding: 20px 20px 28px;
   display: flex;
-  gap: 14px;
+  gap: 16px;
   align-items: center;
+  position: relative;
+}
+
+.profile::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: var(--color-bg, #f6f7f9);
+  border-radius: 20px 20px 0 0;
 }
 
 .info {
@@ -20,38 +34,48 @@
 }
 
 .name {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
+  letter-spacing: -0.3px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }
 
 .bio {
   font-size: 13px;
-  color: rgba(255,255,255,0.8);
-  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 6px;
+  line-height: 1.4;
 }
 
 .phone {
   font-size: 13px;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .listTitle {
-  padding: 14px 16px 8px;
+  padding: 24px 16px 8px;
   font-size: 14px;
-  color: #666;
-  font-weight: 500;
+  color: var(--color-text-secondary, #555);
+  font-weight: 600;
 }
 
 .list {
-  padding: 0 12px 16px;
+  padding: 0 12px 24px;
 }
 
 .loadMore {
   text-align: center;
   padding: 16px;
-  color: #E84040;
+  color: var(--color-primary, #E84040);
   font-size: 14px;
   cursor: pointer;
+}
+
+.bottomSafe {
+  height: 24px;
 }

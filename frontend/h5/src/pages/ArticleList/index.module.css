@@ -1,15 +1,29 @@
-.page { background: #f5f5f5; min-height: 100vh; }
+.page {
+  background: var(--color-bg, #f6f7f9);
+  min-height: 100vh;
+}
 
-.nav { background: #fff; border-bottom: 1px solid #f0f0f0; }
+.nav {
+  background: var(--color-surface, #fff);
+  border-bottom: 1px solid var(--color-border-light, #f5f6f8);
+}
 
-.tabs { background: #fff; position: sticky; top: 45px; z-index: 10; }
+.tabs {
+  background: var(--color-surface, #fff);
+  position: sticky;
+  top: 45px;
+  z-index: 10;
+  border-bottom: 1px solid var(--color-border-light, #f5f6f8);
+}
 
-.list { padding: 12px 16px 72px; }
+.list {
+  padding: 12px 12px 80px;
+}
 
 .loadMore {
   text-align: center;
   padding: 16px;
-  color: #E84040;
+  color: var(--color-primary, #E84040);
   font-size: 14px;
   cursor: pointer;
 }
@@ -17,41 +31,66 @@
 .noMore {
   text-align: center;
   padding: 16px;
-  color: #bbb;
+  color: var(--color-text-muted, #bbb);
   font-size: 13px;
 }
 
 .card {
-  background: #fff;
-  border-radius: 10px;
-  margin-bottom: 12px;
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius-md, 12px);
+  margin-bottom: 10px;
   padding: 14px;
   display: flex;
   gap: 12px;
+  cursor: pointer;
+  border: 1px solid var(--color-border-light, #f5f6f8);
+  box-shadow: var(--shadow-sm, 0 1px 6px rgba(0,0,0,0.06));
+  transition: opacity 0.15s ease;
+}
+
+.card:active {
+  opacity: 0.75;
 }
 
 .thumb {
-  width: 110px;
-  height: 76px;
-  border-radius: 6px;
+  width: 108px;
+  height: 80px;
+  border-radius: var(--radius-sm, 8px);
   object-fit: cover;
   flex-shrink: 0;
-  background: #eee;
+  background: var(--color-border-light, #f0f0f3);
 }
 
-.info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
 
 .title {
   font-size: 14px;
-  color: #222;
+  color: var(--color-text, #1a1a1a);
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.meta { font-size: 11px; color: #bbb; margin-top: 6px; }
+.meta {
+  font-size: 11px;
+  color: var(--color-text-muted, #bbb);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
 
-.dot { margin: 0 4px; }
+.dot {
+  margin: 0 2px;
+  opacity: 0.5;
+}

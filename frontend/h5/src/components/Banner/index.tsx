@@ -73,8 +73,9 @@ export default function Banner() {
         onClick={() => handleBannerClick(currentBanner)}
         style={{ cursor: currentBanner.link_type !== 'none' ? 'pointer' : 'default' }}
       >
-        <img 
-          src={imageUrl} 
+        <img
+          key={currentIndex}
+          src={imageUrl}
           alt={currentBanner.title}
           className={styles.bannerImage}
           onError={(e) => {

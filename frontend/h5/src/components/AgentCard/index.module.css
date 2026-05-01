@@ -1,15 +1,16 @@
 .card {
-  background: #fff;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #fff8f8 0%, #fff 60%);
+  border-radius: var(--radius-md, 12px);
   padding: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--color-border, #eceef2);
+  box-shadow: var(--shadow-sm, 0 1px 6px rgba(0,0,0,0.06));
 }
 
 .header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .info {
@@ -18,15 +19,16 @@
 
 .name {
   font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-weight: 700;
+  color: var(--color-text, #1a1a1a);
   margin-bottom: 4px;
+  letter-spacing: -0.2px;
 }
 
 .bio {
-  font-size: 13px;
-  color: #999;
-  line-height: 1.4;
+  font-size: 12px;
+  color: var(--color-text-muted, #999);
+  line-height: 1.5;
 }
 
 .actions {
@@ -36,26 +38,28 @@
 
 .btn {
   flex: 1;
-  height: 40px;
+  height: 44px;
   font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius-sm, 8px) !important;
 }
 
 .qrSection {
-  margin-top: 14px;
+  margin-top: 16px;
   text-align: center;
-  padding-top: 14px;
-  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-light, #f5f6f8);
 }
 
 .qrTip {
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-muted, #999);
   margin-bottom: 10px;
 }
 
 .qrCode {
   width: 120px;
   height: 120px;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--color-border, #eceef2);
 }

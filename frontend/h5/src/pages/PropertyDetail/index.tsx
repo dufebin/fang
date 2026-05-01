@@ -190,9 +190,9 @@ export default function PropertyDetail() {
 
 function InfoItem({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: '8px 0' }}>
-      <span style={{ fontSize: 12, color: '#999' }}>{label}</span>
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#333' }}>{value}</span>
+    <div className={styles.infoItem}>
+      <span className={styles.infoLabel}>{label}</span>
+      <span className={styles.infoValue}>{value}</span>
     </div>
   )
 }

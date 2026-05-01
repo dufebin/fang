@@ -3,12 +3,13 @@
 }
 
 .placeholder {
-  height: 220px;
-  background: #f0f0f0;
+  height: 240px;
+  background: var(--color-border-light, #eef0f3);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #999;
+  color: var(--color-text-muted, #999);
+  font-size: 14px;
 }
 
 .mainImage {
@@ -18,20 +19,23 @@
 
 .mainImage img {
   width: 100%;
-  height: 260px;
+  height: 280px;
   object-fit: cover;
   display: block;
 }
 
 .count {
   position: absolute;
-  bottom: 8px;
-  right: 10px;
-  background: rgba(0,0,0,0.5);
+  bottom: 10px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   color: #fff;
   font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full, 9999px);
+  letter-spacing: 0.3px;
 }
 
 .thumbs {
@@ -48,7 +52,7 @@
 
 .thumb img {
   width: 100%;
-  height: 80px;
+  height: 84px;
   object-fit: cover;
   display: block;
 }
@@ -56,9 +60,10 @@
 .more {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.52);
   color: #fff;
   font-size: 18px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;

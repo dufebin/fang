@@ -26,27 +26,33 @@ export default function PropertyCard({ property, agentCode }: Props) {
 
   return (
     <div className={styles.card} onClick={handleClick}>
-      {property.cover_image && (
-        <img
-          src={property.cover_image}
-          alt={property.title}
-          className={styles.image}
-          loading="lazy"
-        />
-      )}
+      <div className={styles.imageWrap}>
+        {property.cover_image ? (
+          <img
+            src={property.cover_image}
+            alt={property.title}
+            className={styles.image}
+            loading="lazy"
+          />
+        ) : (
+          <div className={styles.imagePlaceholder} />
+        )}
+        <span className={styles.typeBadge}>{property.property_type}</span>
+      </div>
       <div className={styles.content}>
         <div className={styles.title}>{property.title}</div>
         <div className={styles.tags}>
-          <span className={styles.tag}>{property.property_type}</span>
           <span className={styles.tag}>{roomInfo}</span>
           <span className={styles.tag}>{property.area}㎡</span>
           {property.district && <span className={styles.tag}>{property.district}</span>}
         </div>
         <div className={styles.footer}>
-          <span className={styles.price}>{priceText}</span>
-          {property.unit_price && (
-            <span className={styles.unitPrice}>{property.unit_price}元/㎡</span>
-          )}
+          <div className={styles.priceWrap}>
+            <span className={styles.price}>{priceText}</span>
+            {property.unit_price && (
+              <span className={styles.unitPrice}>{property.unit_price}元/㎡</span>
+            )}
+          </div>
         </div>
       </div>
     </div>
