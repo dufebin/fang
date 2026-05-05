@@ -30,6 +30,7 @@ func NewPropertyService(
 type CreatePropertyReq struct {
 	Title        string                `form:"title" json:"title" binding:"required"`
 	PropertyType string                `form:"property_type" json:"property_type" binding:"required"`
+	Province     string                `form:"province" json:"province"`
 	City         string                `form:"city" json:"city" binding:"required"`
 	District     string                `form:"district" json:"district" binding:"required"`
 	Address      string                `form:"address" json:"address"`
@@ -121,6 +122,7 @@ func (s *PropertyService) Create(req *CreatePropertyReq, createdBy uint64) (*mod
 	property := &model.Property{
 		Title:        req.Title,
 		PropertyType: model.PropertyType(req.PropertyType),
+		Province:     req.Province,
 		City:         req.City,
 		District:     req.District,
 		Address:      req.Address,
@@ -189,6 +191,7 @@ func (s *PropertyService) UpdateStatus(id uint64, status string) error {
 type UpdatePropertyReq struct {
 	Title         string   `json:"title"`
 	PropertyType  string   `json:"property_type"`
+	Province      string   `json:"province"`
 	City          string   `json:"city"`
 	District      string   `json:"district"`
 	Address       string   `json:"address"`
@@ -238,6 +241,9 @@ func (s *PropertyService) UpdateProperty(id, userID uint64, isAdmin bool, req *U
 	}
 	if req.PropertyType != "" {
 		property.PropertyType = model.PropertyType(req.PropertyType)
+	}
+	if req.Province != "" {
+		property.Province = req.Province
 	}
 	if req.City != "" {
 		property.City = req.City

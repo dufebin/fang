@@ -4,10 +4,11 @@ import {
   Button, Space, Tag, Upload, Popconfirm, Drawer,
   Form, Input, Select, InputNumber, Row, Col, Image, App, AutoComplete,
 } from 'antd'
-import { PlusOutlined, UploadOutlined, EditOutlined } from '@ant-design/icons'
+import { PlusOutlined, UploadOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import { pinyin } from 'pinyin-pro'
+import AddressParse from 'address-parse-cn'
 import '@wangeditor/editor/dist/css/style.css'
 import {
   getProperties, createProperty, updateProperty,
@@ -43,21 +44,14 @@ function pinyinMatch(text: string, query: string): boolean {
 }
 
 function parseChineseAddress(input: string) {
-  let s = input.trim().replace(/^.+?(?:省|自治区)/, '')
-  let city = '', district = '', address = s
-  const cityMatch = s.match(/^(.+?(?:市|州))/)
-  if (cityMatch) {
-    city = cityMatch[1].replace(/[市州]$/, '')
-    const rest = s.slice(cityMatch[0].length)
-    const distMatch = rest.match(/^(.+?(?:区|县))/)
-    if (distMatch) {
-      district = distMatch[1].replace(/[区县]$/, '')
-      address = rest.slice(distMatch[0].length)
-    } else {
-      address = rest
-    }
+  const [result] = (AddressParse as any).parse(input) as any[]
+  if (!result) return { province: '', city: '', district: '', address: input }
+  return {
+    province: (result.province as string || '').replace(/省$|市$/, ''),
+    city: (result.city as string || '').replace(/市$/, ''),
+    district: (result.area as string || '').replace(/[区县]$/, ''),
+    address: result.details as string || '',
   }
-  return { city, district, address }
 }
 
 const toolbarConfig: Partial<IToolbarConfig> = {}
@@ -87,13 +81,34 @@ export default function PropertiesPage() {
   const [editCoverPreview, setEditCoverPreview] = useState('')
   const [createCity, setCreateCity] = useState('')
   const [editCity, setEditCity] = useState('')
+  const [createParseInput, setCreateParseInput] = useState('')
+  const [editParseInput, setEditParseInput] = useState('')
   const refresh = () => setTableKey(k => k + 1)
+
+  function applyAddressParse(input: string, form: typeof createForm, setCity: (v: string) => void) {
+    const { province, city, district, address } = parseChineseAddress(input)
+    if (province) form.setFieldValue('province', province)
+    if (city) { form.setFieldValue('city', city); setCity(city) }
+    if (district) form.setFieldValue('district', district)
+    if (address) form.setFieldValue('address', address)
+  }
+
+  function recalcUnitPrice(form: typeof createForm, area?: number | null, totalPrice?: number | null) {
+    const a = area ?? form.getFieldValue('area')
+    const p = totalPrice ?? form.getFieldValue('total_price')
+    if (a && p) {
+      form.setFieldValue('unit_price', Math.round(p * 10000 / a))
+    } else {
+      form.setFieldValue('unit_price', undefined)
+    }
+  }
 
   const openEdit = (record: Property) => {
     setEditTarget(record)
     editForm.setFieldsValue(record)
     setEditCoverPreview(record.cover_image || '')
     setEditCity(record.city || '')
+    setEditParseInput('')
     setEditDrawerOpen(true)
   }
 
@@ -234,7 +249,7 @@ export default function PropertiesPage() {
         title="新增房源"
         open={createModalOpen}
         onOpenChange={(v) => {
-          if (!v) { setCoverFile(null); setCoverPreview(''); setCreateCity(''); createForm.resetFields() }
+          if (!v) { setCoverFile(null); setCoverPreview(''); setCreateCity(''); setCreateParseInput(''); createForm.resetFields() }
           setCreateModalOpen(v)
         }}
         onFinish={handleCreate}
@@ -278,20 +293,29 @@ export default function PropertiesPage() {
           </Col>
         </Row>
 
-        <Form.Item label="解析地址" extra="粘贴完整地址（如：广东省广州市天河区体育西路123号），自动填充下方城市、区域、详细地址">
-          <Input
-            placeholder="粘贴完整地址，自动解析"
-            onChange={(e) => {
-              const { city, district, address } = parseChineseAddress(e.target.value)
-              if (city) { createForm.setFieldValue('city', city); setCreateCity(city) }
-              if (district) createForm.setFieldValue('district', district)
-              if (address) createForm.setFieldValue('address', address)
-            }}
-          />
+        <Form.Item label="解析地址" extra="粘贴完整地址（如：广东省广州市天河区体育西路123号），点击自动填充">
+          <Space.Compact style={{ width: '100%' }}>
+            <Input
+              placeholder="粘贴完整地址，点击自动填充"
+              value={createParseInput}
+              onChange={(e) => setCreateParseInput(e.target.value)}
+            />
+            <Button
+              icon={<SearchOutlined />}
+              onClick={() => applyAddressParse(createParseInput, createForm, setCreateCity)}
+            >
+              自动填充
+            </Button>
+          </Space.Compact>
         </Form.Item>
 
         <Row gutter={16}>
-          <Col span={12}>
+          <Col span={8}>
+            <Form.Item name="province" label="省份">
+              <Input placeholder="如：广东" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
             <Form.Item name="city" label="城市" rules={[{ required: true }]}>
               <AutoComplete
                 options={CITY_OPTIONS}
@@ -301,7 +325,7 @@ export default function PropertiesPage() {
               />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <Form.Item name="district" label="区域" rules={[{ required: true }]}>
               <AutoComplete
                 options={districtOptions(createCity)}
@@ -319,12 +343,12 @@ export default function PropertiesPage() {
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item name="area" label="建筑面积(㎡)" rules={[{ required: true }]}>
-              <InputNumber style={{ width: '100%' }} min={0} />
+              <InputNumber style={{ width: '100%' }} min={0} onChange={(v) => recalcUnitPrice(createForm, v as number)} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item name="total_price" label="总价(万元)">
-              <InputNumber style={{ width: '100%' }} min={0} />
+              <InputNumber style={{ width: '100%' }} min={0} onChange={(v) => recalcUnitPrice(createForm, undefined, v as number)} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -337,7 +361,7 @@ export default function PropertiesPage() {
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item name="unit_price" label="单价(元/㎡)">
-              <InputNumber style={{ width: '100%' }} min={0} />
+              <InputNumber style={{ width: '100%' }} min={0} disabled />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -441,20 +465,29 @@ export default function PropertiesPage() {
             </Col>
           </Row>
 
-          <Form.Item label="解析地址" extra="粘贴完整地址，自动填充城市、区域和详细地址">
-            <Input
-              placeholder="如：广东省广州市天河区体育西路123号"
-              onChange={(e) => {
-                const { city, district, address } = parseChineseAddress(e.target.value)
-                if (city) { editForm.setFieldValue('city', city); setEditCity(city) }
-                if (district) editForm.setFieldValue('district', district)
-                if (address) editForm.setFieldValue('address', address)
-              }}
-            />
+          <Form.Item label="解析地址" extra="粘贴完整地址（如：广东省广州市天河区体育西路123号），点击自动填充">
+            <Space.Compact style={{ width: '100%' }}>
+              <Input
+                placeholder="粘贴完整地址，点击自动填充"
+                value={editParseInput}
+                onChange={(e) => setEditParseInput(e.target.value)}
+              />
+              <Button
+                icon={<SearchOutlined />}
+                onClick={() => applyAddressParse(editParseInput, editForm, setEditCity)}
+              >
+                自动填充
+              </Button>
+            </Space.Compact>
           </Form.Item>
 
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={8}>
+              <Form.Item name="province" label="省份">
+                <Input placeholder="如：广东" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
               <Form.Item name="city" label="城市" rules={[{ required: true }]}>
                 <AutoComplete
                   options={CITY_OPTIONS}
@@ -464,7 +497,7 @@ export default function PropertiesPage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <Form.Item name="district" label="区域" rules={[{ required: true }]}>
                 <AutoComplete
                   options={districtOptions(editCity)}
@@ -482,12 +515,12 @@ export default function PropertiesPage() {
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item name="area" label="面积(㎡)" rules={[{ required: true }]}>
-                <InputNumber style={{ width: '100%' }} min={0} />
+                <InputNumber style={{ width: '100%' }} min={0} onChange={(v) => recalcUnitPrice(editForm, v as number)} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name="total_price" label="总价(万元)">
-                <InputNumber style={{ width: '100%' }} min={0} />
+                <InputNumber style={{ width: '100%' }} min={0} onChange={(v) => recalcUnitPrice(editForm, undefined, v as number)} />
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -500,7 +533,7 @@ export default function PropertiesPage() {
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item name="unit_price" label="单价(元/㎡)">
-                <InputNumber style={{ width: '100%' }} min={0} />
+                <InputNumber style={{ width: '100%' }} min={0} disabled />
               </Form.Item>
             </Col>
             <Col span={8}>

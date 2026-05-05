@@ -27,6 +27,7 @@ type Property struct {
 	ID           uint64         `gorm:"primaryKey;autoIncrement" json:"id"`
 	Title        string         `gorm:"size:100;not null" json:"title"`
 	PropertyType PropertyType   `gorm:"type:enum('新房','二手房','租房','商铺');not null;default:'二手房'" json:"property_type"`
+	Province     string         `gorm:"size:30;not null;default:''" json:"province"`
 	City         string         `gorm:"size:30;not null;default:''" json:"city"`
 	District     string         `gorm:"size:50;not null;default:'';index" json:"district"`
 	Address      string         `gorm:"size:200;not null;default:''" json:"address"`

@@ -53,7 +53,7 @@ func (s *LocalStorage) Save(file multipart.File, header *multipart.FileHeader) (
 	}
 
 	// 返回可访问的URL
-	relPath := strings.TrimPrefix(dst, s.BasePath)
+	relPath := strings.TrimPrefix(dst, filepath.Clean(s.BasePath))
 	relPath = strings.ReplaceAll(relPath, string(os.PathSeparator), "/")
 	return s.BaseURL + relPath, nil
 }

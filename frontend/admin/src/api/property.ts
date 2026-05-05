@@ -4,6 +4,7 @@ export interface Property {
   id: number
   title: string
   property_type: string
+  province: string
   city: string
   district: string
   address: string
