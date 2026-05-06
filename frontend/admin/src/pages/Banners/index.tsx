@@ -128,6 +128,7 @@ export default function BannersPage() {
         }}
         rowKey="id"
         pagination={false}
+        scroll={{ x: 700 }}
         headerTitle="横幅管理"
         toolBarRender={() => [
           <Button key="create" type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>

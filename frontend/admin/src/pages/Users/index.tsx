@@ -61,6 +61,7 @@ export default function UsersPage() {
       }}
       rowKey="id"
       pagination={{ pageSize: 20 }}
+      scroll={{ x: 600 }}
       headerTitle="用户管理"
       search={{ labelWidth: 'auto' }}
     />

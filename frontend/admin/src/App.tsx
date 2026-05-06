@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { ProLayout, DefaultFooter } from '@ant-design/pro-components'
 import { App as AntdApp } from 'antd'
@@ -67,6 +67,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [collapsed, setCollapsed] = useState(false)
 
   const onLogout = () => {
     localStorage.removeItem('admin_token')
@@ -95,6 +96,11 @@ function AdminLayout() {
       footerRender={() => <DefaultFooter copyright="房产中介系统" links={[]} />}
       layout="side"
       colorPrimary="#1677ff"
+      collapsed={collapsed}
+      onCollapse={setCollapsed}
+      breakpoint="lg"
+      fixSiderbar
+      fixedHeader
     >
       <Routes>
         <Route path="/" element={<Dashboard />} />

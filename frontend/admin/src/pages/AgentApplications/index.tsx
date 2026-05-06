@@ -118,6 +118,7 @@ export default function AgentApplicationsPage() {
         }}
         rowKey="id"
         pagination={{ pageSize: 20 }}
+        scroll={{ x: 800 }}
         headerTitle="经纪人申请审核"
         search={{ labelWidth: 'auto' }}
       />

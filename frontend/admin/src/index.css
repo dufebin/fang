@@ -1,2 +1,84 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; }
+
+/* ===== Tablet (≤1024px) ===== */
+@media screen and (max-width: 1024px) {
+  .ant-modal {
+    max-width: calc(100vw - 48px) !important;
+  }
+  .ant-drawer-content-wrapper {
+    width: min(80vw, 640px) !important;
+  }
+}
+
+/* ===== Mobile (≤768px) ===== */
+@media screen and (max-width: 768px) {
+  /* Drawers: full-screen */
+  .ant-drawer-content-wrapper {
+    width: 100vw !important;
+  }
+
+  /* Modals: edge-to-edge */
+  .ant-modal {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px auto !important;
+    top: 12px !important;
+  }
+  .ant-modal-body {
+    max-height: calc(100dvh - 160px);
+    overflow-y: auto;
+  }
+
+  /* Tables: guaranteed horizontal scroll */
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ProTable toolbar: wrap on small screens */
+  .ant-pro-table-list-toolbar-container {
+    flex-wrap: wrap !important;
+    gap: 8px;
+  }
+  .ant-pro-table-list-toolbar-right {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Touch-friendly button height (min 36px) */
+  .ant-btn:not(.ant-btn-icon-only):not(.ant-btn-sm) {
+    min-height: 36px;
+  }
+
+  /* Form items: tighter spacing on mobile */
+  .ant-form-item {
+    margin-bottom: 12px !important;
+  }
+
+  /* ProLayout page content: less padding */
+  .ant-pro-layout-content {
+    padding: 12px !important;
+  }
+
+  /* Row gutters: narrower on mobile */
+  .ant-row {
+    margin-left: -6px !important;
+    margin-right: -6px !important;
+  }
+  .ant-row > .ant-col {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  /* Drawer footer: stick to bottom */
+  .ant-drawer-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+  }
+
+  /* Horizontal Space: wrap on mobile */
+  .ant-space-horizontal {
+    flex-wrap: wrap;
+  }
+}

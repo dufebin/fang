@@ -137,6 +137,7 @@ export default function AgentsPage() {
         }}
         rowKey="id"
         pagination={{ pageSize: 20 }}
+        scroll={{ x: 800 }}
         headerTitle="销售员管理"
         toolBarRender={() => [
           <Button

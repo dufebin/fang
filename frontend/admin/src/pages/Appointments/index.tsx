@@ -133,6 +133,7 @@ export default function AppointmentsPage() {
       }}
       rowKey="id"
       pagination={{ pageSize: 20 }}
+      scroll={{ x: 900 }}
       headerTitle="预约管理"
       search={{ labelWidth: 'auto' }}
     />
