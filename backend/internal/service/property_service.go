@@ -164,6 +164,33 @@ func (s *PropertyService) UploadImage(propertyID uint64, file multipart.File, he
 	return img, nil
 }
 
+// UploadVideo 上传房源视频并更新 video_url
+func (s *PropertyService) UploadVideo(propertyID uint64, file multipart.File, header *multipart.FileHeader) (string, error) {
+	url, err := s.store.SaveVideo(file, header)
+	if err != nil {
+		return "", fmt.Errorf("保存视频失败: %w", err)
+	}
+	property, err := s.propertyRepo.FindByID(propertyID)
+	if err != nil || property == nil {
+		return "", fmt.Errorf("房源不存在")
+	}
+	property.VideoURL = url
+	if err := s.propertyRepo.Update(property); err != nil {
+		return "", err
+	}
+	return url, nil
+}
+
+// GetByID 获取房源详情（含图片）
+func (s *PropertyService) GetByID(id uint64) (*model.Property, error) {
+	return s.propertyRepo.FindByID(id)
+}
+
+// DeleteImage 删除房源图片
+func (s *PropertyService) DeleteImage(propertyID, imageID uint64) error {
+	return s.propertyRepo.DeleteImages(propertyID, []uint64{imageID})
+}
+
 // List 房源列表
 func (s *PropertyService) List(page, limit int, filter repository.PropertyFilter) ([]model.Property, int64, error) {
 	return s.propertyRepo.List(page, limit, filter)

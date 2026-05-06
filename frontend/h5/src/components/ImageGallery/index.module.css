@@ -1,70 +1,94 @@
 .gallery {
-  background: #000;
+  position: relative;
+  background: #111;
+  width: 100%;
 }
 
 .placeholder {
-  height: 240px;
-  background: var(--color-border-light, #eef0f3);
+  height: 260px;
+  background: #eef0f3;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-muted, #999);
+  color: #999;
   font-size: 14px;
 }
 
-.mainImage {
-  position: relative;
-  cursor: pointer;
+.swiper {
+  width: 100%;
 }
 
-.mainImage img {
+.slide {
   width: 100%;
-  height: 280px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  cursor: pointer;
+  background: #1a1a1a;
+}
+
+.slideImg {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.count {
+.counter {
   position: absolute;
-  bottom: 10px;
-  right: 12px;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  bottom: 12px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: #fff;
   font-size: 12px;
-  padding: 3px 10px;
-  border-radius: var(--radius-full, 9999px);
-  letter-spacing: 0.3px;
-}
-
-.thumbs {
-  display: flex;
-  gap: 2px;
-  margin-top: 2px;
-}
-
-.thumb {
-  flex: 1;
-  position: relative;
-  cursor: pointer;
-}
-
-.thumb img {
-  width: 100%;
-  height: 84px;
-  object-fit: cover;
-  display: block;
-}
-
-.more {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.52);
-  color: #fff;
-  font-size: 18px;
   font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  padding: 0;
+}
+
+.arrow:active {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.arrowLeft {
+  left: 12px;
+}
+
+.arrowRight {
+  right: 12px;
+}
+
+.arrowHidden {
+  opacity: 0;
+  pointer-events: none;
 }

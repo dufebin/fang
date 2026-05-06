@@ -189,6 +189,63 @@ func (h *AdminHandler) UploadPropertyImage(c *gin.Context) {
 	response.Success(c, img)
 }
 
+// UploadPropertyVideo 上传房源视频
+func (h *AdminHandler) UploadPropertyVideo(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+
+	file, header, err := c.Request.FormFile("video")
+	if err != nil {
+		response.BadRequest(c, "请选择视频文件")
+		return
+	}
+	defer file.Close()
+
+	url, err := h.propertySvc.UploadVideo(id, file, header)
+	if err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"url": url})
+}
+
+// GetPropertyDetail 获取房源详情（含图片列表）
+func (h *AdminHandler) GetPropertyDetail(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	property, err := h.propertySvc.GetByID(id)
+	if err != nil || property == nil {
+		response.NotFound(c)
+		return
+	}
+	response.Success(c, property)
+}
+
+// DeletePropertyImage 删除房源图片
+func (h *AdminHandler) DeletePropertyImage(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	imgID, err := strconv.ParseUint(c.Param("imgId"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的图片ID")
+		return
+	}
+	if err := h.propertySvc.DeleteImage(id, imgID); err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, nil)
+}
+
 // UpdatePropertyStatus 更新房源状态
 func (h *AdminHandler) UpdatePropertyStatus(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)

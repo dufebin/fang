@@ -224,7 +224,10 @@ func registerRoutes(
 		// 房源
 		admin.GET("/properties", adminH.ListProperties)
 		admin.POST("/properties", adminH.CreateProperty)
+		admin.GET("/properties/:id", adminH.GetPropertyDetail)
 		admin.POST("/properties/:id/images", adminH.UploadPropertyImage)
+		admin.DELETE("/properties/:id/images/:imgId", adminH.DeletePropertyImage)
+		admin.POST("/properties/:id/video", adminH.UploadPropertyVideo)
 		admin.PUT("/properties/:id", propertyH.UpdateProperty)
 		admin.PUT("/properties/:id/status", adminH.UpdatePropertyStatus)
 		// 经纪人

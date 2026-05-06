@@ -3,6 +3,8 @@ import request from './request'
 export interface Article {
   id: number
   title: string
+  summary?: string
+  author?: string
   category: string
   cover_image?: string
   content: string

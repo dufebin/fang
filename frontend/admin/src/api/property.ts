@@ -21,10 +21,22 @@ export interface Property {
   direction: string
   description: string
   cover_image: string
+  video_url: string
   status: string
   view_count: number
   created_at: string
   updated_at: string
+}
+
+export interface PropertyImage {
+  id: number
+  property_id: number
+  url: string
+  sort_order: number
+}
+
+export interface PropertyDetail extends Property {
+  images: PropertyImage[]
 }
 
 export interface PageResult<T> {
@@ -58,5 +70,16 @@ export const updatePropertyStatus = (id: number, status: string) =>
 
 export const uploadPropertyImage = (id: number, data: FormData) =>
   request.post(`/admin/properties/${id}/images`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+
+export const getPropertyDetail = (id: number) =>
+  request.get<unknown, { data: PropertyDetail }>(`/admin/properties/${id}`)
+
+export const deletePropertyImage = (propertyId: number, imgId: number) =>
+  request.delete(`/admin/properties/${propertyId}/images/${imgId}`)
+
+export const uploadPropertyVideo = (id: number, data: FormData) =>
+  request.post(`/admin/properties/${id}/video`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })

@@ -7,7 +7,13 @@ import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css'
 import { getArticles, createArticle, updateArticle, deleteArticle, Article } from '../../api/content'
 
-const CATEGORIES = ['市场动态', '购房指南', '政策解读', '装修百科', '社区活动', '其他']
+const CATEGORIES = [
+  { label: '行业新闻', value: 'news' },
+  { label: '政策解读', value: 'policy' },
+  { label: '购房指南', value: 'guide' },
+  { label: '市场动态', value: 'market' },
+]
+const CATEGORY_LABEL: Record<string, string> = Object.fromEntries(CATEGORIES.map(c => [c.value, c.label]))
 
 const toolbarConfig: Partial<IToolbarConfig> = {}
 const editorConfig: Partial<IEditorConfig> = { placeholder: '请输入正文内容...' }
@@ -39,6 +45,21 @@ function RichEditor({ value, onChange }: { value?: string; onChange?: (v: string
   )
 }
 
+function CoverPreview({ url }: { url?: string }) {
+  if (!url) return null
+  return (
+    <div style={{ marginTop: 8, marginBottom: 4 }}>
+      <Image
+        src={url}
+        width={180}
+        height={112}
+        style={{ objectFit: 'cover', borderRadius: 6, border: '1px solid #f0f0f0', display: 'block' }}
+        fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/uNDPQAIhAMzfMV7HgAAAABJRU5ErkJggg=="
+      />
+    </div>
+  )
+}
+
 function ArticleFormModal({
   open,
   onClose,
@@ -52,6 +73,7 @@ function ArticleFormModal({
 }) {
   const [form] = Form.useForm()
   const [submitting, setSubmitting] = useState(false)
+  const [coverUrl, setCoverUrl] = useState<string | undefined>(initial?.cover_image)
   const { message } = App.useApp()
 
   const handleOk = async () => {
@@ -74,10 +96,7 @@ function ArticleFormModal({
     }
   }
 
-  // initialValues feeds into Form on fresh mount (destroyOnHidden ensures remount each open)
-  const initialValues = initial
-    ? { ...initial }
-    : { status: 'draft', content: '' }
+  const initialValues = initial ? { ...initial } : { status: 'draft', content: '' }
 
   return (
     <Modal
@@ -91,22 +110,51 @@ function ArticleFormModal({
       width={900}
       destroyOnHidden
     >
-      <Form form={form} layout="vertical" initialValues={initialValues} style={{ marginTop: 16 }}>
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={initialValues}
+        style={{ marginTop: 16 }}
+        onValuesChange={(changed) => {
+          if ('cover_image' in changed) setCoverUrl(changed.cover_image)
+        }}
+      >
         <Form.Item name="title" label="标题" rules={[{ required: true, message: '请输入标题' }]}>
           <Input placeholder="请输入文章标题" />
         </Form.Item>
+
+        <Form.Item name="summary" label="摘要" extra="显示在列表卡片和详情页标题下方，建议 50–100 字">
+          <Input.TextArea
+            placeholder="请输入文章摘要（选填）"
+            rows={2}
+            maxLength={500}
+            showCount
+          />
+        </Form.Item>
+
         <div style={{ display: 'flex', gap: 16 }}>
           <Form.Item name="category" label="分类" rules={[{ required: true, message: '请选择分类' }]} style={{ flex: 1 }}>
-            <Select placeholder="请选择分类" options={CATEGORIES.map(c => ({ label: c, value: c }))} />
+            <Select placeholder="请选择分类" options={CATEGORIES} />
           </Form.Item>
           <Form.Item name="status" label="状态" rules={[{ required: true }]} style={{ flex: 1 }}>
             <Select options={[{ label: '草稿', value: 'draft' }, { label: '发布', value: 'published' }]} />
           </Form.Item>
+          <Form.Item name="author" label="作者" style={{ flex: 1 }}>
+            <Input placeholder="选填" />
+          </Form.Item>
         </div>
-        <Form.Item name="cover_image" label="封面图片URL" extra="填入图片地址，留空则无封面">
+
+        <Form.Item name="cover_image" label="封面图片 URL" extra="填入图片地址，留空则无封面">
           <Input placeholder="https://..." />
         </Form.Item>
-        <Form.Item name="content" label="正文内容" rules={[{ required: true, message: '请输入正文内容' }]}>
+        <CoverPreview url={coverUrl} />
+
+        <Form.Item
+          name="content"
+          label="正文内容"
+          rules={[{ required: true, message: '请输入正文内容' }]}
+          style={{ marginTop: coverUrl ? 12 : 0 }}
+        >
           <RichEditor />
         </Form.Item>
       </Form>
@@ -134,13 +182,28 @@ export default function ArticlesPage() {
           <div style={{ width: 60, height: 40, background: '#f5f5f5', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#bbb' }}>无图</div>
         ),
     },
-    { title: '标题', dataIndex: 'title', ellipsis: true, copyable: true },
+    {
+      title: '标题 / 摘要',
+      dataIndex: 'title',
+      ellipsis: true,
+      copyable: true,
+      render: (_, r) => (
+        <div>
+          <div style={{ fontWeight: 500, color: '#1a1a1a' }}>{r.title}</div>
+          {r.summary && (
+            <div style={{ fontSize: 12, color: '#999', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 300 }}>
+              {r.summary}
+            </div>
+          )}
+        </div>
+      ),
+    },
     {
       title: '分类',
       dataIndex: 'category',
       valueType: 'select',
-      valueEnum: Object.fromEntries(CATEGORIES.map(c => [c, { text: c }])),
-      render: (_, r) => <Tag color="blue">{r.category}</Tag>,
+      valueEnum: Object.fromEntries(CATEGORIES.map(c => [c.value, { text: c.label }])),
+      render: (_, r) => <Tag color="blue">{CATEGORY_LABEL[r.category] ?? r.category}</Tag>,
     },
     {
       title: '状态',
@@ -153,7 +216,7 @@ export default function ArticlesPage() {
         </Tag>
       ),
     },
-    { title: '浏览量', dataIndex: 'view_count', search: false, sorter: true },
+    { title: '浏览量', dataIndex: 'view_count', search: false, sorter: true, width: 80 },
     {
       title: '发布时间',
       dataIndex: 'published_at',

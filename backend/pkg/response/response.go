@@ -54,30 +54,34 @@ func BadRequest(c *gin.Context, message string) {
 	})
 }
 
-func Unauthorized(c *gin.Context) {
-	c.JSON(http.StatusUnauthorized, Response{
-		Code:    401,
-		Message: "未授权，请先登录",
-	})
+func Unauthorized(c *gin.Context, msg ...string) {
+	m := "未授权，请先登录"
+	if len(msg) > 0 {
+		m = msg[0]
+	}
+	c.JSON(http.StatusUnauthorized, Response{Code: 401, Message: m})
 }
 
-func Forbidden(c *gin.Context) {
-	c.JSON(http.StatusForbidden, Response{
-		Code:    403,
-		Message: "权限不足",
-	})
+func Forbidden(c *gin.Context, msg ...string) {
+	m := "权限不足"
+	if len(msg) > 0 {
+		m = msg[0]
+	}
+	c.JSON(http.StatusForbidden, Response{Code: 403, Message: m})
 }
 
-func NotFound(c *gin.Context) {
-	c.JSON(http.StatusNotFound, Response{
-		Code:    404,
-		Message: "资源不存在",
-	})
+func NotFound(c *gin.Context, msg ...string) {
+	m := "资源不存在"
+	if len(msg) > 0 {
+		m = msg[0]
+	}
+	c.JSON(http.StatusNotFound, Response{Code: 404, Message: m})
 }
 
-func ServerError(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, Response{
-		Code:    500,
-		Message: "服务器内部错误",
-	})
+func ServerError(c *gin.Context, err error, msg ...string) {
+	m := "服务器内部错误"
+	if len(msg) > 0 {
+		m = msg[0]
+	}
+	c.JSON(http.StatusInternalServerError, Response{Code: 500, Message: m})
 }

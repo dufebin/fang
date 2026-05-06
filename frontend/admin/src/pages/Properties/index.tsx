@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ProTable, ProColumns, ModalForm } from '@ant-design/pro-components'
 import {
   Button, Space, Tag, Upload, Popconfirm, Drawer,
-  Form, Input, Select, InputNumber, Row, Col, Image, App, AutoComplete,
+  Form, Input, Select, InputNumber, Row, Col, Image, App, AutoComplete, Spin,
 } from 'antd'
-import { PlusOutlined, UploadOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { PlusOutlined, UploadOutlined, EditOutlined, SearchOutlined, DeleteOutlined, VideoCameraOutlined, EnvironmentOutlined } from '@ant-design/icons'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import { pinyin } from 'pinyin-pro'
@@ -12,9 +12,11 @@ import AddressParse from 'address-parse-cn'
 import '@wangeditor/editor/dist/css/style.css'
 import {
   getProperties, createProperty, updateProperty,
-  updatePropertyStatus, uploadPropertyImage, Property,
+  updatePropertyStatus, uploadPropertyImage, getPropertyDetail, deletePropertyImage,
+  uploadPropertyVideo,
+  Property, PropertyImage,
 } from '../../api/property'
-import { CITY_DISTRICTS, MAJOR_CITIES } from '../../data/cityDistricts'
+import { CITY_DISTRICTS, MAJOR_CITIES, PROVINCE_CITIES, PROVINCES } from '../../data/cityDistricts'
 
 const STATUS_MAP: Record<string, { text: string; color: string }> = {
   available: { text: '在售', color: 'success' },
@@ -27,12 +29,33 @@ const PROPERTY_TYPES = ['新房', '二手房', '租房', '商铺']
 const DECORATIONS = ['毛坯', '简装', '精装', '豪华装修']
 
 const CITY_OPTIONS = MAJOR_CITIES.map(c => ({ value: c }))
+const PROVINCE_OPTIONS = PROVINCES.map(p => ({ value: p }))
+
+function cityOptions(province: string) {
+  const cities = PROVINCE_CITIES[province]
+  return cities ? cities.map(c => ({ value: c })) : CITY_OPTIONS
+}
 
 function districtOptions(city: string) {
   return (CITY_DISTRICTS[city] ?? []).map(d => ({ value: d }))
 }
 
-// 支持汉字包含、全拼包含、首字母前缀三种方式匹配
+async function detectLocation(): Promise<{ province: string; city: string } | null> {
+  try {
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), 4000)
+    const res = await fetch('https://ip.useragentinfo.com/json', { signal: controller.signal })
+    clearTimeout(timer)
+    const data = await res.json()
+    if (data.province && data.city) {
+      const province = (data.province as string).replace(/省$|市$|自治区.*$|特别行政区$/, '')
+      const city = (data.city as string).replace(/市$/, '')
+      return { province, city }
+    }
+  } catch { /* silent */ }
+  return null
+}
+
 function pinyinMatch(text: string, query: string): boolean {
   if (!query) return true
   const q = query.toLowerCase()
@@ -68,6 +91,11 @@ function RichEditor({ value, onChange }: { value?: string; onChange?: (v: string
   )
 }
 
+interface QueuedFile {
+  file: File
+  preview: string
+}
+
 export default function PropertiesPage() {
   const { message } = App.useApp()
   const [createModalOpen, setCreateModalOpen] = useState(false)
@@ -76,18 +104,34 @@ export default function PropertiesPage() {
   const [tableKey, setTableKey] = useState(0)
   const [editForm] = Form.useForm()
   const [createForm] = Form.useForm()
-  const [coverFile, setCoverFile] = useState<File | null>(null)
-  const [coverPreview, setCoverPreview] = useState('')
-  const [editCoverPreview, setEditCoverPreview] = useState('')
+
+  // Create form media queue
+  const [createImageFiles, setCreateImageFiles] = useState<QueuedFile[]>([])
+  const [createVideoFile, setCreateVideoFile] = useState<QueuedFile | null>(null)
+
+  // Edit form state
+  const [createProvince, setCreateProvince] = useState('')
   const [createCity, setCreateCity] = useState('')
+  const [editProvince, setEditProvince] = useState('')
   const [editCity, setEditCity] = useState('')
+  const [locating, setLocating] = useState(false)
   const [createParseInput, setCreateParseInput] = useState('')
   const [editParseInput, setEditParseInput] = useState('')
+  const [editImages, setEditImages] = useState<PropertyImage[]>([])
+  const [editImagesLoading, setEditImagesLoading] = useState(false)
+  const [editVideoUrl, setEditVideoUrl] = useState('')
+
+  // Cover highlight animation
+  const [highlightFirst, setHighlightFirst] = useState(false)
+  const [highlightCover, setHighlightCover] = useState(false)
+  const firstImageRef = useRef<HTMLDivElement>(null)
+  const coverAreaRef = useRef<HTMLDivElement>(null)
+
   const refresh = () => setTableKey(k => k + 1)
 
-  function applyAddressParse(input: string, form: typeof createForm, setCity: (v: string) => void) {
+  function applyAddressParse(input: string, form: typeof createForm, setProvince: (v: string) => void, setCity: (v: string) => void) {
     const { province, city, district, address } = parseChineseAddress(input)
-    if (province) form.setFieldValue('province', province)
+    if (province) { form.setFieldValue('province', province); setProvince(province) }
     if (city) { form.setFieldValue('city', city); setCity(city) }
     if (district) form.setFieldValue('district', district)
     if (address) form.setFieldValue('address', address)
@@ -103,20 +147,49 @@ export default function PropertiesPage() {
     }
   }
 
-  const openEdit = (record: Property) => {
+  const openEdit = async (record: Property) => {
     setEditTarget(record)
     editForm.setFieldsValue(record)
-    setEditCoverPreview(record.cover_image || '')
+    setEditProvince(record.province || '')
     setEditCity(record.city || '')
     setEditParseInput('')
+    setEditImages([])
+    setEditVideoUrl(record.video_url || '')
     setEditDrawerOpen(true)
+    setEditImagesLoading(true)
+    try {
+      const res: any = await getPropertyDetail(record.id)
+      setEditImages(res.data?.images || [])
+    } catch {
+      // images stay empty
+    } finally {
+      setEditImagesLoading(false)
+    }
+  }
+
+  const handleCoverClick = () => {
+    if (editImages.length === 0) return
+    firstImageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    setHighlightFirst(true)
+    setTimeout(() => setHighlightFirst(false), 1500)
+  }
+
+  const setCoverImage = (img: PropertyImage) => {
+    setEditImages(prev => [img, ...prev.filter(i => i.id !== img.id)])
+    coverAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    setHighlightCover(true)
+    setTimeout(() => setHighlightCover(false), 1500)
   }
 
   const handleEditSubmit = async () => {
     if (!editTarget) return
     try {
       const values = await editForm.validateFields()
-      await updateProperty(editTarget.id, values)
+      await updateProperty(editTarget.id, {
+        ...values,
+        cover_image: editImages[0]?.url || '',
+        video_url: editVideoUrl,
+      })
       message.success('房源已更新')
       setEditDrawerOpen(false)
       refresh()
@@ -132,16 +205,34 @@ export default function PropertiesPage() {
     })
     const res: any = await createProperty(fd)
     const newId = res.data?.id
-    if (coverFile && newId) {
-      const imgFd = new FormData()
-      imgFd.append('image', coverFile)
-      const imgRes: any = await uploadPropertyImage(newId, imgFd)
-      const imgUrl = imgRes.data?.url
-      if (imgUrl) await updateProperty(newId, { cover_image: imgUrl } as any)
+
+    if (newId) {
+      let firstImageUrl = ''
+      for (const { file } of createImageFiles) {
+        const imgFd = new FormData()
+        imgFd.append('image', file)
+        try {
+          const imgRes: any = await uploadPropertyImage(newId, imgFd)
+          if (!firstImageUrl && imgRes.data?.url) firstImageUrl = imgRes.data.url
+        } catch { /* shown by interceptor */ }
+      }
+      if (firstImageUrl) {
+        await updateProperty(newId, { cover_image: firstImageUrl } as any)
+      }
+      if (createVideoFile) {
+        const vFd = new FormData()
+        vFd.append('video', createVideoFile.file)
+        try {
+          await uploadPropertyVideo(newId, vFd)
+        } catch { /* shown by interceptor */ }
+      }
     }
+
+    createImageFiles.forEach(f => URL.revokeObjectURL(f.preview))
+    if (createVideoFile) URL.revokeObjectURL(createVideoFile.preview)
+    setCreateImageFiles([])
+    setCreateVideoFile(null)
     message.success('房源创建成功')
-    setCoverFile(null)
-    setCoverPreview('')
     refresh()
     return true
   }
@@ -248,8 +339,31 @@ export default function PropertiesPage() {
       <ModalForm
         title="新增房源"
         open={createModalOpen}
-        onOpenChange={(v) => {
-          if (!v) { setCoverFile(null); setCoverPreview(''); setCreateCity(''); setCreateParseInput(''); createForm.resetFields() }
+        onOpenChange={async (v) => {
+          if (!v) {
+            createImageFiles.forEach(f => URL.revokeObjectURL(f.preview))
+            if (createVideoFile) URL.revokeObjectURL(createVideoFile.preview)
+            setCreateImageFiles([])
+            setCreateVideoFile(null)
+            setCreateProvince('')
+            setCreateCity('')
+            setCreateParseInput('')
+            createForm.resetFields()
+          } else {
+            setLocating(true)
+            const loc = await detectLocation()
+            setLocating(false)
+            if (loc) {
+              createForm.setFieldValue('province', loc.province)
+              setCreateProvince(loc.province)
+              const cities = cityOptions(loc.province)
+              const matchedCity = cities.find(c => c.value === loc.city)
+              if (matchedCity) {
+                createForm.setFieldValue('city', loc.city)
+                setCreateCity(loc.city)
+              }
+            }
+          }
           setCreateModalOpen(v)
         }}
         onFinish={handleCreate}
@@ -261,23 +375,92 @@ export default function PropertiesPage() {
           <Input />
         </Form.Item>
 
-        <Form.Item label="封面图片">
-          {coverPreview && (
-            <div style={{ marginBottom: 8 }}>
-              <img src={coverPreview} alt="封面预览" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 6, border: '1px solid #f0f0f0' }} />
+        {/* 媒体文件 */}
+        <Form.Item label="媒体文件" extra="第一张图片自动作为封面，可上传多张图片及一个视频">
+          {createImageFiles.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+              {createImageFiles.map((item, idx) => (
+                <div key={idx} style={{ position: 'relative', width: 100 }}>
+                  <img
+                    src={item.preview}
+                    style={{
+                      width: 100, height: 75, objectFit: 'cover', borderRadius: 4, display: 'block',
+                      border: idx === 0 ? '2px solid #1677ff' : '1px solid #f0f0f0',
+                    }}
+                  />
+                  {idx === 0 && (
+                    <div style={{
+                      position: 'absolute', top: 2, left: 2, background: '#1677ff',
+                      color: '#fff', fontSize: 10, padding: '1px 5px', borderRadius: 3,
+                    }}>
+                      封面
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+                    {idx > 0 && (
+                      <Button
+                        size="small" type="link"
+                        style={{ fontSize: 11, padding: '0 4px', color: '#1677ff' }}
+                        onClick={() => setCreateImageFiles(prev => [prev[idx], ...prev.filter((_, i) => i !== idx)])}
+                      >
+                        封面
+                      </Button>
+                    )}
+                    <Button
+                      size="small" type="link" danger
+                      style={{ padding: '0 4px', fontSize: 11 }}
+                      onClick={() => {
+                        URL.revokeObjectURL(item.preview)
+                        setCreateImageFiles(prev => prev.filter((_, i) => i !== idx))
+                      }}
+                    >
+                      删除
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
-          <Upload
-            accept="image/*"
-            showUploadList={false}
-            beforeUpload={(file) => {
-              setCoverFile(file)
-              setCoverPreview(URL.createObjectURL(file))
-              return false
-            }}
-          >
-            <Button icon={<UploadOutlined />}>{coverFile ? '重新选择' : '选择封面图片'}</Button>
-          </Upload>
+          {createVideoFile && (
+            <div style={{ marginBottom: 10 }}>
+              <video src={createVideoFile.preview} controls width={200} style={{ borderRadius: 4, display: 'block' }} />
+              <Button
+                size="small" type="link" danger
+                style={{ padding: 0, marginTop: 2 }}
+                onClick={() => {
+                  URL.revokeObjectURL(createVideoFile.preview)
+                  setCreateVideoFile(null)
+                }}
+              >
+                删除视频
+              </Button>
+            </div>
+          )}
+          <Space wrap>
+            <Upload
+              accept="image/*"
+              multiple
+              showUploadList={false}
+              beforeUpload={(file) => {
+                setCreateImageFiles(prev => [...prev, { file, preview: URL.createObjectURL(file) }])
+                return false
+              }}
+            >
+              <Button icon={<UploadOutlined />}>上传图片</Button>
+            </Upload>
+            {!createVideoFile && (
+              <Upload
+                accept="video/*"
+                showUploadList={false}
+                beforeUpload={(file) => {
+                  setCreateVideoFile({ file, preview: URL.createObjectURL(file) })
+                  return false
+                }}
+              >
+                <Button icon={<VideoCameraOutlined />}>上传视频</Button>
+              </Upload>
+            )}
+          </Space>
         </Form.Item>
 
         <Row gutter={16}>
@@ -302,7 +485,7 @@ export default function PropertiesPage() {
             />
             <Button
               icon={<SearchOutlined />}
-              onClick={() => applyAddressParse(createParseInput, createForm, setCreateCity)}
+              onClick={() => applyAddressParse(createParseInput, createForm, setCreateProvince, setCreateCity)}
             >
               自动填充
             </Button>
@@ -312,13 +495,23 @@ export default function PropertiesPage() {
         <Row gutter={16}>
           <Col span={8}>
             <Form.Item name="province" label="省份">
-              <Input placeholder="如：广东" />
+              <AutoComplete
+                options={PROVINCE_OPTIONS}
+                filterOption={(input, option) => pinyinMatch(option?.value as string || '', input)}
+                placeholder="输入省份或拼音"
+                onChange={(v) => {
+                  setCreateProvince(v)
+                  createForm.setFieldValue('city', undefined)
+                  createForm.setFieldValue('district', undefined)
+                  setCreateCity('')
+                }}
+              />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item name="city" label="城市" rules={[{ required: true }]}>
               <AutoComplete
-                options={CITY_OPTIONS}
+                options={cityOptions(createProvince)}
                 filterOption={(input, option) => pinyinMatch(option?.value as string || '', input)}
                 placeholder="输入城市名或拼音"
                 onChange={(v) => { setCreateCity(v); createForm.setFieldValue('district', undefined) }}
@@ -335,6 +528,32 @@ export default function PropertiesPage() {
             </Form.Item>
           </Col>
         </Row>
+
+        <Form.Item style={{ marginTop: -16, marginBottom: 8 }}>
+          <Button
+            size="small"
+            icon={<EnvironmentOutlined />}
+            loading={locating}
+            onClick={async () => {
+              setLocating(true)
+              const loc = await detectLocation()
+              setLocating(false)
+              if (loc) {
+                createForm.setFieldValue('province', loc.province)
+                setCreateProvince(loc.province)
+                const cities = cityOptions(loc.province)
+                const matchedCity = cities.find(c => c.value === loc.city)
+                if (matchedCity) {
+                  createForm.setFieldValue('city', loc.city)
+                  setCreateCity(loc.city)
+                }
+                createForm.setFieldValue('district', undefined)
+              }
+            }}
+          >
+            重新定位
+          </Button>
+        </Form.Item>
 
         <Form.Item name="address" label="详细地址">
           <Input placeholder="街道/小区/门牌号" />
@@ -422,34 +641,161 @@ export default function PropertiesPage() {
             <Input />
           </Form.Item>
 
-          <Form.Item label="封面图片">
-            {editCoverPreview && (
-              <div style={{ marginBottom: 8 }}>
-                <img src={editCoverPreview} alt="封面" style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 6, border: '1px solid #f0f0f0' }} />
+          {/* 图片与视频 */}
+          <Form.Item label="图片与视频">
+            <Spin spinning={editImagesLoading}>
+              {/* 封面预览区 */}
+              <div
+                ref={coverAreaRef}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12,
+                  padding: 10, background: '#fafafa', borderRadius: 6,
+                  border: highlightCover ? '2px solid #1677ff' : '1px solid #f0f0f0',
+                  transition: 'border 0.3s',
+                  cursor: editImages.length > 0 ? 'pointer' : 'default',
+                }}
+                onClick={handleCoverClick}
+                title={editImages.length > 0 ? '点击定位到第一张图片' : ''}
+              >
+                {editImages[0]?.url ? (
+                  <img
+                    src={editImages[0].url}
+                    style={{ width: 96, height: 68, objectFit: 'cover', borderRadius: 4, flexShrink: 0 }}
+                  />
+                ) : (
+                  <div style={{
+                    width: 96, height: 68, background: '#f0f0f0', borderRadius: 4, flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#bbb',
+                  }}>
+                    暂无图片
+                  </div>
+                )}
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: '#333' }}>当前封面</div>
+                  <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>
+                    {editImages.length > 0 ? '第一张图片自动作为封面，点击可定位' : '上传图片后自动设置封面'}
+                  </div>
+                </div>
               </div>
-            )}
-            <Upload
-              accept="image/*"
-              showUploadList={false}
-              beforeUpload={async (file) => {
-                if (!editTarget) return false
-                const fd = new FormData()
-                fd.append('image', file)
-                try {
-                  const res: any = await uploadPropertyImage(editTarget.id, fd)
-                  const url = res.data?.url
-                  if (url) {
-                    editForm.setFieldValue('cover_image', url)
-                    setEditCoverPreview(url)
-                    message.success('封面已更新')
-                  }
-                } catch { /* error shown by interceptor */ }
-                return false
-              }}
-            >
-              <Button icon={<UploadOutlined />}>上传新封面</Button>
-            </Upload>
-            <Form.Item name="cover_image" hidden><Input /></Form.Item>
+
+              {/* 图片网格 */}
+              {editImages.length > 0 && (
+                <Image.PreviewGroup>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+                    {editImages.map((img, idx) => (
+                      <div
+                        key={img.id}
+                        ref={idx === 0 ? firstImageRef : undefined}
+                        style={{
+                          position: 'relative', width: 100,
+                          outline: idx === 0 && highlightFirst ? '2px solid #1677ff' : 'none',
+                          borderRadius: 4, transition: 'outline 0.3s',
+                        }}
+                      >
+                        <Image
+                          src={img.url}
+                          width={100}
+                          height={75}
+                          style={{
+                            objectFit: 'cover', borderRadius: 4, display: 'block',
+                            border: idx === 0 ? '2px solid #1677ff' : '1px solid #f0f0f0',
+                          }}
+                        />
+                        {idx === 0 && (
+                          <div style={{
+                            position: 'absolute', top: 2, left: 2, background: '#1677ff',
+                            color: '#fff', fontSize: 10, padding: '1px 5px', borderRadius: 3,
+                            pointerEvents: 'none',
+                          }}>
+                            封面
+                          </div>
+                        )}
+                        <div style={{ marginTop: 2, display: 'flex', justifyContent: 'center', gap: 0 }}>
+                          {idx > 0 && (
+                            <Button
+                              size="small" type="link"
+                              style={{ fontSize: 11, padding: '0 4px', color: '#1677ff' }}
+                              onClick={() => setCoverImage(img)}
+                            >
+                              封面
+                            </Button>
+                          )}
+                          <Popconfirm
+                            title="确认删除此图片？"
+                            onConfirm={async () => {
+                              if (!editTarget) return
+                              await deletePropertyImage(editTarget.id, img.id)
+                              setEditImages(prev => prev.filter(i => i.id !== img.id))
+                              message.success('图片已删除')
+                            }}
+                          >
+                            <Button size="small" type="link" danger icon={<DeleteOutlined />} style={{ fontSize: 11, padding: '0 4px' }}>
+                              删除
+                            </Button>
+                          </Popconfirm>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Image.PreviewGroup>
+              )}
+
+              {/* 视频区域 */}
+              {editVideoUrl && (
+                <div style={{ marginBottom: 10 }}>
+                  <video src={editVideoUrl} controls width={200} style={{ borderRadius: 4, display: 'block' }} />
+                  <Button
+                    size="small" type="link" danger
+                    style={{ padding: 0, marginTop: 2 }}
+                    onClick={() => setEditVideoUrl('')}
+                  >
+                    删除视频
+                  </Button>
+                </div>
+              )}
+
+              {/* 上传按钮 */}
+              <Space wrap>
+                <Upload
+                  accept="image/*"
+                  multiple
+                  showUploadList={false}
+                  beforeUpload={async (file) => {
+                    if (!editTarget) return false
+                    const fd = new FormData()
+                    fd.append('image', file)
+                    try {
+                      const res: any = await uploadPropertyImage(editTarget.id, fd)
+                      if (res.data) setEditImages(prev => [...prev, res.data])
+                    } catch { /* shown by interceptor */ }
+                    return false
+                  }}
+                >
+                  <Button icon={<UploadOutlined />}>上传图片</Button>
+                </Upload>
+                {!editVideoUrl && (
+                  <Upload
+                    accept="video/*"
+                    showUploadList={false}
+                    beforeUpload={async (file) => {
+                      if (!editTarget) return false
+                      const fd = new FormData()
+                      fd.append('video', file)
+                      try {
+                        const res: any = await uploadPropertyVideo(editTarget.id, fd)
+                        if (res.data?.url) {
+                          setEditVideoUrl(res.data.url)
+                          message.success('视频已上传')
+                        }
+                      } catch { /* shown by interceptor */ }
+                      return false
+                    }}
+                  >
+                    <Button icon={<VideoCameraOutlined />}>上传视频</Button>
+                  </Upload>
+                )}
+              </Space>
+            </Spin>
           </Form.Item>
 
           <Row gutter={16}>
@@ -474,7 +820,7 @@ export default function PropertiesPage() {
               />
               <Button
                 icon={<SearchOutlined />}
-                onClick={() => applyAddressParse(editParseInput, editForm, setEditCity)}
+                onClick={() => applyAddressParse(editParseInput, editForm, setEditProvince, setEditCity)}
               >
                 自动填充
               </Button>
@@ -484,13 +830,23 @@ export default function PropertiesPage() {
           <Row gutter={16}>
             <Col span={8}>
               <Form.Item name="province" label="省份">
-                <Input placeholder="如：广东" />
+                <AutoComplete
+                  options={PROVINCE_OPTIONS}
+                  filterOption={(input, option) => pinyinMatch(option?.value as string || '', input)}
+                  placeholder="输入省份或拼音"
+                  onChange={(v) => {
+                    setEditProvince(v)
+                    editForm.setFieldValue('city', undefined)
+                    editForm.setFieldValue('district', undefined)
+                    setEditCity('')
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item name="city" label="城市" rules={[{ required: true }]}>
                 <AutoComplete
-                  options={CITY_OPTIONS}
+                  options={cityOptions(editProvince)}
                   filterOption={(input, option) => pinyinMatch(option?.value as string || '', input)}
                   placeholder="输入城市名或拼音"
                   onChange={(v) => { setEditCity(v); editForm.setFieldValue('district', undefined) }}

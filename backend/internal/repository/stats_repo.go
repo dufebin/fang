@@ -67,18 +67,22 @@ type AgentRankItem struct {
 
 func (r *StatsRepo) AgentRanking(limit int) ([]AgentRankItem, error) {
 	var result []AgentRankItem
-	err := r.db.Table("agents a").
-		Select(`a.id as agent_id, a.name as name,
-			COALESCE(v.views, 0) as total_views,
-			COALESCE(c.claims, 0) as favorite_count,
-			COALESCE(ap.appointments, 0) as appointment_count`).
-		Joins("LEFT JOIN (SELECT agent_code, COUNT(*) as views FROM browse_histories GROUP BY agent_code) v ON v.agent_code COLLATE utf8mb4_0900_ai_ci = a.agent_code").
-		Joins("LEFT JOIN (SELECT agent_id, COUNT(*) as claims FROM agent_properties GROUP BY agent_id) c ON c.agent_id = a.id").
-		Joins("LEFT JOIN (SELECT agent_id, COUNT(*) as appointments FROM appointments GROUP BY agent_id) ap ON ap.agent_id = a.id").
-		Where("a.status = 'active'").
-		Order("total_views DESC").
-		Limit(limit).
-		Scan(&result).Error
+	sql := `
+		SELECT a.id AS agent_id, a.name AS agent_name, a.agent_code,
+			COALESCE(v.views, 0)        AS views,
+			COALESCE(c.claims, 0)       AS claims,
+			COALESCE(ap.appointments, 0) AS appointments
+		FROM agents a
+		LEFT JOIN (SELECT agent_code, COUNT(*) AS views FROM browse_histories GROUP BY agent_code) v
+			ON v.agent_code = a.agent_code
+		LEFT JOIN (SELECT agent_id, COUNT(*) AS claims FROM agent_properties GROUP BY agent_id) c
+			ON c.agent_id = a.id
+		LEFT JOIN (SELECT agent_id, COUNT(*) AS appointments FROM appointments GROUP BY agent_id) ap
+			ON ap.agent_id = a.id
+		WHERE a.status = 'active'
+		ORDER BY views DESC
+		LIMIT ?`
+	err := r.db.Raw(sql, limit).Scan(&result).Error
 	if result == nil {
 		result = []AgentRankItem{}
 	}

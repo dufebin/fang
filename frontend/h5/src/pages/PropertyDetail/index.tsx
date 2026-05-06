@@ -140,7 +140,10 @@ export default function PropertyDetail() {
             <Divider />
             <div className={styles.section}>
               <div className={styles.sectionTitle}>房源详情</div>
-              <div className={styles.description}>{property.description}</div>
+              <div
+                className={styles.richContent}
+                dangerouslySetInnerHTML={{ __html: property.description }}
+              />
             </div>
           </>
         )}
