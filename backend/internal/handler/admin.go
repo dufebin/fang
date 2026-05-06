@@ -129,10 +129,11 @@ func (h *AdminHandler) ListProperties(c *gin.Context) {
 	}
 
 	filter := repository.PropertyFilter{
-		PropertyType: c.Query("type"),
-		District:     c.Query("district"),
-		Status:       c.Query("status"),
-		Keyword:      c.Query("keyword"),
+		PropertyType:   c.Query("type"),
+		District:       c.Query("district"),
+		Status:         c.Query("status"),
+		Keyword:        c.Query("keyword"),
+		IncludeOffline: true,
 	}
 
 	list, total, err := h.propertySvc.List(page, limit, filter)

@@ -11,12 +11,13 @@ type PropertyRepo struct {
 }
 
 type PropertyFilter struct {
-	PropertyType string
-	District     string
-	Status       string
-	MinPrice     *float64
-	MaxPrice     *float64
-	Keyword      string
+	PropertyType   string
+	District       string
+	Status         string
+	MinPrice       *float64
+	MaxPrice       *float64
+	Keyword        string
+	IncludeOffline bool
 }
 
 func NewPropertyRepo(db *gorm.DB) *PropertyRepo {
@@ -58,7 +59,7 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 	}
 	if filter.Status != "" {
 		query = query.Where("status = ?", filter.Status)
-	} else {
+	} else if !filter.IncludeOffline {
 		query = query.Where("status != ?", model.PropertyStatusOffline)
 	}
 	if filter.MinPrice != nil {
