@@ -37,6 +37,7 @@ Page({
       description: '',
     },
     status: 'available',
+    descLength: 0,
     regionValue: ['', '', ''],
     locating: false,
     images: [],
@@ -83,6 +84,7 @@ Page({
           description: p.description || '',
         },
         images: (p.images || []).map(img => ({ id: img.id, url: fullImageURL(img.url) })),
+        descLength: (p.description || '').length,
         regionValue: [p.province || '', p.city || '', p.district || ''],
       })
     } catch (_) {
@@ -93,7 +95,9 @@ Page({
 
   onInput(e) {
     const field = e.currentTarget.dataset.field
-    this.setData({ [`form.${field}`]: e.detail.value })
+    const update = { [`form.${field}`]: e.detail.value }
+    if (field === 'description') update.descLength = e.detail.value.length
+    this.setData(update)
   },
 
   onStepper(e) {

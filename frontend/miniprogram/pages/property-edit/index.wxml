@@ -159,7 +159,7 @@
       <text class="card-title">房源描述</text>
     </view>
     <textarea class="desc-area" placeholder="描述房源特点、周边配套、交通等..." value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="1000" />
-    <text class="desc-count">{{(form.description || '').length}}/1000</text>
+    <text class="desc-count">{{descLength}}/1000</text>
   </view>
 
   <!-- 房源状态（仅编辑） -->
