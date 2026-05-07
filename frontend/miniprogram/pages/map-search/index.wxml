@@ -19,7 +19,7 @@
       <view wx:if="{{hasFilter}}" class="filter-dot" />
     </view>
     <view class="location-btn" bindtap="onLocate">
-      <image class="loc-icon" src="/assets/icons/locate.png" />
+      <text class="loc-icon-text">⊕</text>
     </view>
   </view>
 

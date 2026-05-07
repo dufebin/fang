@@ -6,11 +6,17 @@
 
 .loading-page {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
   font-size: 28rpx;
   color: #bbb;
+}
+
+.error-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
 }
 
 .section-title {

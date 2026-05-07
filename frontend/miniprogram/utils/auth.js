@@ -18,17 +18,15 @@ function isLoggedIn() {
 }
 
 // 需要登录时调用：跳转登录页，登录后返回
-function requireLogin(callback) {
-  if (isLoggedIn()) {
-    callback && callback()
-    return
-  }
+function requireLogin() {
+  if (isLoggedIn()) return true
   const pages = getCurrentPages()
   const currentPage = pages[pages.length - 1]
   const route = currentPage ? '/' + currentPage.route : ''
   wx.navigateTo({
     url: `/pages/login/index?redirect=${encodeURIComponent(route)}`,
   })
+  return false
 }
 
 // 小程序静默登录（获取 openid）

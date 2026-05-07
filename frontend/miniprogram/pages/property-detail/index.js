@@ -26,9 +26,14 @@ Page({
 
   onLoad(options) {
     const { id, a } = options
+    this._options = options
     this._propertyId = id
     this.setData({ agentCode: a || '' })
     this._loadDetail(id, a)
+  },
+
+  onReload() {
+    this._loadDetail(this._propertyId, this.data.agentCode)
   },
 
   async _loadDetail(id, agentCode) {
@@ -67,8 +72,9 @@ Page({
       })
 
       wx.setNavigationBarTitle({ title: property.title || '房源详情' })
+      this.setData({ loadingFailed: false })
     } catch (e) {
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      this.setData({ loadingFailed: true })
     }
   },
 
@@ -82,7 +88,7 @@ Page({
   },
 
   async onToggleFav() {
-    if (!requireLogin(this)) return
+    if (!requireLogin()) return
     try {
       const res = await toggleFavorite(this._propertyId)
       this.setData({ isFav: res.is_favorited })
@@ -109,7 +115,7 @@ Page({
   },
 
   async onSubmitAppt() {
-    if (!requireLogin(this)) return
+    if (!requireLogin()) return
     const { apptDate, apptTime, apptNote, agentCode } = this.data
     if (!apptDate || !apptTime) {
       wx.showToast({ title: '请选择预约时间', icon: 'none' })

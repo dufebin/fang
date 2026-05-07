@@ -6,7 +6,6 @@ Page({
   data: {
     agent: {},
     avatarUrl: '/assets/icons/default-avatar.png',
-    qrCode: '/assets/icons/qr-placeholder.png',
     shareLink: '',
   },
 

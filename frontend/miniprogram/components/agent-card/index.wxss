@@ -68,7 +68,6 @@
   color: #fff;
 }
 
-.action-icon {
-  width: 32rpx;
-  height: 32rpx;
+.action-icon-text {
+  font-size: 30rpx;
 }

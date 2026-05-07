@@ -1,7 +1,7 @@
 <view class="page">
   <!-- 顶部搜索栏 -->
   <view class="search-bar" bindtap="onSearchTap">
-    <image class="search-icon" src="/assets/icons/search.png" />
+    <image class="search-icon" src="../../assets/icons/search.png" />
     <text class="search-placeholder">搜索小区、地址、房源</text>
   </view>
 
@@ -15,27 +15,27 @@
   <!-- 快捷入口 -->
   <view class="quick-nav">
     <view class="nav-item" bindtap="onNavTap" data-type="住宅">
-      <image class="nav-icon" src="/assets/icons/house.png" />
+      <view class="nav-icon-circle">🏠</view>
       <text>住宅</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="租房">
-      <image class="nav-icon" src="/assets/icons/rent.png" />
+      <view class="nav-icon-circle">🔑</view>
       <text>租房</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="公寓">
-      <image class="nav-icon" src="/assets/icons/apt.png" />
+      <view class="nav-icon-circle">🏢</view>
       <text>公寓</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="别墅">
-      <image class="nav-icon" src="/assets/icons/villa.png" />
+      <view class="nav-icon-circle">🏡</view>
       <text>别墅</text>
     </view>
     <view class="nav-item" bindtap="onMapTap">
-      <image class="nav-icon" src="/assets/icons/map.png" />
+      <view class="nav-icon-circle">🗺️</view>
       <text>地图找房</text>
     </view>
     <view class="nav-item" bindtap="onCalcTap">
-      <image class="nav-icon" src="/assets/icons/calc.png" />
+      <view class="nav-icon-circle">🧮</view>
       <text>贷款计算</text>
     </view>
   </view>
@@ -46,7 +46,10 @@
       <text class="section-title">推荐房源</text>
       <text class="section-more" bindtap="onMoreTap">更多 ></text>
     </view>
-    <block wx:if="{{hotProperties.length}}">
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+    <!-- 数据 -->
+    <block wx:elif="{{hotProperties.length}}">
       <property-card
         wx:for="{{hotProperties}}"
         wx:key="id"
@@ -57,12 +60,15 @@
   </view>
 
   <!-- 最新资讯 -->
-  <view wx:if="{{articles.length}}" class="section">
+  <view wx:if="{{articles.length || loading}}" class="section">
     <view class="section-header">
       <text class="section-title">最新资讯</text>
       <text class="section-more" bindtap="onArticleMoreTap">更多 ></text>
     </view>
-    <view class="article-list">
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+    <!-- 数据 -->
+    <view wx:elif="{{articles.length}}" class="article-list">
       <view class="article-item" wx:for="{{articles}}" wx:key="id" bindtap="onArticleTap" data-id="{{item.id}}">
         <image wx:if="{{item.cover_image}}" class="article-thumb" src="{{item.coverImageUrl}}" mode="aspectFill" />
         <view class="article-info">

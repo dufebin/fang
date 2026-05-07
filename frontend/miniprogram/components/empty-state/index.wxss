@@ -5,10 +5,10 @@
   padding: 80rpx 40rpx;
 }
 
-.empty-icon {
-  width: 200rpx;
-  height: 200rpx;
+.empty-icon-text {
+  font-size: 120rpx;
   opacity: 0.4;
+  line-height: 1;
 }
 
 .empty-text {

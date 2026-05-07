@@ -12,4 +12,22 @@
     <rich-text class="article-content" nodes="{{article.content}}" />
   </view>
 </view>
-<view wx:else class="loading-page">加载中...</view>
+
+<!-- 骨架屏 -->
+<view wx:elif="{{loading && !loadFailed}}" class="loading-page">
+  <view class="sk-cover"></view>
+  <view class="sk-content">
+    <view class="sk-line w-80"></view>
+    <view class="sk-line w-60"></view>
+    <view class="sk-line w-40"></view>
+    <view class="sk-line"></view>
+    <view class="sk-line"></view>
+    <view class="sk-line w-60"></view>
+  </view>
+</view>
+
+<!-- 加载失败 -->
+<view wx:else class="loading-page" bindtap="onReload">
+  <view class="error-icon">😞</view>
+  <text>加载失败，点击重试</text>
+</view>

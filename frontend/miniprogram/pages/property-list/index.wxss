@@ -54,6 +54,12 @@
   height: 40rpx;
 }
 
+.filter-icon-text {
+  font-size: 36rpx;
+  color: #666;
+  margin-bottom: 2rpx;
+}
+
 .sort-bar {
   display: flex;
   background: #fff;

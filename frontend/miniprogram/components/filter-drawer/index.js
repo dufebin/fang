@@ -1,6 +1,6 @@
 Component({
   properties: {
-    show: { type: Boolean, value: false },
+    show: { type: Boolean, value: false }
   },
 
   data: {
@@ -11,33 +11,37 @@ Component({
       max_price: '',
       min_area: '',
       max_area: '',
-      bedrooms: '',
+      bedrooms: ''
     },
     propertyTypes: ['不限', '住宅', '公寓', '别墅', '商铺', '办公室', '租房'],
-    bedroomOptions: ['不限', '1室', '2室', '3室', '4室', '5室+'],
+    bedroomOptions: ['不限', '1室', '2室', '3室', '4室', '5室+']
   },
 
   methods: {
-    onMaskTap() {
+    onMaskTap: function() {
       this.triggerEvent('close')
     },
 
-    onTypeSelect(e) {
-      const val = e.currentTarget.dataset.val
-      this.setData({ 'filter.property_type': val === '不限' ? '' : val })
+    onTypeSelect: function(e) {
+      var val = e.currentTarget.dataset.val
+      var newVal = val === '不限' ? '' : val
+      this.setData({ 'filter.property_type': newVal })
     },
 
-    onBedroomSelect(e) {
-      const val = e.currentTarget.dataset.val
-      this.setData({ 'filter.bedrooms': val === '不限' ? '' : val.replace('室', '') })
+    onBedroomSelect: function(e) {
+      var val = e.currentTarget.dataset.val
+      var newVal = val === '不限' ? '' : val.replace('室', '')
+      this.setData({ 'filter.bedrooms': newVal })
     },
 
-    onInputChange(e) {
-      const field = e.currentTarget.dataset.field
-      this.setData({ [`filter.${field}`]: e.detail.value })
+    onInputChange: function(e) {
+      var field = e.currentTarget.dataset.field
+      var obj = {}
+      obj[field] = e.detail.value
+      this.setData({ filter: Object.assign({}, this.data.filter, obj) })
     },
 
-    onReset() {
+    onReset: function() {
       this.setData({
         filter: {
           property_type: '',
@@ -46,15 +50,20 @@ Component({
           max_price: '',
           min_area: '',
           max_area: '',
-          bedrooms: '',
-        },
+          bedrooms: ''
+        }
       })
     },
 
-    onConfirm() {
-      const filter = { ...this.data.filter }
-      Object.keys(filter).forEach(k => { if (filter[k] === '') delete filter[k] })
-      this.triggerEvent('confirm', filter)
-    },
-  },
+    onConfirm: function() {
+      var f = this.data.filter
+      var result = {}
+      Object.keys(f).forEach(function(k) {
+        if (f[k] !== '' && f[k] !== undefined && f[k] !== null) {
+          result[k] = f[k]
+        }
+      })
+      this.triggerEvent('confirm', result)
+    }
+  }
 })

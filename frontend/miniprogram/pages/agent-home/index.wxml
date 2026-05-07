@@ -10,6 +10,17 @@
     />
     <view wx:if="{{noMore}}" class="no-more">没有更多了</view>
   </block>
+  <view wx:elif="{{loading}}" class="loading-tip">加载中...</view>
   <empty-state wx:elif="{{!loading}}" text="暂无房源" />
 </view>
-<view wx:else class="loading-page">加载中...</view>
+
+<!-- 加载中 -->
+<view wx:elif="{{!loadFailed}}" class="loading-page">
+  <text>加载中...</text>
+</view>
+
+<!-- 加载失败 -->
+<view wx:else class="loading-page" bindtap="onReload">
+  <view class="error-icon">😞</view>
+  <text>加载失败，点击重试</text>
+</view>

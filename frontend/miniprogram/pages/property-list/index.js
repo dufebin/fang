@@ -8,6 +8,7 @@ Page({
     page: 1,
     loading: false,
     noMore: false,
+    _firstLoaded: false,
     keyword: '',
     sort: 'created_at',
     showFilter: false,
@@ -54,6 +55,7 @@ Page({
         list: reset ? newList : [...this.data.list, ...newList],
         page: page + 1,
         noMore: newList.length < PAGE_SIZE,
+        _firstLoaded: true,
       })
     } catch (_) {}
 

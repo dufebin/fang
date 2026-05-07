@@ -9,7 +9,7 @@
   </view>
   <view wx:if="{{showActions && agent.phone}}" class="agent-actions">
     <view class="action-btn btn-call" bindtap="onCall">
-      <image class="action-icon" src="/assets/icons/phone.png" />
+      <text class="action-icon-text">📞</text>
       <text>电话咨询</text>
     </view>
   </view>

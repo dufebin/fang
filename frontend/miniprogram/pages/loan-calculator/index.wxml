@@ -78,14 +78,12 @@
     <view class="schedule-title">还款明细（年度）</view>
     <view class="schedule-header">
       <text>年份</text>
-      <text>年还款</text>
-      <text>年利息</text>
+      <text>月还款额</text>
       <text>剩余本金</text>
     </view>
-    <view class="schedule-row" wx:for="{{result.schedule}}" wx:key="year">
-      <text>第{{item.year}}年</text>
-      <text>{{item.yearlyText}}</text>
-      <text class="red">{{item.interestText}}</text>
+    <view class="schedule-row" wx:for="{{result.schedule}}" wx:key="period">
+      <text>第{{item.period}}年</text>
+      <text>{{item.monthlyText}}</text>
       <text>{{item.remainingText}}</text>
     </view>
   </view>

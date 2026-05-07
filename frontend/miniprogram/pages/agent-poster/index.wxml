@@ -12,7 +12,7 @@
       </view>
       <view class="poster-slogan">专业房产服务，诚信为本</view>
       <view class="poster-qr-area">
-        <image class="poster-qr" src="{{qrCode}}" mode="aspectFit" />
+        <view class="poster-qr-placeholder">📱</view>
         <view class="poster-qr-hint">扫码看我的房源</view>
       </view>
     </view>

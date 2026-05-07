@@ -59,6 +59,13 @@
   height: 40rpx;
 }
 
+.loc-icon-text {
+  font-size: 44rpx;
+  color: #E84040;
+  line-height: 1;
+  font-weight: 700;
+}
+
 .bottom-panel {
   position: absolute;
   bottom: -400rpx;

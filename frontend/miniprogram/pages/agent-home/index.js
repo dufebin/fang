@@ -11,6 +11,7 @@ Page({
     total: 0,
     page: 1,
     loading: false,
+    loadFailed: false,
     noMore: false,
   },
 
@@ -21,11 +22,19 @@ Page({
     this._loadProperties(code, true)
   },
 
+  onReload() {
+    this.setData({ loadFailed: false })
+    this._loadAgent(this.data.agentCode)
+    this._loadProperties(this.data.agentCode, true)
+  },
+
   async _loadAgent(code) {
     try {
       const res = await getAgentHome(code)
-      this.setData({ agent: res.agent || res })
-    } catch (_) {}
+      this.setData({ agent: res.agent || res, loadFailed: false })
+    } catch (_) {
+      this.setData({ loadFailed: true })
+    }
   },
 
   async _loadProperties(code, reset) {

@@ -3,7 +3,7 @@
   <view class="swiper-wrap">
     <swiper class="img-swiper" circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" bindchange="onSwiperChange">
       <swiper-item wx:for="{{images}}" wx:key="index">
-        <image class="swiper-img" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-index="{{index}}" />
+        <image class="swiper-img" src="{{item}}" mode="aspectFill" lazy-load bindtap="onPreviewImage" data-index="{{index}}" />
       </swiper-item>
     </swiper>
     <view class="img-count">{{swiperCurrent+1}}/{{images.length}}</view>
@@ -113,4 +113,13 @@
   <view class="safe-bottom" />
 </view>
 
-<view wx:else class="loading-page">加载中...</view>
+<!-- 加载中 -->
+<view wx:elif="{{!loadingFailed}}" class="loading-page">
+  <text>加载中...</text>
+</view>
+
+<!-- 加载失败 -->
+<view wx:else class="loading-page" bindtap="onReload">
+  <view class="error-icon">😞</view>
+  <text>加载失败，点击重试</text>
+</view>

@@ -3,6 +3,17 @@ const { formatDate } = require('../../utils/format')
 
 const STATUS_MAP = { pending: '待确认', confirmed: '已确认', cancelled: '已取消', completed: '已完成' }
 
+// Promise 化 wx.showModal
+function showModal(opts) {
+  return new Promise((resolve) => {
+    wx.showModal({
+      ...opts,
+      success: resolve,
+      fail: () => resolve({ confirm: false }),
+    })
+  })
+}
+
 Page({
   data: { list: [], loading: false },
 
@@ -26,7 +37,7 @@ Page({
 
   async onCancel(e) {
     const id = e.currentTarget.dataset.id
-    const res = await wx.showModal({ title: '确认取消', content: '确定取消本次预约？' })
+    const res = await showModal({ title: '确认取消', content: '确定取消本次预约？' })
     if (!res.confirm) return
     try {
       await cancelAppointment(id)

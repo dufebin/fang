@@ -2,40 +2,39 @@
   "appid": "wx3229dc77038d6958",
   "projectname": "fangchan-miniprogram",
   "compileType": "miniprogram",
+  "libVersion": "3.4.10",
   "setting": {
     "urlCheck": true,
     "es6": true,
     "enhance": true,
     "postcss": true,
-    "minified": true,
+    "minified": false,
     "newFeature": true,
     "coverView": true,
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "scopeDataCheck": false,
-    "uglifyFileName": false,
     "checkInvalidKey": true,
-    "checkSiteMap": true,
-    "uploadWithSourceMap": true,
+    "checkSiteMap": false,
+    "uploadWithSourceMap": false,
     "useIsolateContext": false,
     "nodeModules": false,
-    "isAutoCompressImage": false,
     "compileWorklet": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
-    "minifyWXSS": true,
-    "minifyWXML": true,
+    "minifyWXSS": false,
+    "minifyWXML": false,
     "localPlugins": false,
     "disableUseStrict": false,
     "useCompilerPlugins": false,
     "condition": false,
     "swc": false,
+    "disableSWC": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    },
-    "disableSWC": true
+    }
   },
   "condition": {},
   "editorSetting": {
@@ -46,6 +45,5 @@
   "packOptions": {
     "ignore": [],
     "include": []
-  },
-  "libVersion": "3.15.2"
+  }
 }

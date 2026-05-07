@@ -65,9 +65,8 @@ Page({
 
     const schedule = raw.schedule.map(row => ({
       ...row,
-      yearlyText: wan(row.yearlyPayment),
-      interestText: wan(row.yearlyInterest),
-      remainingText: wan(row.remainingPrincipal),
+      monthlyText: wan(row.monthly),
+      remainingText: wan(row.remaining),
     }))
 
     this.setData({

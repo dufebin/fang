@@ -1,5 +1,16 @@
 const { silentLogin } = require('../../utils/auth')
-const { mpLogin, updateProfile } = require('../../api/user')
+const { mpLogin } = require('../../api/user')
+
+// Promise 化 wx.getUserProfile
+function getUserProfile(opts) {
+  return new Promise((resolve, reject) => {
+    wx.getUserProfile({
+      ...opts,
+      success: resolve,
+      fail: reject,
+    })
+  })
+}
 
 Page({
   data: { loading: false },
@@ -8,21 +19,30 @@ Page({
     this._redirect = options.redirect || ''
   },
 
-  async onGetUserInfo(e) {
-    if (!e.detail.userInfo) return
+  async onLogin() {
     this.setData({ loading: true })
     try {
+      // 1. 获取微信登录凭证
       const code = await silentLogin()
-      const { userInfo } = e.detail
+
+      // 2. 获取用户基本信息（新版 API）
+      const profileRes = await getUserProfile({ desc: '用于完善个人资料' })
+      const userInfo = profileRes.userInfo
+
+      // 3. 后端登录，返回 token
       const token = await mpLogin(code, userInfo.nickName, userInfo.avatarUrl)
-      await updateProfile({ nickname: userInfo.nickName, avatar: userInfo.avatarUrl })
-      getApp().onLoginSuccess(token, userInfo)
+
+      // 4. 更新全局状态（注意：先 userInfo 后 token）
+      getApp().onLoginSuccess(userInfo, token)
+
+      // 5. 跳转
       if (this._redirect) {
         wx.redirectTo({ url: decodeURIComponent(this._redirect) })
       } else {
         wx.navigateBack({ delta: 1 })
       }
-    } catch (_) {
+    } catch (e) {
+      console.error('登录失败:', e)
       wx.showToast({ title: '登录失败，请重试', icon: 'none' })
     } finally {
       this.setData({ loading: false })

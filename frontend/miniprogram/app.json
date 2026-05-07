@@ -11,11 +11,13 @@
     "pages/article-detail/index",
     "pages/my/index",
     "pages/my-favorites/index",
-    "pages/my-appointments/index",
     "pages/my-history/index",
     "pages/my-notifications/index",
     "pages/agent-workbench/index",
     "pages/agent-poster/index",
+    "pages/agent-profile/index",
+    "pages/agent-apply/index",
+    "pages/property-edit/index",
     "pages/login/index"
   ],
   "tabBar": {

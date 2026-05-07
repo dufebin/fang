@@ -2,7 +2,6 @@ const { getNearbyProperties } = require('../../api/property')
 
 const DEFAULT_LAT = 39.9087
 const DEFAULT_LNG = 116.3974
-const MARKER_ICON = '/assets/icons/marker.png'
 
 Page({
   data: {
@@ -53,9 +52,6 @@ Page({
           id: p.id,
           latitude: p.latitude,
           longitude: p.longitude,
-          iconPath: MARKER_ICON,
-          width: 36,
-          height: 36,
           callout: {
             content: this._shortPrice(p),
             color: '#fff',

@@ -3,6 +3,17 @@ const { listMyAppointments } = require('../../api/appointment')
 const { fullImageURL } = require('../../utils/format')
 const { isLoggedIn } = require('../../utils/auth')
 
+// Promise 化 wx.showModal
+function showModal(opts) {
+  return new Promise((resolve) => {
+    wx.showModal({
+      ...opts,
+      success: resolve,
+      fail: () => resolve({ confirm: false }),
+    })
+  })
+}
+
 Page({
   data: {
     isLoggedIn: false,
@@ -73,7 +84,7 @@ Page({
   onArticles() { wx.navigateTo({ url: '/pages/article-list/index' }) },
 
   async onLogout() {
-    const res = await wx.showModal({ title: '确认退出', content: '确定要退出登录吗？' })
+    const res = await showModal({ title: '确认退出', content: '确定要退出登录吗？' })
     if (!res.confirm) return
     getApp().logout()
     this.setData({

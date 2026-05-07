@@ -1,0 +1,105 @@
+/**
+ * WXS 视图层格式化函数，避免 JS 线程阻塞渲染
+ * 在 WXML 中通过 <wxs module="fmt" src="../../utils/format.wxs" /> 引入
+ * 
+ * 注意：WXS 不支持 const/let/箭头函数/模板字符串，只能用 var 和 function
+ */
+
+// 转为数字（API 可能返回字符串）
+function toNum(v) {
+  if (typeof v === 'number') return v
+  if (typeof v === 'string') {
+    var n = parseFloat(v)
+    return isNaN(n) ? 0 : n
+  }
+  return 0
+}
+
+// 价格格式化
+function formatPrice(price, type) {
+  if (price === null || price === undefined || price === '') return '--'
+  var num = toNum(price)
+  if (type === 'rent') {
+    return num + '元/月'
+  }
+  if (num >= 10000) {
+    return (num / 10000).toFixed(2) + '亿'
+  }
+  return num + '万'
+}
+
+// 面积格式化
+function formatArea(area) {
+  if (area === null || area === undefined || area === '') return '--'
+  var num = toNum(area)
+  return num.toFixed(2) + '㎡'
+}
+
+// 户型格式化
+function formatLayout(bedrooms, livingRooms, bathrooms) {
+  var b = toNum(bedrooms)
+  var l = toNum(livingRooms)
+  var w = toNum(bathrooms)
+  return b + '室' + l + '厅' + w + '卫'
+}
+
+// 月供文本
+function formatMonthly(monthly) {
+  if (monthly === null || monthly === undefined || monthly === '') return '--'
+  var num = toNum(monthly)
+  if (num >= 10000) {
+    return (num / 10000).toFixed(2) + '万/月'
+  }
+  return num.toFixed(0) + '元/月'
+}
+
+// 金额大数格式化
+function formatWan(yuan) {
+  if (yuan === null || yuan === undefined || yuan === '') return '--'
+  var num = toNum(yuan)
+  if (num >= 10000) {
+    return (num / 10000).toFixed(2) + '万元'
+  }
+  return num.toFixed(2) + '元'
+}
+
+// 图片 URL 补全
+function fullImageURL(url, base) {
+  if (!url) return ''
+  if (getRegExp('^https?://').test(url)) return url
+  return base + url
+}
+
+// 获取状态颜色类名
+function statusClass(status) {
+  var map = {
+    available: 'tag-green',
+    sold: 'tag-gray',
+    rented: 'tag-blue',
+    offline: 'tag-gray'
+  }
+  return map[status] || 'tag-gray'
+}
+
+// 状态文字
+function statusLabel(status) {
+  var map = {
+    available: '在售',
+    sold: '已售',
+    rented: '已租',
+    offline: '已下架'
+  }
+  return map[status] || status
+}
+
+module.exports = {
+  toNum: toNum,
+  formatPrice: formatPrice,
+  formatArea: formatArea,
+  formatLayout: formatLayout,
+  formatMonthly: formatMonthly,
+  formatWan: formatWan,
+  fullImageURL: fullImageURL,
+  statusClass: statusClass,
+  statusLabel: statusLabel
+}

@@ -10,9 +10,9 @@ function getPropertyDetail(id, agentCode) {
   return request({ url: `/h5/property/${id}`, data: agentCode ? { a: agentCode } : {} })
 }
 
-// 附近房源
-function getNearbyProperties(lat, lng, radius = 3) {
-  return request({ url: '/h5/properties', data: { lat, lng, radius } })
+// 附近房源（接受 { latitude, longitude, radius, page_size } 对象）
+function getNearbyProperties(params) {
+  return request({ url: '/h5/properties', data: params })
 }
 
 // 创建房源（经纪人）

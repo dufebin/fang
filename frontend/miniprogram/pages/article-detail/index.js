@@ -2,13 +2,24 @@ const { getArticle } = require('../../api/content')
 const { fullImageURL, formatDate } = require('../../utils/format')
 
 Page({
-  data: { article: null },
+  data: {
+    article: null,
+    loading: true,
+    loadFailed: false,
+  },
 
   onLoad(options) {
+    this._articleId = options.id
     this._load(options.id)
   },
 
+  onReload() {
+    this.setData({ loadFailed: false, loading: true })
+    this._load(this._articleId)
+  },
+
   async _load(id) {
+    this.setData({ loading: true })
     try {
       const a = await getArticle(id)
       this.setData({
@@ -17,10 +28,12 @@ Page({
           coverImageUrl: a.cover_image ? fullImageURL(a.cover_image) : '',
           publishedAt: formatDate(a.published_at),
         },
+        loading: false,
+        loadFailed: false,
       })
       wx.setNavigationBarTitle({ title: a.title })
     } catch (_) {
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      this.setData({ loading: false, loadFailed: true })
     }
   },
 })
