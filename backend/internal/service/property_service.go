@@ -205,6 +205,24 @@ func (s *PropertyService) GetAgentProperties(agentID uint64, page, limit int) ([
 	return s.propertyRepo.ListByIDs(ids, page, limit)
 }
 
+// DeleteProperty 删除房源（仅 owner_agent 或 admin）
+func (s *PropertyService) DeleteProperty(id, userID uint64, isAdmin bool) error {
+	property, err := s.propertyRepo.FindByID(id)
+	if err != nil || property == nil {
+		return fmt.Errorf("房源不存在")
+	}
+	if !isAdmin {
+		agent, err := s.agentRepo.FindByUserID(userID)
+		if err != nil || agent == nil {
+			return fmt.Errorf("无权限")
+		}
+		if property.OwnerAgentID == nil || *property.OwnerAgentID != agent.ID {
+			return fmt.Errorf("仅房源负责人可删除")
+		}
+	}
+	return s.propertyRepo.Delete(id)
+}
+
 // UpdateStatus 更新状态
 func (s *PropertyService) UpdateStatus(id uint64, status string) error {
 	property, err := s.propertyRepo.FindByID(id)

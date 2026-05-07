@@ -16,7 +16,7 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 
 func (r *UserRepo) FindByOpenID(openID string) (*model.User, error) {
 	var user model.User
-	err := r.db.Where("openid = ?", openID).First(&user).Error
+	err := r.db.Where("open_id = ?", openID).First(&user).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}

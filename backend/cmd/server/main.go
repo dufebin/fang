@@ -94,14 +94,14 @@ func main() {
 	statsSvc := service.NewStatsService(statsRepo)
 
 	// Handlers
-	authHandler := handler.NewAuthHandler(authSvc, cfg.WeChat.AppID, cfg.WeChat.OAuthRedirectURL)
+	authHandler := handler.NewAuthHandler(authSvc, agentSvc, cfg.WeChat.AppID, cfg.WeChat.OAuthRedirectURL)
 	propertyHandler := handler.NewPropertyHandler(propertySvc, agentSvc)
 	agentHandler := handler.NewAgentHandler(agentSvc, propertySvc, wxClient)
 	adminHandler := handler.NewAdminHandler(propertySvc, agentSvc, userRepo, cfg.Admin.Username, cfg.Admin.Password)
 	contentHandler := handler.NewContentHandler(contentSvc)
 	userActionHandler := handler.NewUserActionHandler(userActionSvc, agentSvc, statsSvc, agentAppSvc)
 	statsHandler := handler.NewStatsHandler(statsSvc)
-	mpHandler := handler.NewMiniProgramHandler(authSvc, wxClient)
+	mpHandler := handler.NewMiniProgramHandler(authSvc, agentSvc, wxClient, cfg.App.Env)
 
 	middleware.SetJWTSecret(cfg.App.JWTSecret)
 
@@ -168,6 +168,9 @@ func registerRoutes(
 		mp.PUT("/profile", middleware.AuthRequired(), mpH.UpdateProfile)
 	}
 
+	// 开发辅助接口
+	api.POST("/dev/mock-agent-login", mpH.DevMockAgentLogin)
+
 	// H5 公开接口
 	h5 := api.Group("/h5")
 	{
@@ -207,6 +210,10 @@ func registerRoutes(
 		agent.GET("/all-properties", propertyH.List)
 		agent.POST("/properties", propertyH.Create)
 		agent.PUT("/properties/:id", propertyH.UpdateProperty)
+		agent.GET("/properties/:id", propertyH.GetAgentPropertyDetail)
+		agent.DELETE("/properties/:id", propertyH.DeleteAgentProperty)
+		agent.DELETE("/properties/:id/images/:imgId", propertyH.DeleteAgentPropertyImage)
+		agent.PUT("/properties/:id/status", propertyH.UpdateAgentPropertyStatus)
 		agent.POST("/properties/:id/claim", propertyH.Claim)
 		agent.DELETE("/properties/:id/claim", propertyH.Unclaim)
 		agent.POST("/properties/:id/images", propertyH.UploadImage)

@@ -18,6 +18,8 @@ type PropertyFilter struct {
 	MaxPrice       *float64
 	Keyword        string
 	IncludeOffline bool
+	OwnerAgentID   *uint64
+	PreloadAgent   bool
 }
 
 func NewPropertyRepo(db *gorm.DB) *PropertyRepo {
@@ -72,15 +74,22 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 		like := "%" + filter.Keyword + "%"
 		query = query.Where("title LIKE ? OR address LIKE ? OR district LIKE ?", like, like, like)
 	}
+	if filter.OwnerAgentID != nil {
+		query = query.Where("owner_agent_id = ?", *filter.OwnerAgentID)
+	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
 	offset := (page - 1) * limit
-	err := query.Preload("Images", func(db *gorm.DB) *gorm.DB {
+	q := query.Preload("Images", func(db *gorm.DB) *gorm.DB {
 		return db.Order("sort_order ASC").Limit(1) // 只加载第一张图
-	}).Offset(offset).Limit(limit).Order("created_at DESC").Find(&properties).Error
+	})
+	if filter.PreloadAgent {
+		q = q.Preload("OwnerAgent")
+	}
+	err := q.Offset(offset).Limit(limit).Order("created_at DESC").Find(&properties).Error
 
 	return properties, total, err
 }

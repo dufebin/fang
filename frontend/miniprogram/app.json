@@ -59,6 +59,11 @@
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F5F5F5"
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于自动填写房源所在省市区"
+    }
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents",

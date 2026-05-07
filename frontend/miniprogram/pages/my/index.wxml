@@ -74,4 +74,6 @@
   </view>
 
   <view wx:if="{{isLoggedIn}}" class="logout-btn" bindtap="onLogout">退出登录</view>
+
+  <view wx:if="{{!isLoggedIn}}" class="mock-login-btn" bindtap="onMockLogin">模拟经纪人登录（测试）</view>
 </view>

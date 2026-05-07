@@ -131,3 +131,15 @@
   font-size: 28rpx;
   color: #E84040;
 }
+
+.mock-login-btn {
+  margin: 40rpx 24rpx 0;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #fff3cd;
+  border-radius: 44rpx;
+  font-size: 26rpx;
+  color: #856404;
+  border: 1rpx solid #ffc107;
+}

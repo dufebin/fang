@@ -1,5 +1,5 @@
 const { getStats } = require('../../api/agent')
-const { getMyProperties } = require('../../api/property')
+const { getMyProperties, deleteProperty } = require('../../api/property')
 const { listAgentAppointments, updateAppointmentStatus } = require('../../api/appointment')
 const { formatDate } = require('../../utils/format')
 
@@ -54,6 +54,29 @@ Page({
   },
 
   onAddProperty() { wx.navigateTo({ url: '/pages/property-edit/index' }) },
+
+  onEditProperty(e) {
+    const id = e.currentTarget.dataset.id
+    wx.navigateTo({ url: `/pages/property-edit/index?id=${id}` })
+  },
+
+  onDeleteProperty(e) {
+    const id = e.currentTarget.dataset.id
+    wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复，确认删除该房源？',
+      success: async res => {
+        if (!res.confirm) return
+        try {
+          await deleteProperty(id)
+          wx.showToast({ title: '已删除' })
+          this._loadTabData(this.data.activeTab)
+        } catch (_) {
+          wx.showToast({ title: '删除失败', icon: 'none' })
+        }
+      },
+    })
+  },
   onViewAppointments() { this.onTabTap({ currentTarget: { dataset: { tab: 'appt' } } }) },
   onEditProfile() { wx.navigateTo({ url: '/pages/agent-profile/index' }) },
   onSharePoster() { wx.navigateTo({ url: '/pages/agent-poster/index' }) },

@@ -61,7 +61,8 @@ type Property struct {
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
 
-	Images []PropertyImage `gorm:"foreignKey:PropertyID" json:"images,omitempty"`
+	Images     []PropertyImage `gorm:"foreignKey:PropertyID" json:"images,omitempty"`
+	OwnerAgent *Agent          `gorm:"foreignKey:OwnerAgentID" json:"owner_agent,omitempty"`
 }
 
 func (Property) TableName() string { return "properties" }

@@ -16,6 +16,7 @@ import {
   uploadPropertyVideo,
   Property, PropertyImage,
 } from '../../api/property'
+import { getAgents, Agent } from '../../api/agent'
 import { CITY_DISTRICTS, MAJOR_CITIES, PROVINCE_CITIES, PROVINCES } from '../../data/cityDistricts'
 
 const STATUS_MAP: Record<string, { text: string; color: string }> = {
@@ -126,6 +127,12 @@ export default function PropertiesPage() {
   const [highlightCover, setHighlightCover] = useState(false)
   const firstImageRef = useRef<HTMLDivElement>(null)
   const coverAreaRef = useRef<HTMLDivElement>(null)
+
+  const [agents, setAgents] = useState<Agent[]>([])
+
+  useEffect(() => {
+    getAgents({ limit: 200 }).then(res => setAgents(res.data.list || [])).catch(() => {})
+  }, [])
 
   const refresh = () => setTableKey(k => k + 1)
 
@@ -260,6 +267,16 @@ export default function PropertiesPage() {
       valueEnum: Object.fromEntries(PROPERTY_TYPES.map(v => [v, { text: v }])),
     },
     { title: '区域', dataIndex: 'district' },
+    {
+      title: '归属经纪人',
+      dataIndex: 'owner_agent_id',
+      render: (_, record) => record.owner_agent ? (
+        <span>{record.owner_agent.name}<br /><small style={{ color: '#999' }}>{record.owner_agent.phone}</small></span>
+      ) : <span style={{ color: '#bbb' }}>-</span>,
+      renderFormItem: () => (
+        <Select allowClear placeholder="全部经纪人" options={agents.map(a => ({ value: a.id, label: `${a.name} (${a.phone})` }))} />
+      ),
+    },
     { title: '面积(㎡)', dataIndex: 'area', search: false },
     {
       title: '价格',
@@ -321,6 +338,7 @@ export default function PropertiesPage() {
             district: params.district,
             status: params.status,
             keyword: params.title,
+            agent_id: params.owner_agent_id,
           })
           return { data: res.data.list, total: res.data.total, success: true }
         }}

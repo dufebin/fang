@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fangchan/internal/middleware"
+	"fangchan/internal/model"
 	"fangchan/internal/service"
 	"fangchan/pkg/response"
 
@@ -9,14 +10,16 @@ import (
 )
 
 type AuthHandler struct {
-	authSvc *service.AuthService
-	wxAppID string
+	authSvc  *service.AuthService
+	agentSvc *service.AgentService
+	wxAppID       string
 	wxRedirectURL string
 }
 
-func NewAuthHandler(authSvc *service.AuthService, wxAppID, wxRedirectURL string) *AuthHandler {
+func NewAuthHandler(authSvc *service.AuthService, agentSvc *service.AgentService, wxAppID, wxRedirectURL string) *AuthHandler {
 	return &AuthHandler{
 		authSvc:       authSvc,
+		agentSvc:      agentSvc,
 		wxAppID:       wxAppID,
 		wxRedirectURL: wxRedirectURL,
 	}
@@ -63,9 +66,18 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	role := middleware.GetCurrentRole(c)
 	openID, _ := c.Get("open_id")
 
-	response.Success(c, gin.H{
+	result := gin.H{
 		"user_id": userID,
 		"open_id": openID,
 		"role":    role,
-	})
+	}
+
+	if role == model.RoleAgent {
+		agent, err := h.agentSvc.FindByUserID(userID)
+		if err == nil && agent != nil {
+			result["agent_id"] = agent.ID
+		}
+	}
+
+	response.Success(c, result)
 }

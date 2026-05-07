@@ -137,3 +137,32 @@
 
 .appt-btn-confirm { background: #E84040; color: #fff; }
 .appt-btn-cancel { background: #f5f5f5; color: #888; }
+
+.property-wrap { margin-bottom: 16rpx; }
+
+.property-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16rpx;
+  padding: 12rpx 16rpx;
+  background: #fff;
+  border-top: 1rpx solid #f5f5f5;
+  border-radius: 0 0 16rpx 16rpx;
+  margin-top: -16rpx;
+}
+
+.action-edit {
+  padding: 8rpx 28rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  border: 1rpx solid #E84040;
+  color: #E84040;
+}
+
+.action-delete {
+  padding: 8rpx 28rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  background: #f5f5f5;
+  color: #888;
+}

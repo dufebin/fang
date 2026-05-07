@@ -52,12 +52,13 @@
   <!-- 房源列表 -->
   <view wx:if="{{activeTab !== 'appt'}}" class="list-wrap">
     <block wx:if="{{propertyList.length}}">
-      <property-card
-        wx:for="{{propertyList}}"
-        wx:key="id"
-        property="{{item}}"
-        showStatus="{{true}}"
-      />
+      <view class="property-wrap" wx:for="{{propertyList}}" wx:key="id">
+        <property-card property="{{item}}" showStatus="{{true}}" />
+        <view wx:if="{{activeTab === 'my'}}" class="property-actions">
+          <view class="action-edit" bindtap="onEditProperty" data-id="{{item.id}}">编辑</view>
+          <view class="action-delete" bindtap="onDeleteProperty" data-id="{{item.id}}">删除</view>
+        </view>
+      </view>
     </block>
     <empty-state wx:else text="暂无房源" btn-text="发布房源" bindaction="onAddProperty" />
   </view>

@@ -1,5 +1,12 @@
 import request from './request'
 
+export interface PropertyOwnerAgent {
+  id: number
+  name: string
+  phone: string
+  agent_code: string
+}
+
 export interface Property {
   id: number
   title: string
@@ -24,6 +31,8 @@ export interface Property {
   video_url: string
   status: string
   view_count: number
+  owner_agent_id: number | null
+  owner_agent?: PropertyOwnerAgent
   created_at: string
   updated_at: string
 }
@@ -55,6 +64,7 @@ export const getProperties = (params: {
   district?: string
   status?: string
   keyword?: string
+  agent_id?: number
 }) => request.get<unknown, PageResult<Property>>('/admin/properties', { params })
 
 export const createProperty = (data: FormData) =>

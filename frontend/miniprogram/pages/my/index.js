@@ -1,4 +1,4 @@
-const { getMe, listFavorites, listHistory, listNotifications } = require('../../api/user')
+const { getMe, listFavorites, listHistory, listNotifications, mockAgentLogin } = require('../../api/user')
 const { listMyAppointments } = require('../../api/appointment')
 const { fullImageURL } = require('../../utils/format')
 const { isLoggedIn } = require('../../utils/auth')
@@ -74,6 +74,27 @@ Page({
   },
 
   onLogin() { wx.navigateTo({ url: '/pages/login/index' }) },
+
+  async onMockLogin() {
+    try {
+      wx.showLoading({ title: '登录中...' })
+      const res = await mockAgentLogin()
+      wx.hideLoading()
+      const { setToken } = require('../../utils/auth')
+      setToken(res.token)
+      getApp().globalData.token = res.token
+      getApp().globalData.isAgent = true
+      getApp().globalData.userInfo = { role: res.role, agent_id: res.agent_id, nickname: res.nickname }
+      this.setData({ isLoggedIn: true, isAgent: true })
+      this._loadUser()
+      wx.showToast({ title: '模拟登录成功', icon: 'success' })
+    } catch (e) {
+      wx.hideLoading()
+      const msg = (e && e.message) ? e.message : '未知错误'
+      console.error('[mockLogin]', e)
+      wx.showModal({ title: '登录失败', content: msg, showCancel: false })
+    }
+  },
   onFavorites() { wx.navigateTo({ url: '/pages/my-favorites/index' }) },
   onAppointments() { wx.navigateTo({ url: '/pages/appointment/index' }) },
   onHistory() { wx.navigateTo({ url: '/pages/my-history/index' }) },

@@ -18,4 +18,7 @@ module.exports = {
   BASE_URL: ENV[CURRENT_ENV].BASE_URL,
   UPLOAD_BASE: ENV[CURRENT_ENV].UPLOAD_BASE,
   H5_BASE_URL: ENV[CURRENT_ENV].H5_BASE_URL,
+  // 腾讯地图 WebService API Key，用于逆地理编码（自动定位省市区）
+  // 申请地址: https://lbs.qq.com/dev/console/application/mine
+  QQMAP_KEY: 'YOUR_QQMAP_KEY',
 }

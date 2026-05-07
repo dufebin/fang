@@ -15,6 +15,26 @@ function getNearbyProperties(params) {
   return request({ url: '/h5/properties', data: params })
 }
 
+// 经纪人获取自己的单个房源详情（用于编辑）
+function getAgentPropertyDetail(id) {
+  return request({ url: `/agent/properties/${id}` })
+}
+
+// 经纪人删除自己的房源
+function deleteProperty(id) {
+  return request({ url: `/agent/properties/${id}`, method: 'DELETE' })
+}
+
+// 经纪人删除房源图片
+function deletePropertyImage(propertyId, imgId) {
+  return request({ url: `/agent/properties/${propertyId}/images/${imgId}`, method: 'DELETE' })
+}
+
+// 经纪人更新房源状态
+function updatePropertyStatus(id, status) {
+  return request({ url: `/agent/properties/${id}/status`, method: 'PUT', data: { status } })
+}
+
 // 创建房源（经纪人）
 function createProperty(data) {
   return request({ url: '/agent/properties', method: 'POST', data })
@@ -49,8 +69,12 @@ module.exports = {
   listProperties,
   getPropertyDetail,
   getNearbyProperties,
+  getAgentPropertyDetail,
   createProperty,
   updateProperty,
+  deleteProperty,
+  deletePropertyImage,
+  updatePropertyStatus,
   claimProperty,
   unclaimProperty,
   getMyProperties,

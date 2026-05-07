@@ -78,6 +78,16 @@ func (s *AuthService) UpdateUserProfile(userID uint64, nickname, avatar, phone s
 	return user, s.userRepo.Update(user)
 }
 
+// UpdateUserRole 更新用户角色
+func (s *AuthService) UpdateUserRole(userID uint64, role model.Role) error {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil || user == nil {
+		return fmt.Errorf("用户不存在")
+	}
+	user.Role = role
+	return s.userRepo.Update(user)
+}
+
 // WeChatLogin 微信授权码登录
 func (s *AuthService) WeChatLogin(code string) (*LoginResult, error) {
 	token, err := s.wx.GetOAuthToken(code)

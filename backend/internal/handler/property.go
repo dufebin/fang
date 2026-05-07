@@ -215,6 +215,116 @@ func (h *PropertyHandler) UpdateProperty(c *gin.Context) {
 	response.Success(c, property)
 }
 
+// GetAgentPropertyDetail 经纪人获取自己的房源详情（用于编辑）
+func (h *PropertyHandler) GetAgentPropertyDetail(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	userID := middleware.GetCurrentUserID(c)
+	agent, err := h.agentSvc.FindByUserID(userID)
+	if err != nil || agent == nil {
+		response.Fail(c, 403, "无权限")
+		return
+	}
+	property, err := h.propertySvc.GetByID(id)
+	if err != nil || property == nil {
+		response.NotFound(c)
+		return
+	}
+	if property.OwnerAgentID == nil || *property.OwnerAgentID != agent.ID {
+		response.Fail(c, 403, "仅房源负责人可操作")
+		return
+	}
+	response.Success(c, property)
+}
+
+// DeleteAgentProperty 经纪人删除自己的房源
+func (h *PropertyHandler) DeleteAgentProperty(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	userID := middleware.GetCurrentUserID(c)
+	if err := h.propertySvc.DeleteProperty(id, userID, false); err != nil {
+		response.Fail(c, 403, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"deleted": true})
+}
+
+// DeleteAgentPropertyImage 经纪人删除房源图片
+func (h *PropertyHandler) DeleteAgentPropertyImage(c *gin.Context) {
+	propertyID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	imgID, err := strconv.ParseUint(c.Param("imgId"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的图片ID")
+		return
+	}
+	userID := middleware.GetCurrentUserID(c)
+	agent, err := h.agentSvc.FindByUserID(userID)
+	if err != nil || agent == nil {
+		response.Fail(c, 403, "无权限")
+		return
+	}
+	property, err := h.propertySvc.GetByID(propertyID)
+	if err != nil || property == nil {
+		response.NotFound(c)
+		return
+	}
+	if property.OwnerAgentID == nil || *property.OwnerAgentID != agent.ID {
+		response.Fail(c, 403, "仅房源负责人可操作")
+		return
+	}
+	if err := h.propertySvc.DeleteImage(propertyID, imgID); err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"deleted": true})
+}
+
+// UpdateAgentPropertyStatus 经纪人更新自己房源的状态
+func (h *PropertyHandler) UpdateAgentPropertyStatus(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	var req struct {
+		Status string `json:"status" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, err.Error())
+		return
+	}
+	userID := middleware.GetCurrentUserID(c)
+	agent, err := h.agentSvc.FindByUserID(userID)
+	if err != nil || agent == nil {
+		response.Fail(c, 403, "无权限")
+		return
+	}
+	property, err := h.propertySvc.GetByID(id)
+	if err != nil || property == nil {
+		response.NotFound(c)
+		return
+	}
+	if property.OwnerAgentID == nil || *property.OwnerAgentID != agent.ID {
+		response.Fail(c, 403, "仅房源负责人可操作")
+		return
+	}
+	if err := h.propertySvc.UpdateStatus(id, req.Status); err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"updated": true})
+}
+
 // UpdateStatus 更新房源状态（管理员）
 func (h *PropertyHandler) UpdateStatus(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)

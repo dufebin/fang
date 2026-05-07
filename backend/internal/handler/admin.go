@@ -134,6 +134,13 @@ func (h *AdminHandler) ListProperties(c *gin.Context) {
 		Status:         c.Query("status"),
 		Keyword:        c.Query("keyword"),
 		IncludeOffline: true,
+		PreloadAgent:   true,
+	}
+
+	if agentIDStr := c.Query("agent_id"); agentIDStr != "" {
+		if agentID, err := strconv.ParseUint(agentIDStr, 10, 64); err == nil {
+			filter.OwnerAgentID = &agentID
+		}
 	}
 
 	list, total, err := h.propertySvc.List(page, limit, filter)
