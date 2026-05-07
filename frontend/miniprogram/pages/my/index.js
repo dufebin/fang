@@ -90,7 +90,7 @@ Page({
       wx.showToast({ title: '模拟登录成功', icon: 'success' })
     } catch (e) {
       wx.hideLoading()
-      const msg = (e && e.message) ? e.message : '未知错误'
+      const msg = (e && (e.message || e.errMsg)) || '未知错误'
       console.error('[mockLogin]', e)
       wx.showModal({ title: '登录失败', content: msg, showCancel: false })
     }

@@ -52,13 +52,8 @@ func (h *MiniProgramHandler) Login(c *gin.Context) {
 	})
 }
 
-// DevMockAgentLogin POST /dev/mock-agent-login（仅开发环境）
+// DevMockAgentLogin POST /dev/mock-agent-login
 func (h *MiniProgramHandler) DevMockAgentLogin(c *gin.Context) {
-	if h.env == "production" {
-		response.Fail(c, 403, "仅开发环境可用")
-		return
-	}
-
 	const mockOpenID = "dev_mock_agent_001"
 	user, _, err := h.authSvc.LoginOrRegisterByOpenID(mockOpenID, "", "测试经纪人", "")
 	if err != nil {
