@@ -1,4 +1,4 @@
-const { silentLogin } = require('../../utils/auth')
+const { silentLogin, setToken } = require('../../utils/auth')
 const { mpLogin } = require('../../api/user')
 
 // Promise 化 wx.getUserProfile
@@ -29,11 +29,12 @@ Page({
       const profileRes = await getUserProfile({ desc: '用于完善个人资料' })
       const userInfo = profileRes.userInfo
 
-      // 3. 后端登录，返回 token
-      const token = await mpLogin(code, userInfo.nickName, userInfo.avatarUrl)
+      // 3. 后端登录，返回 { token, user }
+      const loginRes = await mpLogin(code, userInfo.nickName, userInfo.avatarUrl)
 
-      // 4. 更新全局状态（注意：先 userInfo 后 token）
-      getApp().onLoginSuccess(userInfo, token)
+      // 4. 持久化 JWT，更新全局状态
+      setToken(loginRes.token)
+      getApp().onLoginSuccess({ ...userInfo, role: loginRes.user.role }, loginRes.token)
 
       // 5. 跳转
       if (this._redirect) {

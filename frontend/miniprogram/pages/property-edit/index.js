@@ -19,7 +19,7 @@ Page({
     _originalStatus: 'available',
     form: {
       title: '',
-      property_type: '住宅',
+      property_type: '二手房',
       province: '',
       city: '',
       district: '',
@@ -42,7 +42,7 @@ Page({
     locating: false,
     images: [],
     _newImagePaths: [],
-    propertyTypes: ['住宅', '公寓', '别墅', '商铺', '办公室', '租房'],
+    propertyTypes: ['新房', '二手房', '租房', '商铺'],
     decorations: DECORATIONS,
     directions: DIRECTIONS,
     statuses: STATUSES,
@@ -66,7 +66,7 @@ Page({
         status: p.status || 'available',
         form: {
           title: p.title || '',
-          property_type: p.property_type || '住宅',
+          property_type: p.property_type || '二手房',
           province: p.province || '',
           city: p.city || '',
           district: p.district || '',
@@ -250,9 +250,11 @@ Page({
       wx.hideLoading()
       wx.showToast({ title: isEdit ? '保存成功' : '发布成功' })
       setTimeout(() => wx.navigateBack(), 1500)
-    } catch (_) {
+    } catch (err) {
       wx.hideLoading()
-      wx.showToast({ title: '操作失败', icon: 'none' })
+      const msg = (err && (err.message || err.errMsg)) || '操作失败'
+      console.error('[property-edit] submit error:', err)
+      wx.showToast({ title: msg.length > 14 ? '操作失败' : msg, icon: 'none' })
     }
   },
 })
