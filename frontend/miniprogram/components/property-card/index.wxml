@@ -10,6 +10,7 @@
     />
     <view class="card-type-tag">{{property.property_type}}</view>
     <view wx:if="{{showStatus}}" class="card-status-tag {{fmt.statusClass(property.status)}}">{{fmt.statusLabel(property.status)}}</view>
+    <view wx:if="{{property.video_url}}" class="card-video-badge">▶ 视频</view>
   </view>
 
   <view class="card-body">

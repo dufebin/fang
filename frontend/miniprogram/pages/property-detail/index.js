@@ -10,6 +10,7 @@ Page({
     property: null,
     agent: null,
     images: [],
+    mediaItems: [],
     priceText: '--',
     areaText: '--',
     layoutText: '--',
@@ -39,9 +40,16 @@ Page({
   async _loadDetail(id, agentCode) {
     try {
       const property = await getPropertyDetail(id, agentCode)
-      const images = (property.images && property.images.length > 0)
+
+      const imageStrings = (property.images && property.images.length > 0)
         ? property.images.map(img => fullImageURL(img.url))
-        : [fullImageURL(property.cover_image)]
+        : (property.cover_image ? [fullImageURL(property.cover_image)] : [])
+
+      const mediaItems = []
+      if (property.video_url) {
+        mediaItems.push({ type: 'video', url: fullImageURL(property.video_url) })
+      }
+      imageStrings.forEach(url => mediaItems.push({ type: 'image', url }))
 
       const agent = property.agent || {}
       const tags = property.tags ? property.tags.split(',').filter(Boolean) : []
@@ -61,7 +69,8 @@ Page({
       this.setData({
         property,
         agent,
-        images,
+        images: imageStrings,
+        mediaItems,
         priceText,
         areaText,
         layoutText,
@@ -69,10 +78,10 @@ Page({
         tags,
         monthlyText,
         isFav: property.is_favorited || false,
+        loadingFailed: false,
       })
 
       wx.setNavigationBarTitle({ title: property.title || '房源详情' })
-      this.setData({ loadingFailed: false })
     } catch (e) {
       this.setData({ loadingFailed: true })
     }
@@ -84,7 +93,9 @@ Page({
 
   onPreviewImage(e) {
     const index = e.currentTarget.dataset.index
-    wx.previewImage({ urls: this.data.images, current: this.data.images[index] })
+    const item = this.data.mediaItems[index]
+    if (!item || item.type === 'video') return
+    wx.previewImage({ urls: this.data.images, current: item.url })
   },
 
   async onToggleFav() {
@@ -141,7 +152,7 @@ Page({
     return {
       title: p.title,
       path: `/pages/property-detail/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`,
-      imageUrl: this.data.images[0],
+      imageUrl: this.data.images[0] || '',
     }
   },
 })

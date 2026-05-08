@@ -37,6 +37,12 @@
   height: 480rpx;
 }
 
+.swiper-video {
+  width: 100%;
+  height: 480rpx;
+  background: #000;
+}
+
 .img-count {
   position: absolute;
   bottom: 20rpx;

@@ -161,6 +161,15 @@ func (s *PropertyService) UploadImage(propertyID uint64, file multipart.File, he
 	if err := s.propertyRepo.AddImages([]model.PropertyImage{*img}); err != nil {
 		return nil, err
 	}
+
+	// 上传首张图时自动设置封面
+	if sortOrder == 0 {
+		if property, err := s.propertyRepo.FindByID(propertyID); err == nil && property != nil && property.CoverImage == "" {
+			property.CoverImage = url
+			_ = s.propertyRepo.Update(property)
+		}
+	}
+
 	return img, nil
 }
 
@@ -254,6 +263,7 @@ type UpdatePropertyReq struct {
 	Description   string   `json:"description"`
 	CoverImage    string   `json:"cover_image"`
 	VideoURL      string   `json:"video_url"`
+	ClearVideo    bool     `json:"clear_video"`
 	VRURL         string   `json:"vr_url"`
 	Tags          string   `json:"tags"`
 	Latitude      *float64 `json:"latitude"`
@@ -338,7 +348,9 @@ func (s *PropertyService) UpdateProperty(id, userID uint64, isAdmin bool, req *U
 	if req.CoverImage != "" {
 		property.CoverImage = req.CoverImage
 	}
-	if req.VideoURL != "" {
+	if req.ClearVideo {
+		property.VideoURL = ""
+	} else if req.VideoURL != "" {
 		property.VideoURL = req.VideoURL
 	}
 	if req.VRURL != "" {

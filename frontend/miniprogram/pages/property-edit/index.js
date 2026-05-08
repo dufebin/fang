@@ -1,5 +1,5 @@
 const { createProperty, updateProperty, getAgentPropertyDetail, deletePropertyImage, updatePropertyStatus } = require('../../api/property')
-const { uploadPropertyImage } = require('../../api/agent')
+const { uploadPropertyImage, uploadPropertyVideo } = require('../../api/agent')
 const { fullImageURL } = require('../../utils/format')
 const { QQMAP_KEY } = require('../../utils/config')
 
@@ -42,6 +42,9 @@ Page({
     locating: false,
     images: [],
     _newImagePaths: [],
+    videoUrl: '',
+    _newVideoPath: '',
+    _originalVideoUrl: '',
     propertyTypes: ['新房', '二手房', '租房', '商铺'],
     decorations: DECORATIONS,
     directions: DIRECTIONS,
@@ -61,6 +64,7 @@ Page({
     try {
       const res = await getAgentPropertyDetail(id)
       const p = res.data || res
+      const videoUrl = p.video_url ? fullImageURL(p.video_url) : ''
       this.setData({
         _originalStatus: p.status || 'available',
         status: p.status || 'available',
@@ -86,6 +90,9 @@ Page({
         images: (p.images || []).map(img => ({ id: img.id, url: fullImageURL(img.url) })),
         descLength: (p.description || '').length,
         regionValue: [p.province || '', p.city || '', p.district || ''],
+        videoUrl,
+        _originalVideoUrl: videoUrl,
+        _newVideoPath: '',
       })
     } catch (_) {
       wx.showToast({ title: '加载失败', icon: 'none' })
@@ -208,8 +215,36 @@ Page({
     this.setData({ images, _newImagePaths: newPaths })
   },
 
+  // 将指定图片设为封面（移至第一位）
+  onSetCover(e) {
+    const idx = e.currentTarget.dataset.index
+    if (idx === 0) return
+    const images = [...this.data.images]
+    const [item] = images.splice(idx, 1)
+    images.unshift(item)
+    this.setData({ images })
+  },
+
+  onAddVideo() {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['video'],
+      sourceType: ['album', 'camera'],
+      maxDuration: 120,
+      success: res => {
+        const path = res.tempFiles[0].tempFilePath
+        this.setData({ _newVideoPath: path, videoUrl: path })
+      },
+    })
+  },
+
+  onDelVideo() {
+    this.setData({ videoUrl: '', _newVideoPath: '' })
+  },
+
   async onSubmit() {
-    const { form, isEdit, propertyId, _newImagePaths, status, _originalStatus } = this.data
+    const { form, isEdit, propertyId, _newImagePaths, status, _originalStatus,
+            _newVideoPath, _originalVideoUrl, videoUrl } = this.data
     if (!form.title) { wx.showToast({ title: '请填写房源标题', icon: 'none' }); return }
     if (!form.total_price && !form.monthly_rent) { wx.showToast({ title: '请填写价格', icon: 'none' }); return }
     if (!form.city) { wx.showToast({ title: '请填写城市', icon: 'none' }); return }
@@ -230,6 +265,17 @@ Page({
         total_floors: form.total_floors ? Number(form.total_floors) : undefined,
       }
 
+      // 封面：首张已入库图片的 URL（设封面后第一张已变更）
+      const firstImg = this.data.images[0]
+      if (isEdit && firstImg && typeof firstImg === 'object' && firstImg.url) {
+        payload.cover_image = firstImg.url
+      }
+
+      // 用户在编辑时删除了原有视频
+      if (isEdit && _originalVideoUrl && !videoUrl) {
+        payload.clear_video = true
+      }
+
       let pid = propertyId
       if (isEdit) {
         await updateProperty(pid, payload)
@@ -241,10 +287,16 @@ Page({
         pid = (res.data || res).id
       }
 
+      // 上传新图片（sort_order = 在 images 数组中的下标，决定封面）
       const allImages = this.data.images
       for (const path of _newImagePaths) {
         const sortOrder = allImages.findIndex(img => img === path)
         await uploadPropertyImage(pid, path, sortOrder >= 0 ? sortOrder : 0)
+      }
+
+      // 上传新视频
+      if (_newVideoPath) {
+        await uploadPropertyVideo(pid, _newVideoPath)
       }
 
       wx.hideLoading()

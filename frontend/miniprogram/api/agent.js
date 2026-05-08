@@ -35,6 +35,15 @@ function uploadPropertyImage(propertyId, filePath, sortOrder = 0) {
   })
 }
 
+// 上传房源视频
+function uploadPropertyVideo(propertyId, filePath) {
+  return upload({
+    url: `/agent/properties/${propertyId}/video`,
+    filePath,
+    name: 'video',
+  })
+}
+
 module.exports = {
   getAgentHome,
   getProfile,
@@ -42,4 +51,5 @@ module.exports = {
   uploadAvatar,
   getStats,
   uploadPropertyImage,
+  uploadPropertyVideo,
 }

@@ -1,12 +1,29 @@
 <view wx:if="{{property}}" class="page">
-  <!-- 图片轮播 -->
+  <!-- 图片/视频轮播 -->
   <view class="swiper-wrap">
     <swiper class="img-swiper" circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" bindchange="onSwiperChange">
-      <swiper-item wx:for="{{images}}" wx:key="index">
-        <image class="swiper-img" src="{{item}}" mode="aspectFill" lazy-load bindtap="onPreviewImage" data-index="{{index}}" />
+      <swiper-item wx:for="{{mediaItems}}" wx:key="index">
+        <video
+          wx:if="{{item.type === 'video'}}"
+          class="swiper-video"
+          src="{{item.url}}"
+          controls
+          show-center-play-btn
+          object-fit="contain"
+          enable-play-gesture
+        />
+        <image
+          wx:else
+          class="swiper-img"
+          src="{{item.url}}"
+          mode="aspectFill"
+          lazy-load
+          bindtap="onPreviewImage"
+          data-index="{{index}}"
+        />
       </swiper-item>
     </swiper>
-    <view class="img-count">{{swiperCurrent+1}}/{{images.length}}</view>
+    <view class="img-count">{{swiperCurrent+1}}/{{mediaItems.length}}</view>
     <!-- 标签 -->
     <view class="tag-type">{{property.property_type}}</view>
     <view wx:if="{{property.is_verified}}" class="tag-verified">已核验</view>

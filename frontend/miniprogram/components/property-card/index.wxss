@@ -42,6 +42,17 @@
 .tag-gray  { background: rgba(0,0,0,0.45); color: #fff; }
 .tag-blue  { background: rgba(24,144,255,0.9); color: #fff; }
 
+.card-video-badge {
+  position: absolute;
+  bottom: 20rpx;
+  right: 20rpx;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+
 .card-body {
   padding: 24rpx 28rpx 20rpx;
 }

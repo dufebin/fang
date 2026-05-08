@@ -84,7 +84,7 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 
 	offset := (page - 1) * limit
 	q := query.Preload("Images", func(db *gorm.DB) *gorm.DB {
-		return db.Order("sort_order ASC").Limit(1) // 只加载第一张图
+		return db.Order("sort_order ASC")
 	})
 	if filter.PreloadAgent {
 		q = q.Preload("OwnerAgent")
@@ -111,7 +111,7 @@ func (r *PropertyRepo) ListByIDs(ids []uint64, page, limit int) ([]model.Propert
 
 	offset := (page - 1) * limit
 	err := query.Preload("Images", func(db *gorm.DB) *gorm.DB {
-		return db.Order("sort_order ASC").Limit(1)
+		return db.Order("sort_order ASC")
 	}).Offset(offset).Limit(limit).Order("created_at DESC").Find(&properties).Error
 
 	return properties, total, err

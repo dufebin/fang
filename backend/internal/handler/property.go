@@ -159,6 +159,42 @@ func (h *PropertyHandler) UploadImage(c *gin.Context) {
 	response.Success(c, img)
 }
 
+// UploadVideo 经纪人上传房源视频
+func (h *PropertyHandler) UploadVideo(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	userID := middleware.GetCurrentUserID(c)
+	agent, err := h.agentSvc.FindByUserID(userID)
+	if err != nil || agent == nil {
+		response.Fail(c, 403, "无权限")
+		return
+	}
+	property, err := h.propertySvc.GetByID(id)
+	if err != nil || property == nil {
+		response.NotFound(c)
+		return
+	}
+	if property.OwnerAgentID == nil || *property.OwnerAgentID != agent.ID {
+		response.Fail(c, 403, "仅房源负责人可操作")
+		return
+	}
+	file, header, err := c.Request.FormFile("video")
+	if err != nil {
+		response.BadRequest(c, "请选择视频文件")
+		return
+	}
+	defer file.Close()
+	url, err := h.propertySvc.UploadVideo(id, file, header)
+	if err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"url": url})
+}
+
 // Claim 认领房源
 func (h *PropertyHandler) Claim(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)

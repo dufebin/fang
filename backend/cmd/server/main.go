@@ -217,6 +217,7 @@ func registerRoutes(
 		agent.POST("/properties/:id/claim", propertyH.Claim)
 		agent.DELETE("/properties/:id/claim", propertyH.Unclaim)
 		agent.POST("/properties/:id/images", propertyH.UploadImage)
+		agent.POST("/properties/:id/video", propertyH.UploadVideo)
 		agent.GET("/appointments", userActionH.ListAgentAppointments)
 		agent.PUT("/appointments/:id/status", userActionH.UpdateAgentAppointmentStatus)
 		agent.GET("/stats", userActionH.GetAgentStats)

@@ -11,11 +11,31 @@
       <view class="img-cell" wx:for="{{images}}" wx:key="index">
         <image class="img-thumb" src="{{item.url || item}}" mode="aspectFill" />
         <view wx:if="{{index === 0}}" class="cover-tag">封面</view>
-        <view class="img-del" bindtap="onDelImage" data-index="{{index}}">×</view>
+        <view wx:else class="set-cover-btn" catchtap="onSetCover" data-index="{{index}}">设封面</view>
+        <view class="img-del" catchtap="onDelImage" data-index="{{index}}">×</view>
       </view>
       <view wx:if="{{images.length < 9}}" class="img-add" bindtap="onAddImage">
         <text class="add-plus">+</text>
         <text class="add-label">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 房源视频 -->
+  <view class="card">
+    <view class="card-header">
+      <view class="header-bar"></view>
+      <text class="card-title">房源视频</text>
+      <text class="card-hint">最长2分钟</text>
+    </view>
+    <view class="video-section">
+      <view wx:if="{{videoUrl}}" class="video-wrap">
+        <video class="video-preview" src="{{videoUrl}}" controls show-center-play-btn object-fit="contain" />
+        <view class="video-del" catchtap="onDelVideo">删除视频</view>
+      </view>
+      <view wx:else class="video-add" bindtap="onAddVideo">
+        <text class="video-add-icon">▶</text>
+        <text class="video-add-label">添加视频</text>
       </view>
     </view>
   </view>
