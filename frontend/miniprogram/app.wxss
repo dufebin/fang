@@ -35,9 +35,9 @@ page {
 /* 卡片 */
 .card {
   background: #fff;
-  border-radius: 20rpx;
+  border-radius: 24rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 16rpx rgba(2,132,199,0.08);
+  box-shadow: 0 2rpx 20rpx rgba(2,132,199,0.09);
 }
 
 /* 按钮 */

@@ -31,17 +31,19 @@
   </view>
 
   <!-- 房源列表 -->
-  <view class="list-wrap">
+  <view class="list-grid">
     <block wx:if="{{list.length}}">
       <property-card
         wx:for="{{list}}"
         wx:key="id"
         property="{{item}}"
+        compact="{{true}}"
+        style="width: calc(50% - 8rpx)"
       />
     </block>
     <view wx:elif="{{loading && !list.length && !_firstLoaded}}" class="loading-tip">加载中...</view>
     <empty-state wx:elif="{{!loading && !list.length && _firstLoaded}}" text="没有找到符合条件的房源" btn-text="清除筛选" bindaction="onClearFilter" />
-    <view wx:if="{{noMore && list.length}}" class="no-more">没有更多了</view>
+    <view wx:if="{{noMore && list.length}}" class="no-more no-more-grid">没有更多了</view>
   </view>
 
   <filter-drawer show="{{showFilter}}" bind:close="onFilterClose" bind:confirm="onFilterConfirm" />

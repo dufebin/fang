@@ -17,31 +17,31 @@
   <!-- 快捷入口 -->
   <view class="quick-nav">
     <view class="nav-item" bindtap="onNavTap" data-type="二手房">
-      <view class="nav-icon-circle">🏠</view>
+      <view class="nav-icon-circle nav-green">🏠</view>
       <text>二手房</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="新房">
-      <view class="nav-icon-circle">🏗️</view>
+      <view class="nav-icon-circle nav-orange">🏗️</view>
       <text>新房</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="租房">
-      <view class="nav-icon-circle">🔑</view>
+      <view class="nav-icon-circle nav-blue">🔑</view>
       <text>租房</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="装修">
-      <view class="nav-icon-circle">🪟</view>
+      <view class="nav-icon-circle nav-pink">🪟</view>
       <text>装修</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="商铺办公">
-      <view class="nav-icon-circle">🏢</view>
+      <view class="nav-icon-circle nav-teal">🏢</view>
       <text>商铺办公</text>
     </view>
     <view class="nav-item" bindtap="onMapTap">
-      <view class="nav-icon-circle">🗺️</view>
+      <view class="nav-icon-circle nav-indigo">🗺️</view>
       <text>地图找房</text>
     </view>
     <view class="nav-item" bindtap="onCalcTap">
-      <view class="nav-icon-circle">🧮</view>
+      <view class="nav-icon-circle nav-purple">🧮</view>
       <text>贷款计算</text>
     </view>
   </view>

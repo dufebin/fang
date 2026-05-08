@@ -1,7 +1,7 @@
 <wxs module="fmt" src="../../utils/format.wxs" />
 
-<view class="property-card" bindtap="onTap">
-  <view class="card-image-wrap">
+<view class="property-card {{compact ? 'property-card-compact' : ''}}" bindtap="onTap">
+  <view class="card-image-wrap {{compact ? 'card-image-compact' : ''}}">
     <image
       class="card-image"
       src="{{coverImage}}"
@@ -10,25 +10,21 @@
     />
     <view class="card-type-tag">{{property.property_type}}</view>
     <view wx:if="{{showStatus}}" class="card-status-tag {{fmt.statusClass(property.status)}}">{{fmt.statusLabel(property.status)}}</view>
-    <view wx:if="{{property.video_url}}" class="card-video-badge">▶ 视频</view>
+    <view wx:if="{{property.video_url && !compact}}" class="card-video-badge">▶ 视频</view>
   </view>
 
-  <view class="card-body">
-    <view class="card-title">{{property.title}}</view>
-    <view class="card-meta">
+  <view class="card-body {{compact ? 'card-body-compact' : ''}}">
+    <view class="card-title {{compact ? 'card-title-compact' : ''}}">{{property.title}}</view>
+    <view class="card-meta {{compact ? 'card-meta-compact' : ''}}">
       <text>{{fmt.formatLayout(property.bedrooms, property.living_rooms, property.bathrooms)}}</text>
       <text class="dot">·</text>
       <text>{{fmt.formatArea(property.area)}}</text>
-      <text class="dot">·</text>
-      <text>{{property.district}}</text>
+      <text wx:if="{{!compact}}" class="dot">·</text>
+      <text wx:if="{{!compact}}">{{property.district}}</text>
     </view>
-    <view class="card-bottom">
-      <view class="card-price">
-        <text class="price-num">{{fmt.formatPrice(property.total_price, property.property_type === '租房' ? 'rent' : 'sale')}}</text>
-      </view>
-      <view class="card-views">
-        <text class="views-text">{{property.view_count}}次浏览</text>
-      </view>
+    <view class="card-bottom {{compact ? 'card-bottom-compact' : ''}}">
+      <text class="price-num {{compact ? 'price-compact' : ''}}">{{fmt.formatPrice(property.total_price, property.property_type === '租房' ? 'rent' : 'sale')}}</text>
+      <text wx:if="{{!compact}}" class="views-text">{{property.view_count}}次浏览</text>
     </view>
   </view>
 </view>

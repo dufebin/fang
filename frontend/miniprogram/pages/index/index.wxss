@@ -37,58 +37,69 @@
 
 .banner-swiper {
   width: 100%;
-  height: 320rpx;
+  height: 340rpx;
 }
 
 .banner-img {
   width: 100%;
-  height: 320rpx;
+  height: 340rpx;
+  display: block;
 }
 
 .quick-nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   background: #fff;
-  padding: 24rpx 0 12rpx;
+  padding: 20rpx 0 16rpx;
 }
 
 .nav-item {
-  width: 16.666%;
+  width: calc(100% / 7);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16rpx 0 24rpx;
-  font-size: 22rpx;
+  padding: 12rpx 0 20rpx;
+  font-size: 20rpx;
   color: #444;
 }
 
 .nav-item:active .nav-icon-circle {
-  background: #D9EEF9;
+  opacity: 0.82;
 }
 
+/* 5类主分类彩色 */
+.nav-green  { background: #D1FAE5; }
+.nav-orange { background: #FEF3C7; }
+.nav-blue   { background: #E0F2FE; }
+.nav-pink   { background: #FFE4E6; }
+.nav-teal   { background: #CCFBF1; }
+/* 工具类 */
+.nav-indigo { background: #E0E7FF; }
+.nav-purple { background: #EDE9FE; }
+
 .nav-icon {
-  width: 80rpx;
-  height: 80rpx;
+  width: 72rpx;
+  height: 72rpx;
   margin-bottom: 10rpx;
 }
 
 .nav-icon-circle {
-  width: 80rpx;
-  height: 80rpx;
+  width: 72rpx;
+  height: 72rpx;
   border-radius: 50%;
   background: #EFF7FB;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40rpx;
+  font-size: 34rpx;
   margin-bottom: 10rpx;
 }
 
 .section {
-  margin-top: 20rpx;
+  margin: 16rpx 0 0;
   background: #fff;
   padding: 28rpx 28rpx 24rpx;
-  border-radius: 20rpx 20rpx 0 0;
+  border-radius: 24rpx 24rpx 0 0;
 }
 
 .section-header {
@@ -100,22 +111,22 @@
 
 .section-title {
   font-size: 32rpx;
-  font-weight: 600;
-  color: #222;
+  font-weight: 700;
+  color: #1a1a1a;
 }
 
 .section-more {
   font-size: 26rpx;
-  color: #888;
+  color: #0284C7;
 }
 
 .article-list {}
 
 .article-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 24rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid #f5f5f5;
 }
 
 .article-item:last-child {
@@ -123,22 +134,23 @@
 }
 
 .article-thumb {
-  width: 168rpx;
-  height: 116rpx;
-  border-radius: 12rpx;
+  width: 176rpx;
+  height: 120rpx;
+  border-radius: 14rpx;
   flex-shrink: 0;
   background: #EFF7FB;
 }
 
 .article-info {
   flex: 1;
-  margin-left: 20rpx;
+  margin-left: 24rpx;
 }
 
 .article-title {
   font-size: 28rpx;
+  font-weight: 500;
   color: #222;
-  line-height: 1.5;
+  line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -148,5 +160,5 @@
 .article-date {
   font-size: 22rpx;
   color: #bbb;
-  margin-top: 10rpx;
+  margin-top: 12rpx;
 }

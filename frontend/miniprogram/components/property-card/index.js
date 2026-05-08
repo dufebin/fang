@@ -5,6 +5,7 @@ Component({
     property: { type: Object, value: {} },
     agentCode: { type: String, value: '' },
     showStatus: { type: Boolean, value: false },
+    compact: { type: Boolean, value: false },
   },
 
   methods: {

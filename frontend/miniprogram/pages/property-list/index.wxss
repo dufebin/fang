@@ -92,14 +92,28 @@
   border-radius: 2rpx;
 }
 
-.list-wrap {
-  padding: 16rpx 24rpx;
+.list-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  padding: 16rpx 20rpx;
 }
 
-.loading-tip,
+.loading-tip {
+  width: 100%;
+  text-align: center;
+  font-size: 26rpx;
+  color: #bbb;
+  padding: 32rpx 0;
+}
+
 .no-more {
   text-align: center;
   font-size: 26rpx;
   color: #bbb;
   padding: 32rpx 0;
+}
+
+.no-more-grid {
+  width: 100%;
 }

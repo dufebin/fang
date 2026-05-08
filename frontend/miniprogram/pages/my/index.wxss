@@ -7,7 +7,7 @@
 .profile-header {
   display: flex;
   align-items: center;
-  background: linear-gradient(160deg, #0284C7 0%, #0369A1 100%);
+  background: linear-gradient(135deg, #38bdf8 0%, #0284C7 60%, #0369A1 100%);
   padding: 60rpx 32rpx 48rpx;
   gap: 24rpx;
 }
@@ -82,9 +82,10 @@
 
 .menu-group {
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 20rpx;
   margin: 0 24rpx 20rpx;
   overflow: hidden;
+  box-shadow: 0 1rpx 12rpx rgba(2,132,199,0.05);
 }
 
 .menu-item {
