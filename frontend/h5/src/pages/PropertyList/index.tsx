@@ -11,7 +11,8 @@ const PROPERTY_TYPES = [
   { key: '二手房', label: '二手房' },
   { key: '新房', label: '新房' },
   { key: '租房', label: '租房' },
-  { key: '商铺', label: '商铺' },
+  { key: '装修', label: '装修' },
+  { key: '商铺办公', label: '商铺办公' },
 ]
 
 export default function PropertyList() {

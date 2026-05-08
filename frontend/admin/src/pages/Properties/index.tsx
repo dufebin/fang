@@ -26,7 +26,7 @@ const STATUS_MAP: Record<string, { text: string; color: string }> = {
   offline: { text: '已下架', color: 'red' },
 }
 
-const PROPERTY_TYPES = ['新房', '二手房', '租房', '商铺']
+const PROPERTY_TYPES = ['二手房', '新房', '租房', '装修', '商铺办公']
 const DECORATIONS = ['毛坯', '简装', '精装', '豪华装修']
 
 const CITY_OPTIONS = MAJOR_CITIES.map(c => ({ value: c }))

@@ -37,7 +37,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: #E84040;
+  background: #0284C7;
   position: absolute;
   top: 8rpx;
   right: 8rpx;
@@ -61,7 +61,7 @@
 
 .loc-icon-text {
   font-size: 44rpx;
-  color: #E84040;
+  color: #0284C7;
   line-height: 1;
   font-weight: 700;
 }

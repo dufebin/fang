@@ -45,7 +45,7 @@ Page({
     videoUrl: '',
     _newVideoPath: '',
     _originalVideoUrl: '',
-    propertyTypes: ['新房', '二手房', '租房', '商铺'],
+    propertyTypes: ['二手房', '新房', '租房', '装修', '商铺办公'],
     decorations: DECORATIONS,
     directions: DIRECTIONS,
     statuses: STATUSES,

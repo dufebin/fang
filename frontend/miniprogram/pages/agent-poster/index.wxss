@@ -12,7 +12,7 @@
 }
 
 .poster-bg {
-  background: linear-gradient(135deg, #E84040 0%, #c0392b 100%);
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
   padding: 48rpx 36rpx 40rpx;
 }
 
@@ -97,7 +97,7 @@
 }
 
 .save-btn { background: #f5f5f5; color: #555; }
-.share-btn { background: #E84040; color: #fff; }
+.share-btn { background: #0284C7; color: #fff; }
 
 .link-section {
   background: #fff;
@@ -127,7 +127,7 @@
 .copy-btn {
   flex-shrink: 0;
   padding: 8rpx 20rpx;
-  background: #E84040;
+  background: #0284C7;
   color: #fff;
   border-radius: 8rpx;
   font-size: 24rpx;

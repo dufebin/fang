@@ -1,8 +1,10 @@
 <view class="page">
   <!-- 顶部搜索栏 -->
   <view class="search-bar" bindtap="onSearchTap">
-    <image class="search-icon" src="../../assets/icons/search.png" />
-    <text class="search-placeholder">搜索小区、地址、房源</text>
+    <view class="search-bar-inner">
+      <image class="search-icon" src="../../assets/icons/search.png" />
+      <text class="search-placeholder">搜索小区、地址、房源</text>
+    </view>
   </view>
 
   <!-- 轮播图 -->
@@ -14,21 +16,25 @@
 
   <!-- 快捷入口 -->
   <view class="quick-nav">
-    <view class="nav-item" bindtap="onNavTap" data-type="住宅">
+    <view class="nav-item" bindtap="onNavTap" data-type="二手房">
       <view class="nav-icon-circle">🏠</view>
-      <text>住宅</text>
+      <text>二手房</text>
+    </view>
+    <view class="nav-item" bindtap="onNavTap" data-type="新房">
+      <view class="nav-icon-circle">🏗️</view>
+      <text>新房</text>
     </view>
     <view class="nav-item" bindtap="onNavTap" data-type="租房">
       <view class="nav-icon-circle">🔑</view>
       <text>租房</text>
     </view>
-    <view class="nav-item" bindtap="onNavTap" data-type="公寓">
-      <view class="nav-icon-circle">🏢</view>
-      <text>公寓</text>
+    <view class="nav-item" bindtap="onNavTap" data-type="装修">
+      <view class="nav-icon-circle">🪟</view>
+      <text>装修</text>
     </view>
-    <view class="nav-item" bindtap="onNavTap" data-type="别墅">
-      <view class="nav-icon-circle">🏡</view>
-      <text>别墅</text>
+    <view class="nav-item" bindtap="onNavTap" data-type="商铺办公">
+      <view class="nav-icon-circle">🏢</view>
+      <text>商铺办公</text>
     </view>
     <view class="nav-item" bindtap="onMapTap">
       <view class="nav-icon-circle">🗺️</view>

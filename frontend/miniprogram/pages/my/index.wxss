@@ -1,5 +1,5 @@
 .page {
-  background: #f5f5f5;
+  background: #F0F9FF;
   min-height: 100vh;
   padding-bottom: 60rpx;
 }
@@ -7,8 +7,8 @@
 .profile-header {
   display: flex;
   align-items: center;
-  background: #E84040;
-  padding: 60rpx 32rpx 40rpx;
+  background: linear-gradient(160deg, #0284C7 0%, #0369A1 100%);
+  padding: 60rpx 32rpx 48rpx;
   gap: 24rpx;
 }
 
@@ -34,7 +34,7 @@
   display: inline-block;
   margin-top: 8rpx;
   font-size: 20rpx;
-  color: #E84040;
+  color: #0284C7;
   background: #fff;
   padding: 2rpx 12rpx;
   border-radius: 10rpx;
@@ -51,6 +51,7 @@
   background: #fff;
   padding: 28rpx 0;
   margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(2,132,199,0.06);
 }
 
 .stat-item {
@@ -96,6 +97,8 @@
 
 .menu-item:last-child { border-bottom: none; }
 
+.menu-item:active { background: #F0F9FF; }
+
 .menu-label {
   flex: 1;
   font-size: 28rpx;
@@ -108,7 +111,7 @@
 }
 
 .badge {
-  background: #E84040;
+  background: #0284C7;
   color: #fff;
   font-size: 20rpx;
   min-width: 32rpx;
@@ -129,7 +132,8 @@
   background: #fff;
   border-radius: 44rpx;
   font-size: 28rpx;
-  color: #E84040;
+  color: #666;
+  border: 1rpx solid #e8e8e8;
 }
 
 .mock-login-btn {

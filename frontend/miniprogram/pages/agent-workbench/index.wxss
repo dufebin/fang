@@ -1,11 +1,11 @@
 .page {
-  background: #f5f5f5;
+  background: #F0F9FF;
   min-height: 100vh;
   padding-bottom: 40rpx;
 }
 
 .stats-card {
-  background: #E84040;
+  background: #0284C7;
   padding: 32rpx;
 }
 
@@ -60,7 +60,7 @@
 
 .action-icon-text {
   font-size: 36rpx;
-  color: #E84040;
+  color: #0284C7;
 }
 
 .tab-bar {
@@ -79,7 +79,7 @@
 }
 
 .tab-active {
-  color: #E84040;
+  color: #0284C7;
   font-weight: 500;
 }
 
@@ -91,7 +91,7 @@
   transform: translateX(-50%);
   width: 40rpx;
   height: 4rpx;
-  background: #E84040;
+  background: #0284C7;
   border-radius: 2rpx;
 }
 
@@ -135,8 +135,8 @@
   font-size: 24rpx;
 }
 
-.appt-btn-confirm { background: #E84040; color: #fff; }
-.appt-btn-cancel { background: #f5f5f5; color: #888; }
+.appt-btn-confirm { background: #0284C7; color: #fff; }
+.appt-btn-cancel { background: #F0F9FF; color: #888; }
 
 .property-wrap { margin-bottom: 16rpx; }
 
@@ -155,14 +155,14 @@
   padding: 8rpx 28rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
-  border: 1rpx solid #E84040;
-  color: #E84040;
+  border: 1rpx solid #0284C7;
+  color: #0284C7;
 }
 
 .action-delete {
   padding: 8rpx 28rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
-  background: #f5f5f5;
+  background: #F0F9FF;
   color: #888;
 }

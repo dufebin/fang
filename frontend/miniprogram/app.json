@@ -22,7 +22,7 @@
   ],
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#E84040",
+    "selectedColor": "#0284C7",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
@@ -53,11 +53,11 @@
     ]
   },
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#E84040",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTitleText": "房产",
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#F5F5F5"
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F0F9FF"
   },
   "permission": {
     "scope.userLocation": {

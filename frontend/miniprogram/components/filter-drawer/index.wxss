@@ -69,9 +69,9 @@
 }
 
 .tag-active {
-  color: #E84040;
-  background: #fff0f0;
-  border-color: #E84040;
+  color: #0284C7;
+  background: #E0F2FE;
+  border-color: #0284C7;
 }
 
 .range-row {
@@ -121,6 +121,6 @@
 }
 
 .btn-confirm {
-  background: #E84040;
+  background: #0284C7;
   color: #fff;
 }

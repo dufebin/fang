@@ -31,7 +31,7 @@
 
 .agent-title {
   font-size: 24rpx;
-  color: #E84040;
+  color: #0284C7;
   margin-top: 6rpx;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .btn-call {
-  background: #E84040;
+  background: #0284C7;
   color: #fff;
 }
 

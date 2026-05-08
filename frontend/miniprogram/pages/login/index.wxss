@@ -21,7 +21,7 @@
 .app-name {
   font-size: 40rpx;
   font-weight: 700;
-  color: #E84040;
+  color: #0284C7;
 }
 
 .slogan {
@@ -38,7 +38,7 @@
 .login-btn {
   width: 100%;
   height: 88rpx;
-  background: #E84040;
+  background: #0284C7;
   color: #fff;
   border-radius: 44rpx;
   font-size: 30rpx;

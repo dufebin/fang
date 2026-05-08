@@ -13,7 +13,7 @@ Component({
       max_area: '',
       bedrooms: ''
     },
-    propertyTypes: ['不限', '住宅', '公寓', '别墅', '商铺', '办公室', '租房'],
+    propertyTypes: ['不限', '二手房', '新房', '租房', '装修', '商铺办公'],
     bedroomOptions: ['不限', '1室', '2室', '3室', '4室', '5室+']
   },
 

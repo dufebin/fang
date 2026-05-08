@@ -1,5 +1,5 @@
 .page {
-  background: #f5f5f5;
+  background: #F0F9FF;
   min-height: 100vh;
 }
 
@@ -8,20 +8,31 @@
   align-items: center;
   background: #fff;
   margin: 0;
-  padding: 20rpx 32rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  padding: 16rpx 24rpx 20rpx;
+  border-bottom: 1rpx solid #EDF4FB;
+}
+
+.search-bar-inner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #F0F9FF;
+  border: 1.5rpx solid #E0EEF8;
+  border-radius: 40rpx;
+  padding: 16rpx 28rpx;
 }
 
 .search-icon {
-  width: 36rpx;
-  height: 36rpx;
-  margin-right: 16rpx;
-  opacity: 0.4;
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+  opacity: 0.45;
+  flex-shrink: 0;
 }
 
 .search-placeholder {
   font-size: 28rpx;
-  color: #bbb;
+  color: #aac5d9;
 }
 
 .banner-swiper {
@@ -38,7 +49,7 @@
   display: flex;
   flex-wrap: wrap;
   background: #fff;
-  padding: 20rpx 0 8rpx;
+  padding: 24rpx 0 12rpx;
 }
 
 .nav-item {
@@ -46,9 +57,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16rpx 0 20rpx;
+  padding: 16rpx 0 24rpx;
   font-size: 22rpx;
   color: #444;
+}
+
+.nav-item:active .nav-icon-circle {
+  background: #D9EEF9;
 }
 
 .nav-icon {
@@ -61,7 +76,7 @@
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background: #f8f0f0;
+  background: #EFF7FB;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,9 +85,10 @@
 }
 
 .section {
-  margin-top: 16rpx;
+  margin-top: 20rpx;
   background: #fff;
-  padding: 24rpx 28rpx;
+  padding: 28rpx 28rpx 24rpx;
+  border-radius: 20rpx 20rpx 0 0;
 }
 
 .section-header {
@@ -98,8 +114,8 @@
 .article-item {
   display: flex;
   align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .article-item:last-child {
@@ -107,11 +123,11 @@
 }
 
 .article-thumb {
-  width: 160rpx;
-  height: 110rpx;
-  border-radius: 8rpx;
+  width: 168rpx;
+  height: 116rpx;
+  border-radius: 12rpx;
   flex-shrink: 0;
-  background: #f0f0f0;
+  background: #EFF7FB;
 }
 
 .article-info {

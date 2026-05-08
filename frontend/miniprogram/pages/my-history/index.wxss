@@ -1,2 +1,2 @@
-.page { background: #f5f5f5; min-height: 100vh; padding: 16rpx 24rpx; }
+.page { background: #F0F9FF; min-height: 100vh; padding: 16rpx 24rpx; }
 .no-more { text-align: center; font-size: 26rpx; color: #bbb; padding: 32rpx 0; }
