@@ -10,11 +10,11 @@
         <view class="tag-list">
           <view
             wx:for="{{propertyTypes}}"
-            wx:key="*this"
-            class="filter-tag {{(filter.property_type === item || (filter.property_type === '' && item === '不限')) ? 'tag-active' : ''}}"
-            data-val="{{item}}"
+            wx:key="value"
+            class="filter-tag {{filter.type === item.value ? 'tag-active' : ''}}"
+            data-val="{{item.value}}"
             bindtap="onTypeSelect"
-          >{{item}}</view>
+          >{{item.label}}</view>
         </view>
       </view>
 

@@ -16,6 +16,10 @@ type PropertyFilter struct {
 	Status         string
 	MinPrice       *float64
 	MaxPrice       *float64
+	MinArea        *float64
+	MaxArea        *float64
+	Bedrooms       *int
+	Sort           string // created_at | price_asc | price_desc | area
 	Keyword        string
 	IncludeOffline bool
 	OwnerAgentID   *uint64
@@ -70,6 +74,15 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 	if filter.MaxPrice != nil {
 		query = query.Where("total_price <= ?", *filter.MaxPrice)
 	}
+	if filter.MinArea != nil {
+		query = query.Where("area >= ?", *filter.MinArea)
+	}
+	if filter.MaxArea != nil {
+		query = query.Where("area <= ?", *filter.MaxArea)
+	}
+	if filter.Bedrooms != nil {
+		query = query.Where("bedrooms = ?", *filter.Bedrooms)
+	}
 	if filter.Keyword != "" {
 		like := "%" + filter.Keyword + "%"
 		query = query.Where("title LIKE ? OR address LIKE ? OR district LIKE ?", like, like, like)
@@ -89,7 +102,17 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 	if filter.PreloadAgent {
 		q = q.Preload("OwnerAgent")
 	}
-	err := q.Offset(offset).Limit(limit).Order("created_at DESC").Find(&properties).Error
+	switch filter.Sort {
+	case "price_asc":
+		q = q.Order("total_price ASC")
+	case "price_desc":
+		q = q.Order("total_price DESC")
+	case "area":
+		q = q.Order("area DESC")
+	default:
+		q = q.Order("created_at DESC")
+	}
+	err := q.Offset(offset).Limit(limit).Find(&properties).Error
 
 	return properties, total, err
 }

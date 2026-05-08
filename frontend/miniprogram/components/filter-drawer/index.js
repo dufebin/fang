@@ -5,7 +5,7 @@ Component({
 
   data: {
     filter: {
-      property_type: '',
+      type: '',
       district: '',
       min_price: '',
       max_price: '',
@@ -13,7 +13,14 @@ Component({
       max_area: '',
       bedrooms: ''
     },
-    propertyTypes: ['不限', '二手房', '新房', '租房', '装修', '商铺办公'],
+    propertyTypes: [
+      { value: '', label: '不限' },
+      { value: 'second_hand', label: '二手房' },
+      { value: 'new_home', label: '新房' },
+      { value: 'rent', label: '租房' },
+      { value: 'decoration', label: '装修' },
+      { value: 'commercial', label: '商铺办公' },
+    ],
     bedroomOptions: ['不限', '1室', '2室', '3室', '4室', '5室+']
   },
 
@@ -23,9 +30,7 @@ Component({
     },
 
     onTypeSelect: function(e) {
-      var val = e.currentTarget.dataset.val
-      var newVal = val === '不限' ? '' : val
-      this.setData({ 'filter.property_type': newVal })
+      this.setData({ 'filter.type': e.currentTarget.dataset.val })
     },
 
     onBedroomSelect: function(e) {
@@ -44,7 +49,7 @@ Component({
     onReset: function() {
       this.setData({
         filter: {
-          property_type: '',
+          type: '',
           district: '',
           min_price: '',
           max_price: '',

@@ -51,6 +51,12 @@ func (h *PropertyHandler) GetDetail(c *gin.Context) {
 func (h *PropertyHandler) List(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	// 兼容小程序发来的 page_size
+	if ps := c.Query("page_size"); ps != "" {
+		if v, err := strconv.Atoi(ps); err == nil && v > 0 {
+			limit = v
+		}
+	}
 	if page < 1 {
 		page = 1
 	}
@@ -63,6 +69,7 @@ func (h *PropertyHandler) List(c *gin.Context) {
 		District:     c.Query("district"),
 		Status:       c.Query("status"),
 		Keyword:      c.Query("keyword"),
+		Sort:         c.Query("sort"),
 	}
 
 	if minPrice := c.Query("min_price"); minPrice != "" {
@@ -73,6 +80,21 @@ func (h *PropertyHandler) List(c *gin.Context) {
 	if maxPrice := c.Query("max_price"); maxPrice != "" {
 		if v, err := strconv.ParseFloat(maxPrice, 64); err == nil {
 			filter.MaxPrice = &v
+		}
+	}
+	if minArea := c.Query("min_area"); minArea != "" {
+		if v, err := strconv.ParseFloat(minArea, 64); err == nil {
+			filter.MinArea = &v
+		}
+	}
+	if maxArea := c.Query("max_area"); maxArea != "" {
+		if v, err := strconv.ParseFloat(maxArea, 64); err == nil {
+			filter.MaxArea = &v
+		}
+	}
+	if bedrooms := c.Query("bedrooms"); bedrooms != "" {
+		if v, err := strconv.Atoi(bedrooms); err == nil {
+			filter.Bedrooms = &v
 		}
 	}
 

@@ -26,6 +26,16 @@ function request(opts) {
   var cache = opts.cache || false
   var retry = opts.retry || 0
 
+  if (data && typeof data === 'object') {
+    var cleaned = {}
+    Object.keys(data).forEach(function(k) {
+      if (data[k] !== undefined && data[k] !== null) {
+        cleaned[k] = data[k]
+      }
+    })
+    data = cleaned
+  }
+
   return new Promise(function(resolve, reject) {
     if (showLoading) {
       try { wx.showLoading({ title: '加载中...', mask: false }) } catch (_) {}

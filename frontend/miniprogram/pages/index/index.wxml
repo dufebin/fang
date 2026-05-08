@@ -16,23 +16,23 @@
 
   <!-- 快捷入口 -->
   <view class="quick-nav">
-    <view class="nav-item" bindtap="onNavTap" data-type="二手房">
+    <view class="nav-item" bindtap="onNavTap" data-type="second_hand">
       <view class="nav-icon-circle nav-green">🏠</view>
       <text>二手房</text>
     </view>
-    <view class="nav-item" bindtap="onNavTap" data-type="新房">
+    <view class="nav-item" bindtap="onNavTap" data-type="new_home">
       <view class="nav-icon-circle nav-orange">🏗️</view>
       <text>新房</text>
     </view>
-    <view class="nav-item" bindtap="onNavTap" data-type="租房">
+    <view class="nav-item" bindtap="onNavTap" data-type="rent">
       <view class="nav-icon-circle nav-blue">🔑</view>
       <text>租房</text>
     </view>
-    <view class="nav-item" bindtap="onNavTap" data-type="装修">
+    <view class="nav-item" bindtap="onNavTap" data-type="decoration">
       <view class="nav-icon-circle nav-pink">🪟</view>
       <text>装修</text>
     </view>
-    <view class="nav-item" bindtap="onNavTap" data-type="商铺办公">
+    <view class="nav-item" bindtap="onNavTap" data-type="commercial">
       <view class="nav-icon-circle nav-teal">🏢</view>
       <text>商铺办公</text>
     </view>
@@ -55,13 +55,15 @@
     <!-- 加载中 -->
     <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
     <!-- 数据 -->
-    <block wx:elif="{{hotProperties.length}}">
+    <view wx:elif="{{hotProperties.length}}" class="hot-grid">
       <property-card
         wx:for="{{hotProperties}}"
         wx:key="id"
         property="{{item}}"
+        compact="{{true}}"
+        style="width: calc(50% - 8rpx)"
       />
-    </block>
+    </view>
     <empty-state wx:elif="{{!loading}}" text="暂无推荐房源" />
   </view>
 

@@ -19,7 +19,7 @@ Page({
     _originalStatus: 'available',
     form: {
       title: '',
-      property_type: '二手房',
+      property_type: 'second_hand',
       province: '',
       city: '',
       district: '',
@@ -45,7 +45,13 @@ Page({
     videoUrl: '',
     _newVideoPath: '',
     _originalVideoUrl: '',
-    propertyTypes: ['二手房', '新房', '租房', '装修', '商铺办公'],
+    propertyTypes: [
+      { value: 'second_hand', label: '二手房' },
+      { value: 'new_home', label: '新房' },
+      { value: 'rent', label: '租房' },
+      { value: 'decoration', label: '装修' },
+      { value: 'commercial', label: '商铺办公' },
+    ],
     decorations: DECORATIONS,
     directions: DIRECTIONS,
     statuses: STATUSES,
@@ -70,7 +76,7 @@ Page({
         status: p.status || 'available',
         form: {
           title: p.title || '',
-          property_type: p.property_type || '二手房',
+          property_type: p.property_type || 'second_hand',
           province: p.province || '',
           city: p.city || '',
           district: p.district || '',

@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS agents (
 CREATE TABLE IF NOT EXISTS properties (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL COMMENT '标题',
-    property_type ENUM('二手房', '新房', '租房', '装修', '商铺办公') NOT NULL DEFAULT '二手房' COMMENT '房源类型',
+    property_type ENUM('second_hand', 'new_home', 'rent', 'decoration', 'commercial') NOT NULL DEFAULT 'second_hand' COMMENT '房源类型',
     city VARCHAR(30) NOT NULL DEFAULT '' COMMENT '城市',
     district VARCHAR(50) NOT NULL DEFAULT '' COMMENT '区域',
     address VARCHAR(200) NOT NULL DEFAULT '' COMMENT '详细地址',

@@ -8,11 +8,11 @@ import styles from './index.module.css'
 
 const PROPERTY_TYPES = [
   { key: '', label: '全部' },
-  { key: '二手房', label: '二手房' },
-  { key: '新房', label: '新房' },
-  { key: '租房', label: '租房' },
-  { key: '装修', label: '装修' },
-  { key: '商铺办公', label: '商铺办公' },
+  { key: 'second_hand', label: '二手房' },
+  { key: 'new_home', label: '新房' },
+  { key: 'rent', label: '租房' },
+  { key: 'decoration', label: '装修' },
+  { key: 'commercial', label: '商铺办公' },
 ]
 
 export default function PropertyList() {

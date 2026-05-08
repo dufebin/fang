@@ -22,16 +22,26 @@ Page({
   },
 
   onLoad() {
-    // check pending filter from homepage quick-nav
-    const app = getApp()
-    if (app.globalData.pendingFilter) {
-      this.setData({ activeFilter: app.globalData.pendingFilter })
-      app.globalData.pendingFilter = null
-    }
+    this._applyPendingFilter()
     this._loadList(true)
   },
 
   onShow() {
+    // tab 页重复切换时 onLoad 不再触发，在此消费 pendingFilter
+    if (this.data._firstLoaded) {
+      this._applyPendingFilter()
+    }
+  },
+
+  _applyPendingFilter() {
+    const app = getApp()
+    if (app.globalData.pendingFilter) {
+      this.setData({ activeFilter: app.globalData.pendingFilter })
+      app.globalData.pendingFilter = null
+      if (this.data._firstLoaded) {
+        this._loadList(true)
+      }
+    }
   },
 
   async _loadList(reset = false) {

@@ -67,16 +67,6 @@
   opacity: 0.82;
 }
 
-/* 5类主分类彩色 */
-.nav-green  { background: #D1FAE5; }
-.nav-orange { background: #FEF3C7; }
-.nav-blue   { background: #E0F2FE; }
-.nav-pink   { background: #FFE4E6; }
-.nav-teal   { background: #CCFBF1; }
-/* 工具类 */
-.nav-indigo { background: #E0E7FF; }
-.nav-purple { background: #EDE9FE; }
-
 .nav-icon {
   width: 72rpx;
   height: 72rpx;
@@ -94,6 +84,15 @@
   font-size: 34rpx;
   margin-bottom: 10rpx;
 }
+
+/* 必须在 .nav-icon-circle 之后定义，否则同优先级时被覆盖 */
+.nav-green  { background: #D1FAE5; }
+.nav-orange { background: #FEF3C7; }
+.nav-blue   { background: #E0F2FE; }
+.nav-pink   { background: #FFE4E6; }
+.nav-teal   { background: #CCFBF1; }
+.nav-indigo { background: #E0E7FF; }
+.nav-purple { background: #EDE9FE; }
 
 .section {
   margin: 16rpx 0 0;
@@ -118,6 +117,12 @@
 .section-more {
   font-size: 26rpx;
   color: #0284C7;
+}
+
+.hot-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
 }
 
 .article-list {}

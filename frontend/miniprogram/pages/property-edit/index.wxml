@@ -55,7 +55,7 @@
     <view class="field-row tag-field">
       <text class="field-label">房源类型</text>
       <view class="tag-group">
-        <view wx:for="{{propertyTypes}}" wx:key="*this" class="pill {{form.property_type === item ? 'pill-active' : ''}}" data-val="{{item}}" bindtap="onTypeSelect">{{item}}</view>
+        <view wx:for="{{propertyTypes}}" wx:key="value" class="pill {{form.property_type === item.value ? 'pill-active' : ''}}" data-val="{{item.value}}" bindtap="onTypeSelect">{{item.label}}</view>
       </view>
     </view>
 

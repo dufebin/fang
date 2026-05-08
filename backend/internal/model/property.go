@@ -7,11 +7,11 @@ type PropertyStatus string
 type Decoration string
 
 const (
-	PropertyTypeSecond     PropertyType = "二手房"
-	PropertyTypeNew        PropertyType = "新房"
-	PropertyTypeRent       PropertyType = "租房"
-	PropertyTypeDecoration PropertyType = "装修"
-	PropertyTypeCommerce   PropertyType = "商铺办公"
+	PropertyTypeSecond     PropertyType = "second_hand"
+	PropertyTypeNew        PropertyType = "new_home"
+	PropertyTypeRent       PropertyType = "rent"
+	PropertyTypeDecoration PropertyType = "decoration"
+	PropertyTypeCommerce   PropertyType = "commercial"
 
 	PropertyStatusAvailable PropertyStatus = "available"
 	PropertyStatusSold      PropertyStatus = "sold"
@@ -27,7 +27,7 @@ const (
 type Property struct {
 	ID           uint64         `gorm:"primaryKey;autoIncrement" json:"id"`
 	Title        string         `gorm:"size:100;not null" json:"title"`
-	PropertyType PropertyType   `gorm:"type:enum('二手房','新房','租房','装修','商铺办公');not null;default:'二手房'" json:"property_type"`
+	PropertyType PropertyType   `gorm:"type:enum('second_hand','new_home','rent','decoration','commercial');not null;default:'second_hand'" json:"property_type"`
 	Province     string         `gorm:"size:30;not null;default:''" json:"province"`
 	City         string         `gorm:"size:30;not null;default:''" json:"city"`
 	District     string         `gorm:"size:50;not null;default:'';index" json:"district"`

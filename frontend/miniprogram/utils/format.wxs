@@ -81,6 +81,18 @@ function statusClass(status) {
   return map[status] || 'tag-gray'
 }
 
+// 房源类型文字
+function typeLabel(type) {
+  var map = {
+    second_hand: '二手房',
+    new_home: '新房',
+    rent: '租房',
+    decoration: '装修',
+    commercial: '商铺办公'
+  }
+  return map[type] || type
+}
+
 // 状态文字
 function statusLabel(status) {
   var map = {
@@ -101,5 +113,6 @@ module.exports = {
   formatWan: formatWan,
   fullImageURL: fullImageURL,
   statusClass: statusClass,
-  statusLabel: statusLabel
+  statusLabel: statusLabel,
+  typeLabel: typeLabel
 }

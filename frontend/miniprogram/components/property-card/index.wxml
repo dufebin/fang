@@ -8,7 +8,7 @@
       mode="aspectFill"
       lazy-load
     />
-    <view class="card-type-tag">{{property.property_type}}</view>
+    <view class="card-type-tag">{{fmt.typeLabel(property.property_type)}}</view>
     <view wx:if="{{showStatus}}" class="card-status-tag {{fmt.statusClass(property.status)}}">{{fmt.statusLabel(property.status)}}</view>
     <view wx:if="{{property.video_url && !compact}}" class="card-video-badge">▶ 视频</view>
   </view>
@@ -23,7 +23,7 @@
       <text wx:if="{{!compact}}">{{property.district}}</text>
     </view>
     <view class="card-bottom {{compact ? 'card-bottom-compact' : ''}}">
-      <text class="price-num {{compact ? 'price-compact' : ''}}">{{fmt.formatPrice(property.total_price, property.property_type === '租房' ? 'rent' : 'sale')}}</text>
+      <text class="price-num {{compact ? 'price-compact' : ''}}">{{fmt.formatPrice(property.total_price, property.property_type === 'rent' ? 'rent' : 'sale')}}</text>
       <text wx:if="{{!compact}}" class="views-text">{{property.view_count}}次浏览</text>
     </view>
   </view>

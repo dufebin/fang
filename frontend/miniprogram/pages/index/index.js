@@ -94,9 +94,8 @@ Page({
 
   onNavTap(e) {
     const type = e.currentTarget.dataset.type
+    getApp().globalData.pendingFilter = { type: type }
     wx.switchTab({ url: '/pages/property-list/index' })
-    // pass filter via globalData since switchTab can't carry query
-    getApp().globalData.pendingFilter = { property_type: type }
   },
 
   onMapTap() {

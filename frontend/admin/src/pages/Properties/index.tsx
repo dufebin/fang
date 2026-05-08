@@ -26,7 +26,14 @@ const STATUS_MAP: Record<string, { text: string; color: string }> = {
   offline: { text: '已下架', color: 'red' },
 }
 
-const PROPERTY_TYPES = ['二手房', '新房', '租房', '装修', '商铺办公']
+const PROPERTY_TYPE_MAP: Record<string, string> = {
+  second_hand: '二手房',
+  new_home: '新房',
+  rent: '租房',
+  decoration: '装修',
+  commercial: '商铺办公',
+}
+const PROPERTY_TYPES = Object.entries(PROPERTY_TYPE_MAP).map(([value, label]) => ({ value, label }))
 const DECORATIONS = ['毛坯', '简装', '精装', '豪华装修']
 
 const CITY_OPTIONS = MAJOR_CITIES.map(c => ({ value: c }))
@@ -264,7 +271,7 @@ export default function PropertiesPage() {
       title: '类型',
       dataIndex: 'property_type',
       valueType: 'select',
-      valueEnum: Object.fromEntries(PROPERTY_TYPES.map(v => [v, { text: v }])),
+      valueEnum: Object.fromEntries(PROPERTY_TYPES.map(({ value, label }) => [value, { text: label }])),
     },
     { title: '区域', dataIndex: 'district' },
     {
@@ -484,7 +491,7 @@ export default function PropertiesPage() {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item name="property_type" label="房源类型" rules={[{ required: true }]}>
-              <Select options={PROPERTY_TYPES.map(v => ({ label: v, value: v }))} />
+              <Select options={PROPERTY_TYPES} />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -819,7 +826,7 @@ export default function PropertiesPage() {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="property_type" label="房源类型" rules={[{ required: true }]}>
-                <Select options={PROPERTY_TYPES.map(v => ({ label: v, value: v }))} />
+                <Select options={PROPERTY_TYPES} />
               </Form.Item>
             </Col>
             <Col span={12}>
