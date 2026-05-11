@@ -1,6 +1,6 @@
 const { createProperty, updateProperty, getAgentPropertyDetail, deletePropertyImage, updatePropertyStatus } = require('../../api/property')
 const { uploadPropertyImage, uploadPropertyVideo } = require('../../api/agent')
-const { fullImageURL } = require('../../utils/format')
+const { fullImageURL, relativeImageURL } = require('../../utils/format')
 const { QQMAP_KEY } = require('../../utils/config')
 
 const DECORATIONS = ['毛坯', '简装', '精装', '豪华装修']
@@ -274,7 +274,7 @@ Page({
       // 封面：首张已入库图片的 URL（设封面后第一张已变更）
       const firstImg = this.data.images[0]
       if (isEdit && firstImg && typeof firstImg === 'object' && firstImg.url) {
-        payload.cover_image = firstImg.url
+        payload.cover_image = relativeImageURL(firstImg.url)
       }
 
       // 用户在编辑时删除了原有视频

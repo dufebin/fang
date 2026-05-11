@@ -36,11 +36,18 @@ function formatFloor(floor, totalFloors) {
   return `${level} ${floor}/${totalFloors || '--'}层`
 }
 
-// 图片 URL 补全
+// 图片 URL 补全（相对路径 → 完整 URL）
 function fullImageURL(url) {
   if (!url) return ''
   if (url.startsWith('http')) return url
   return UPLOAD_BASE + url
+}
+
+// 图片 URL 转相对路径（发送给服务端前使用）
+function relativeImageURL(url) {
+  if (!url) return ''
+  if (url.startsWith(UPLOAD_BASE)) return url.slice(UPLOAD_BASE.length)
+  return url
 }
 
 // 日期格式化 2024-01-15
@@ -92,6 +99,7 @@ module.exports = {
   formatLayout,
   formatFloor,
   fullImageURL,
+  relativeImageURL,
   formatDate,
   timeAgo,
   statusLabel,

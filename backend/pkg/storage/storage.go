@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,13 +20,18 @@ type Storage interface {
 type LocalStorage struct {
 	BasePath string
 	BaseURL  string
+	urlPath  string
 }
 
 func NewLocalStorage(basePath, baseURL string) (*LocalStorage, error) {
 	if err := os.MkdirAll(basePath, 0755); err != nil {
 		return nil, fmt.Errorf("create storage dir: %w", err)
 	}
-	return &LocalStorage{BasePath: basePath, BaseURL: baseURL}, nil
+	urlPath := "/uploads"
+	if u, err := url.Parse(baseURL); err == nil {
+		urlPath = strings.TrimRight(u.Path, "/")
+	}
+	return &LocalStorage{BasePath: basePath, BaseURL: baseURL, urlPath: urlPath}, nil
 }
 
 func (s *LocalStorage) Save(file multipart.File, header *multipart.FileHeader) (string, error) {
@@ -64,14 +70,19 @@ func (s *LocalStorage) Save(file multipart.File, header *multipart.FileHeader) (
 	}
 	relPath := strings.TrimPrefix(absDst, absBase)
 	relPath = strings.ReplaceAll(relPath, string(os.PathSeparator), "/")
-	return s.BaseURL + relPath, nil
+	return s.urlPath + relPath, nil
 }
 
 func (s *LocalStorage) Delete(fileURL string) error {
-	if !strings.HasPrefix(fileURL, s.BaseURL) {
+	var relPath string
+	switch {
+	case strings.HasPrefix(fileURL, s.BaseURL):
+		relPath = strings.TrimPrefix(fileURL, s.BaseURL)
+	case strings.HasPrefix(fileURL, s.urlPath+"/"):
+		relPath = strings.TrimPrefix(fileURL, s.urlPath)
+	default:
 		return nil
 	}
-	relPath := strings.TrimPrefix(fileURL, s.BaseURL)
 	fullPath := filepath.Join(s.BasePath, relPath)
 	return os.Remove(fullPath)
 }
@@ -110,7 +121,7 @@ func (s *LocalStorage) SaveVideo(file multipart.File, header *multipart.FileHead
 	}
 	relPath := strings.TrimPrefix(absDst, absBase)
 	relPath = strings.ReplaceAll(relPath, string(os.PathSeparator), "/")
-	return s.BaseURL + relPath, nil
+	return s.urlPath + relPath, nil
 }
 
 func isAllowedImageExt(ext string) bool {

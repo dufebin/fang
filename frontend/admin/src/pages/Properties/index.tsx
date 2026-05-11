@@ -19,6 +19,16 @@ import {
 import { getAgents, Agent } from '../../api/agent'
 import { CITY_DISTRICTS, MAJOR_CITIES, PROVINCE_CITIES, PROVINCES } from '../../data/cityDistricts'
 
+const API_ORIGIN = new URL('https://fapi.deephealth.net/api').origin
+function toRelativeUrl(url: string): string {
+  if (!url) return ''
+  try {
+    const u = new URL(url)
+    if (u.origin === API_ORIGIN) return u.pathname
+  } catch { /* already relative */ }
+  return url
+}
+
 const STATUS_MAP: Record<string, { text: string; color: string }> = {
   available: { text: '在售', color: 'success' },
   sold: { text: '已售', color: 'default' },
@@ -201,8 +211,8 @@ export default function PropertiesPage() {
       const values = await editForm.validateFields()
       await updateProperty(editTarget.id, {
         ...values,
-        cover_image: editImages[0]?.url || '',
-        video_url: editVideoUrl,
+        cover_image: toRelativeUrl(editImages[0]?.url || ''),
+        video_url: toRelativeUrl(editVideoUrl),
       })
       message.success('房源已更新')
       setEditDrawerOpen(false)
