@@ -49,3 +49,4 @@ logs/
 *.temp
 .DS_Store
 backend/bin/
+.gstack/

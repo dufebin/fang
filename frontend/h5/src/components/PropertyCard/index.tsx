@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Property } from '../../api/property'
+import { getImageUrl } from '../../utils/image'
 import styles from './index.module.css'
 
 interface Props {
@@ -29,7 +30,7 @@ export default function PropertyCard({ property, agentCode }: Props) {
       <div className={styles.imageWrap}>
         {property.cover_image ? (
           <img
-            src={property.cover_image}
+            src={getImageUrl(property.cover_image)}
             alt={property.title}
             className={styles.image}
             loading="lazy"

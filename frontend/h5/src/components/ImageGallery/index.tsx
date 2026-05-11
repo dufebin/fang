@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Swiper, ImageViewer } from 'antd-mobile'
 import type { SwiperRef } from 'antd-mobile/es/components/swiper'
 import { PropertyImage } from '../../api/property'
+import { getImageUrl } from '../../utils/image'
 import styles from './index.module.css'
 
 interface Props {
@@ -16,8 +17,8 @@ export default function ImageGallery({ images, coverImage }: Props) {
   const swiperRef = useRef<SwiperRef>(null)
 
   const allImages = images.length > 0
-    ? images.map(img => img.url)
-    : coverImage ? [coverImage] : []
+    ? images.map(img => getImageUrl(img.url))
+    : coverImage ? [getImageUrl(coverImage)] : []
 
   if (allImages.length === 0) {
     return (

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { ProTable, ProColumns } from '@ant-design/pro-components'
-import { Button, Tag, Popconfirm, Modal, Form, Input, Select, Image, App } from 'antd'
-import { PlusOutlined, EyeOutlined } from '@ant-design/icons'
+import { Button, Tag, Popconfirm, Modal, Form, Input, Select, Image, Upload, App } from 'antd'
+import { PlusOutlined, EyeOutlined, UploadOutlined } from '@ant-design/icons'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
 import { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css'
-import { getArticles, createArticle, updateArticle, deleteArticle, Article } from '../../api/content'
+import { getArticles, createArticle, updateArticle, deleteArticle, uploadImage, Article } from '../../api/content'
+import { getImageUrl } from '../../utils/image'
 
 const CATEGORIES = [
   { label: '行业新闻', value: 'news' },
@@ -144,10 +145,28 @@ function ArticleFormModal({
           </Form.Item>
         </div>
 
-        <Form.Item name="cover_image" label="封面图片 URL" extra="填入图片地址，留空则无封面">
-          <Input placeholder="https://..." />
-        </Form.Item>
-        <CoverPreview url={coverUrl} />
+        <Form.Item name="cover_image" noStyle><Input type="hidden" /></Form.Item>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 4, color: 'rgba(0,0,0,0.88)', fontSize: 14 }}>封面图片</div>
+          <Upload
+            accept="image/*"
+            showUploadList={false}
+            beforeUpload={async (file) => {
+              try {
+                const res = await uploadImage(file)
+                const url = res.data.url
+                form.setFieldValue('cover_image', url)
+                setCoverUrl(url)
+              } catch {
+                message.error('上传失败')
+              }
+              return false
+            }}
+          >
+            <Button icon={<UploadOutlined />}>点击上传</Button>
+          </Upload>
+          <CoverPreview url={coverUrl} />
+        </div>
 
         <Form.Item
           name="content"
@@ -177,7 +196,7 @@ export default function ArticlesPage() {
       width: 80,
       render: (_, r) =>
         r.cover_image ? (
-          <Image src={r.cover_image} width={60} height={40} style={{ objectFit: 'cover', borderRadius: 4 }} preview={{ mask: <EyeOutlined /> }} />
+          <Image src={getImageUrl(r.cover_image)} width={60} height={40} style={{ objectFit: 'cover', borderRadius: 4 }} preview={{ mask: <EyeOutlined /> }} />
         ) : (
           <div style={{ width: 60, height: 40, background: '#f5f5f5', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#bbb' }}>无图</div>
         ),

@@ -97,7 +97,7 @@ func main() {
 	authHandler := handler.NewAuthHandler(authSvc, agentSvc, cfg.WeChat.AppID, cfg.WeChat.OAuthRedirectURL)
 	propertyHandler := handler.NewPropertyHandler(propertySvc, agentSvc)
 	agentHandler := handler.NewAgentHandler(agentSvc, propertySvc, wxClient)
-	adminHandler := handler.NewAdminHandler(propertySvc, agentSvc, userRepo, cfg.Admin.Username, cfg.Admin.Password)
+	adminHandler := handler.NewAdminHandler(propertySvc, agentSvc, userRepo, store, cfg.Admin.Username, cfg.Admin.Password)
 	contentHandler := handler.NewContentHandler(contentSvc)
 	userActionHandler := handler.NewUserActionHandler(userActionSvc, agentSvc, statsSvc, agentAppSvc)
 	statsHandler := handler.NewStatsHandler(statsSvc)
@@ -231,7 +231,8 @@ func registerRoutes(
 	{
 		// 房源
 		admin.GET("/properties", adminH.ListProperties)
-		admin.POST("/properties", adminH.CreateProperty)
+		admin.POST("/upload/image", adminH.UploadImage)
+			admin.POST("/properties", adminH.CreateProperty)
 		admin.GET("/properties/:id", adminH.GetPropertyDetail)
 		admin.POST("/properties/:id/images", adminH.UploadPropertyImage)
 		admin.DELETE("/properties/:id/images/:imgId", adminH.DeletePropertyImage)

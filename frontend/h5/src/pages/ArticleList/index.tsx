@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { NavBar, Tabs } from 'antd-mobile'
 import { useNavigate } from 'react-router-dom'
 import { getArticleList, Article } from '../../api/content'
+import { getImageUrl } from '../../utils/image'
 import BottomNav from '../../components/BottomNav'
 import styles from './index.module.css'
 
@@ -107,7 +108,7 @@ export default function ArticleList() {
             {list.map(a => (
               <div key={a.id} className={styles.card} onClick={() => navigate(`/articles/${a.id}`)}>
                 {a.cover_image ? (
-                  <img className={styles.thumb} src={a.cover_image} alt={a.title} loading="lazy" />
+                  <img className={styles.thumb} src={getImageUrl(a.cover_image)} alt={a.title} loading="lazy" />
                 ) : (
                   <div className={styles.thumbPlaceholder}>
                     <span className={styles.thumbPlaceholderLabel}>

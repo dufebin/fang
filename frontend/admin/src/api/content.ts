@@ -39,6 +39,12 @@ export function deleteArticle(id: number) {
   return request.delete(`/admin/articles/${id}`)
 }
 
+export function uploadImage(file: File) {
+  const fd = new FormData()
+  fd.append('image', file)
+  return request.post<any, { code: number; data: { url: string } }>('/admin/upload/image', fd)
+}
+
 export function getBanners(params?: { position?: string }) {
   return request.get('/admin/banners', { params })
 }

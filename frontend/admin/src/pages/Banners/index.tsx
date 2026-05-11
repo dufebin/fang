@@ -8,9 +8,10 @@ import {
   ProFormDigit,
   ProFormSwitch,
 } from '@ant-design/pro-components'
-import { Button, Image, Tag, Popconfirm, Space, App } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { getBanners, createBanner, updateBanner, deleteBanner, Banner } from '../../api/content'
+import { Button, Image, Tag, Popconfirm, Upload, App } from 'antd'
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { getBanners, createBanner, updateBanner, deleteBanner, uploadImage, Banner } from '../../api/content'
+import { getImageUrl } from '../../utils/image'
 
 export default function BannersPage() {
   const { message } = App.useApp()
@@ -25,7 +26,7 @@ export default function BannersPage() {
       dataIndex: 'image_url',
       search: false,
       width: 120,
-      render: (_, r) => <Image src={r.image_url} width={100} height={56} style={{ objectFit: 'cover', borderRadius: 4 }} />,
+      render: (_, r) => <Image src={getImageUrl(r.image_url)} width={100} height={56} style={{ objectFit: 'cover', borderRadius: 4 }} />,
     },
     {
       title: '标题',
@@ -81,41 +82,76 @@ export default function BannersPage() {
     },
   ]
 
-  const BannerForm = ({ open, onClose, initial }: { open: boolean; onClose: () => void; initial?: Banner | null }) => (
-    <ModalForm
-      title={initial ? '编辑横幅' : '新建横幅'}
-      open={open}
-      onOpenChange={(v) => { if (!v) onClose() }}
-      initialValues={initial || { position: 'home', link_type: 'none', sort_order: 0, is_active: true }}
-      onFinish={async (values) => {
-        if (initial) {
-          await updateBanner(initial.id, values)
-          message.success('已更新')
-        } else {
-          await createBanner(values)
-          message.success('已创建')
-        }
-        onClose()
-        refresh()
-        return true
-      }}
-      layout="vertical"
-      modalProps={{ destroyOnHidden: true }}
-    >
-      <ProFormText name="title" label="标题" rules={[{ required: true }]} />
-      <ProFormText name="image_url" label="图片URL" rules={[{ required: true }]} />
-      <ProFormSelect name="position" label="展示位置" options={[{ label: '首页', value: 'home' }, { label: '找房页', value: 'property_list' }]} rules={[{ required: true }]} />
-      <ProFormSelect name="link_type" label="点击跳转类型" options={[
-        { label: '无跳转', value: 'none' },
-        { label: '房源详情', value: 'property' },
-        { label: '文章详情', value: 'article' },
-        { label: '外部链接', value: 'url' },
-      ]} />
-      <ProFormText name="link_value" label="跳转值（ID或URL）" />
-      <ProFormDigit name="sort_order" label="排序（越小越前）" min={0} />
-      <ProFormSwitch name="is_active" label="启用" />
-    </ModalForm>
-  )
+  const BannerForm = ({ open, onClose, initial }: { open: boolean; onClose: () => void; initial?: Banner | null }) => {
+    const [imageUrl, setImageUrl] = useState(initial?.image_url || '')
+    const formRef = React.useRef<any>()
+
+    return (
+      <ModalForm
+        formRef={formRef}
+        title={initial ? '编辑横幅' : '新建横幅'}
+        open={open}
+        onOpenChange={(v) => { if (!v) onClose() }}
+        initialValues={initial || { position: 'home', link_type: 'none', sort_order: 0, is_active: true }}
+        onFinish={async (values) => {
+          if (initial) {
+            await updateBanner(initial.id, values)
+            message.success('已更新')
+          } else {
+            await createBanner(values)
+            message.success('已创建')
+          }
+          onClose()
+          refresh()
+          return true
+        }}
+        layout="vertical"
+        modalProps={{ destroyOnHidden: true }}
+      >
+        <ProFormText name="title" label="标题" rules={[{ required: true }]} />
+        <ProFormText name="image_url" label="横幅图片" rules={[{ required: true, message: '请上传图片' }]}
+          fieldProps={{ style: { display: 'none' } }}
+        />
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 4, color: 'rgba(0,0,0,0.88)', fontSize: 14 }}>
+            横幅图片 <span style={{ color: 'red' }}>*</span>
+          </div>
+          <Upload
+            accept="image/*"
+            showUploadList={false}
+            beforeUpload={async (file) => {
+              try {
+                const res = await uploadImage(file)
+                const url = res.data.url
+                setImageUrl(url)
+                formRef.current?.setFieldValue('image_url', url)
+              } catch {
+                message.error('上传失败')
+              }
+              return false
+            }}
+          >
+            <Button icon={<UploadOutlined />}>点击上传</Button>
+          </Upload>
+          {imageUrl && (
+            <Image src={getImageUrl(imageUrl)}
+              width={200} height={80} style={{ objectFit: 'cover', borderRadius: 4, marginTop: 8, display: 'block' }}
+            />
+          )}
+        </div>
+        <ProFormSelect name="position" label="展示位置" options={[{ label: '首页', value: 'home' }, { label: '找房页', value: 'property_list' }]} rules={[{ required: true }]} />
+        <ProFormSelect name="link_type" label="点击跳转类型" options={[
+          { label: '无跳转', value: 'none' },
+          { label: '房源详情', value: 'property' },
+          { label: '文章详情', value: 'article' },
+          { label: '外部链接', value: 'url' },
+        ]} />
+        <ProFormText name="link_value" label="跳转值（ID或URL）" />
+        <ProFormDigit name="sort_order" label="排序（越小越前）" min={0} />
+        <ProFormSwitch name="is_active" label="启用" />
+      </ModalForm>
+    )
+  }
 
   return (
     <>

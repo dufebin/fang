@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavBar } from 'antd-mobile'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getArticleDetail, Article } from '../../api/content'
+import { getImageUrl, fixContentImageUrls } from '../../utils/image'
 import styles from './index.module.css'
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -61,7 +62,7 @@ export default function ArticleDetail() {
       ) : article ? (
         <>
           {article.cover_image && (
-            <img className={styles.cover} src={article.cover_image} alt={article.title} />
+            <img className={styles.cover} src={getImageUrl(article.cover_image)} alt={article.title} />
           )}
           <div className={styles.body}>
             <h1 className={styles.title}>{article.title}</h1>
@@ -85,7 +86,7 @@ export default function ArticleDetail() {
             </div>
             <div
               className={styles.content}
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{ __html: fixContentImageUrls(article.content) }}
             />
           </div>
         </>

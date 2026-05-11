@@ -18,6 +18,7 @@ import {
 } from '../../api/property'
 import { getAgents, Agent } from '../../api/agent'
 import { CITY_DISTRICTS, MAJOR_CITIES, PROVINCE_CITIES, PROVINCES } from '../../data/cityDistricts'
+import { getImageUrl } from '../../utils/image'
 
 const API_ORIGIN = new URL('https://fapi.deephealth.net/api').origin
 function toRelativeUrl(url: string): string {
@@ -269,7 +270,7 @@ export default function PropertiesPage() {
       width: 80,
       render: (_, record) =>
         record.cover_image ? (
-          <Image src={record.cover_image} width={60} height={45} style={{ objectFit: 'cover', borderRadius: 4 }} />
+          <Image src={getImageUrl(record.cover_image)} width={60} height={45} style={{ objectFit: 'cover', borderRadius: 4 }} />
         ) : (
           <div style={{ width: 60, height: 45, background: '#f5f5f5', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: '#bbb' }}>
             无图

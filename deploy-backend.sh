@@ -14,6 +14,9 @@ go build -o "bin/$BINARY" ./cmd/server/
 echo "==> Deploying to $REMOTE_HOST:$REMOTE_DIR..."
 rsync -avz "$BACKEND_DIR/bin/$BINARY" "$REMOTE_HOST:$REMOTE_DIR"
 
+echo "==> Syncing uploads..."
+rsync -avz "$BACKEND_DIR/uploads/" "$REMOTE_HOST:${REMOTE_DIR}uploads/"
+
 echo "==> Uploading start script..."
 rsync -avz "$SCRIPT_DIR/start.sh" "$REMOTE_HOST:$REMOTE_DIR"
 

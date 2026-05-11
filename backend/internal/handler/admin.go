@@ -10,6 +10,7 @@ import (
 	"fangchan/internal/repository"
 	"fangchan/internal/service"
 	"fangchan/pkg/response"
+	"fangchan/pkg/storage"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -55,6 +56,7 @@ type AdminHandler struct {
 	propertySvc   *service.PropertyService
 	agentSvc      *service.AgentService
 	userRepo      *repository.UserRepo
+	store         storage.Storage
 	adminUsername string
 	adminPassword string
 }
@@ -63,12 +65,14 @@ func NewAdminHandler(
 	propertySvc *service.PropertyService,
 	agentSvc *service.AgentService,
 	userRepo *repository.UserRepo,
+	store storage.Storage,
 	adminUsername, adminPassword string,
 ) *AdminHandler {
 	return &AdminHandler{
 		propertySvc:   propertySvc,
 		agentSvc:      agentSvc,
 		userRepo:      userRepo,
+		store:         store,
 		adminUsername: adminUsername,
 		adminPassword: adminPassword,
 	}
@@ -331,4 +335,21 @@ func (h *AdminHandler) SetAgentStatus(c *gin.Context) {
 		return
 	}
 	response.Success(c, gin.H{"updated": true})
+}
+
+// UploadImage 通用图片上传（banner、文章封面等）
+func (h *AdminHandler) UploadImage(c *gin.Context) {
+	file, header, err := c.Request.FormFile("image")
+	if err != nil {
+		response.BadRequest(c, "请选择图片文件")
+		return
+	}
+	defer file.Close()
+
+	url, err := h.store.Save(file, header)
+	if err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"url": url})
 }

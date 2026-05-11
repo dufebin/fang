@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getBanners, type Banner } from '../../api/content'
+import { getImageUrl } from '../../utils/image'
 import styles from './index.module.css'
 
 export default function Banner() {
@@ -64,7 +65,7 @@ export default function Banner() {
   }
 
   const currentBanner = banners[currentIndex]
-  const imageUrl = currentBanner.image_url
+  const imageUrl = getImageUrl(currentBanner.image_url)
 
   return (
     <div className={styles.bannerContainer}>
