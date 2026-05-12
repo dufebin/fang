@@ -23,6 +23,13 @@ function RichEditor({ value, onChange }: { value?: string; onChange?: (v: string
   const [editor, setEditor] = useState<IDomEditor | null>(null)
 
   useEffect(() => {
+    if (editor == null) return
+    if (value && value !== editor.getHtml()) {
+      editor.setHtml(value)
+    }
+  }, [editor, value])
+
+  useEffect(() => {
     return () => { editor?.destroy() }
   }, [editor])
 
@@ -36,7 +43,6 @@ function RichEditor({ value, onChange }: { value?: string; onChange?: (v: string
       />
       <Editor
         defaultConfig={editorConfig}
-        value={value}
         onCreated={setEditor}
         onChange={e => onChange?.(e.getHtml())}
         mode="default"
@@ -51,7 +57,7 @@ function CoverPreview({ url }: { url?: string }) {
   return (
     <div style={{ marginTop: 8, marginBottom: 4 }}>
       <Image
-        src={url}
+        src={getImageUrl(url)}
         width={180}
         height={112}
         style={{ objectFit: 'cover', borderRadius: 6, border: '1px solid #f0f0f0', display: 'block' }}
@@ -282,7 +288,7 @@ export default function ArticlesPage() {
       />
 
       <ArticleFormModal open={createOpen} onClose={() => setCreateOpen(false)} onSaved={refresh} />
-      <ArticleFormModal open={!!editTarget} onClose={() => setEditTarget(null)} initial={editTarget} onSaved={refresh} />
+      <ArticleFormModal key={editTarget?.id} open={!!editTarget} onClose={() => setEditTarget(null)} initial={editTarget} onSaved={refresh} />
     </>
   )
 }
