@@ -1,0 +1,45 @@
+name: 小程序自动部署
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/miniprogram/**'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号（留空自动生成）'
+        required: false
+        type: string
+      desc:
+        description: '版本描述（留空取 git commit message）'
+        required: false
+        type: string
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend/miniprogram
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/miniprogram/package-lock.json
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 上传小程序代码
+        run: node scripts/upload.js
+        env:
+          PRIVATE_KEY: ${{ secrets.WECHAT_MINIPROGRAM_PRIVATE_KEY }}
+          VERSION: ${{ github.event.inputs.version || '' }}
+          DESC: ${{ github.event.inputs.desc || '' }}

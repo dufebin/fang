@@ -28,6 +28,9 @@ pnpm-debug.log*
 /frontend/h5/dist/
 /frontend/h5/node_modules/
 
+# Mini program private keys
+frontend/miniprogram/private.*.key
+
 # Logs
 logs/
 *.log
