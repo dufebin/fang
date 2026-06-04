@@ -26,6 +26,7 @@ Page({
       address: '',
       total_price: '',
       monthly_rent: '',
+      commission: '',
       area: '',
       bedrooms: '',
       living_rooms: '',
@@ -83,6 +84,7 @@ Page({
           address: p.address || '',
           total_price: p.total_price != null ? String(p.total_price) : '',
           monthly_rent: p.monthly_rent != null ? String(p.monthly_rent) : '',
+          commission: p.commission != null ? String(p.commission) : '',
           area: p.area != null ? String(p.area) : '',
           bedrooms: p.bedrooms != null ? String(p.bedrooms) : '',
           living_rooms: p.living_rooms != null ? String(p.living_rooms) : '',
@@ -251,11 +253,14 @@ Page({
   async onSubmit() {
     const { form, isEdit, propertyId, _newImagePaths, status, _originalStatus,
             _newVideoPath, _originalVideoUrl, videoUrl } = this.data
-    if (!form.title) { wx.showToast({ title: '请填写房源标题', icon: 'none' }); return }
-    if (!form.total_price && !form.monthly_rent) { wx.showToast({ title: '请填写价格', icon: 'none' }); return }
+    if (!form.title.trim()) { wx.showToast({ title: '请填写房源标题', icon: 'none' }); return }
     if (!form.city) { wx.showToast({ title: '请填写城市', icon: 'none' }); return }
     if (!form.district) { wx.showToast({ title: '请填写区域', icon: 'none' }); return }
-    if (!form.area) { wx.showToast({ title: '请填写面积', icon: 'none' }); return }
+    if (!form.area || Number(form.area) <= 0) { wx.showToast({ title: '请填写有效面积', icon: 'none' }); return }
+    if (!form.total_price && !form.monthly_rent) { wx.showToast({ title: '请填写价格', icon: 'none' }); return }
+    if (form.total_price && Number(form.total_price) <= 0) { wx.showToast({ title: '总价须大于 0', icon: 'none' }); return }
+    if (form.monthly_rent && Number(form.monthly_rent) <= 0) { wx.showToast({ title: '月租金须大于 0', icon: 'none' }); return }
+    if (form.commission !== '' && Number(form.commission) < 0) { wx.showToast({ title: '佣金不能为负数', icon: 'none' }); return }
 
     wx.showLoading({ title: isEdit ? '保存中...' : '发布中...' })
     try {
@@ -263,6 +268,7 @@ Page({
         ...form,
         total_price: form.total_price ? Number(form.total_price) : undefined,
         monthly_rent: form.monthly_rent ? Number(form.monthly_rent) : undefined,
+        commission: form.commission ? Number(form.commission) : undefined,
         bedrooms: Number(form.bedrooms) || 0,
         living_rooms: Number(form.living_rooms) || 0,
         bathrooms: Number(form.bathrooms) || 0,

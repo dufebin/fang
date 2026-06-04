@@ -94,11 +94,19 @@
       </view>
     </view>
 
-    <view class="field-row no-border">
+    <view class="field-row">
       <text class="field-label">月租</text>
       <view class="unit-wrap">
         <input class="field-input field-right" type="digit" placeholder="租赁房源填写" value="{{form.monthly_rent}}" bindinput="onInput" data-field="monthly_rent" />
         <text class="unit">元/月</text>
+      </view>
+    </view>
+
+    <view class="field-row no-border">
+      <text class="field-label">佣金</text>
+      <view class="unit-wrap">
+        <input class="field-input field-right" type="digit" placeholder="成交后佣金金额" value="{{form.commission}}" bindinput="onInput" data-field="commission" />
+        <text class="unit">元</text>
       </view>
     </view>
   </view>

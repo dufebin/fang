@@ -18,6 +18,7 @@ export interface Property {
   total_price: number | null
   unit_price: number | null
   monthly_rent: number | null
+  commission: number | null
   area: number
   bedrooms: number
   living_rooms: number

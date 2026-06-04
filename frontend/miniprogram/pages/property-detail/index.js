@@ -1,6 +1,5 @@
-const { getPropertyDetail } = require('../../api/property')
+const { getPropertyDetail, claimProperty, unclaimProperty } = require('../../api/property')
 const { toggleFavorite } = require('../../api/user')
-const { createAppointment } = require('../../api/appointment')
 const { fullImageURL, formatPrice, formatArea, formatLayout, formatFloor } = require('../../utils/format')
 const { calcEqualInstallment } = require('../../utils/loan')
 const { requireLogin } = require('../../utils/auth')
@@ -15,14 +14,15 @@ Page({
     areaText: '--',
     layoutText: '--',
     floorText: '--',
+    commissionText: '',
     tags: [],
     isFav: false,
     monthlyText: '--',
     swiperCurrent: 0,
-    apptDate: '',
-    apptTime: '',
-    apptNote: '',
     agentCode: '',
+    isClaimed: false,
+    myClaimCommission: null,
+    claimCommissionInput: '',
   },
 
   onLoad(options) {
@@ -53,13 +53,21 @@ Page({
 
       const agent = property.agent || {}
       const tags = property.tags ? property.tags.split(',').filter(Boolean) : []
-      const priceText = formatPrice(property.total_price, property.property_type === '租房' ? 'rent' : 'sale')
+      const priceText = formatPrice(property.total_price, property.property_type === 'rent' ? 'rent' : 'sale')
       const areaText = formatArea(property.area)
       const layoutText = formatLayout(property.bedrooms, property.living_rooms, property.bathrooms)
       const floorText = formatFloor(property.floor, property.total_floors)
 
+      // 有 agentCode 时显示该认领人佣金，否则显示录入人设定的佣金
+      let commissionText = ''
+      if (agentCode && agent.claim_commission != null) {
+        commissionText = agent.claim_commission + ' 元'
+      } else if (property.commission != null) {
+        commissionText = property.commission + ' 元'
+      }
+
       let monthlyText = '--'
-      if (property.total_price && property.property_type !== '租房') {
+      if (property.total_price && property.property_type !== 'rent') {
         const loan = property.total_price * 10000 * 0.7
         const result = calcEqualInstallment(loan, 30, 3.95)
         const m = result.monthly
@@ -75,6 +83,7 @@ Page({
         areaText,
         layoutText,
         floorText,
+        commissionText,
         tags,
         monthlyText,
         isFav: property.is_favorited || false,
@@ -113,42 +122,52 @@ Page({
     })
   },
 
-  onDateChange(e) {
-    this.setData({ apptDate: e.detail.value })
+  onClaimCommissionInput(e) {
+    this.setData({ claimCommissionInput: e.detail.value })
   },
 
-  onTimeChange(e) {
-    this.setData({ apptTime: e.detail.value })
-  },
-
-  onNoteInput(e) {
-    this.setData({ apptNote: e.detail.value })
-  },
-
-  async onSubmitAppt() {
+  async onClaim() {
     if (!requireLogin()) return
-    const { apptDate, apptTime, apptNote, agentCode } = this.data
-    if (!apptDate || !apptTime) {
-      wx.showToast({ title: '请选择预约时间', icon: 'none' })
+    const raw = this.data.claimCommissionInput
+    if (raw !== '' && (isNaN(Number(raw)) || Number(raw) < 0)) {
+      wx.showToast({ title: '请输入有效的佣金金额', icon: 'none' })
       return
     }
+    const commission = raw ? Number(raw) : null
     try {
-      await createAppointment({
-        property_id: Number(this._propertyId),
-        agent_code: agentCode || undefined,
-        scheduled_at: `${apptDate}T${apptTime}:00`,
-        note: apptNote,
-      })
-      wx.showToast({ title: '预约成功' })
-      this.setData({ apptDate: '', apptTime: '', apptNote: '' })
+      wx.showLoading({ title: '认领中...' })
+      await claimProperty(this._propertyId, commission)
+      wx.hideLoading()
+      wx.showToast({ title: '认领成功' })
+      this.setData({ isClaimed: true, myClaimCommission: commission })
     } catch (_) {
-      wx.showToast({ title: '预约失败', icon: 'none' })
+      wx.hideLoading()
+      wx.showToast({ title: '认领失败', icon: 'none' })
     }
+  },
+
+  async onUnclaim() {
+    try {
+      await unclaimProperty(this._propertyId)
+      wx.showToast({ title: '已取消认领' })
+      this.setData({ isClaimed: false, myClaimCommission: null, claimCommissionInput: '' })
+    } catch (_) {
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
+  },
+
+  onShare() {
+    const agentCode = wx.getStorageSync('agentCode') || ''
+    const shareUrl = `/pages/property-detail/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`
+    wx.setClipboardData({
+      data: shareUrl,
+      success: () => wx.showToast({ title: '链接已复制' }),
+    })
   },
 
   onShareAppMessage() {
     const p = this.data.property
-    const agentCode = this.data.agentCode
+    const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode
     return {
       title: p.title,
       path: `/pages/property-detail/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`,

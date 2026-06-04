@@ -1,6 +1,5 @@
 const { getProfile } = require('../../api/agent')
 const { fullImageURL } = require('../../utils/format')
-const { BASE_URL } = require('../../utils/config')
 
 Page({
   data: {

@@ -1,8 +1,8 @@
 const { request } = require('../utils/request')
 
 // Banner
-function listBanners(position = 'home') {
-  return request({ url: '/h5/banners', data: { position } })
+function listBanners(params) {
+  return request({ url: '/h5/banners', data: params })
 }
 
 // 资讯列表

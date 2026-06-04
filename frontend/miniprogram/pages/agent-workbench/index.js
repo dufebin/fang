@@ -12,9 +12,13 @@ Page({
     loading: false,
   },
 
+  // 页内 tab 数据缓存，onShow 时重置保证返回页面总拿最新数据
+  _tabLoaded: {},
+
   onShow() {
+    this._tabLoaded = {}
     this._loadStats()
-    this._loadTabData('my')
+    this._loadTabData(this.data.activeTab)
   },
 
   async _loadStats() {
@@ -25,6 +29,7 @@ Page({
   },
 
   async _loadTabData(tab) {
+    if (this._tabLoaded[tab]) return
     this.setData({ loading: true })
     try {
       if (tab === 'my') {
@@ -43,7 +48,10 @@ Page({
         }))
         this.setData({ apptList: list })
       }
-    } catch (_) {}
+      this._tabLoaded[tab] = true
+    } catch (_) {
+      wx.showToast({ title: '加载失败，请重试', icon: 'none' })
+    }
     this.setData({ loading: false })
   },
 
@@ -70,7 +78,9 @@ Page({
         try {
           await deleteProperty(id)
           wx.showToast({ title: '已删除' })
-          this._loadTabData(this.data.activeTab)
+          const tab = this.data.activeTab
+          this._tabLoaded[tab] = false
+          this._loadTabData(tab)
         } catch (_) {
           wx.showToast({ title: '删除失败', icon: 'none' })
         }
@@ -85,6 +95,7 @@ Page({
     const id = e.currentTarget.dataset.id
     try {
       await updateAppointmentStatus(id, 'confirmed')
+      this._tabLoaded['appt'] = false
       this._loadTabData('appt')
     } catch (_) { wx.showToast({ title: '操作失败', icon: 'none' }) }
   },
@@ -93,6 +104,7 @@ Page({
     const id = e.currentTarget.dataset.id
     try {
       await updateAppointmentStatus(id, 'cancelled')
+      this._tabLoaded['appt'] = false
       this._loadTabData('appt')
     } catch (_) { wx.showToast({ title: '操作失败', icon: 'none' }) }
   },

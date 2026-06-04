@@ -36,9 +36,15 @@ Page({
       setToken(loginRes.token)
       getApp().onLoginSuccess({ ...userInfo, role: loginRes.user.role }, loginRes.token)
 
-      // 5. 跳转
+      // 5. 跳转（tab 页必须用 switchTab）
       if (this._redirect) {
-        wx.redirectTo({ url: decodeURIComponent(this._redirect) })
+        const url = decodeURIComponent(this._redirect)
+        const TAB_PAGES = ['/pages/index/index', '/pages/property-list/index', '/pages/map-search/index', '/pages/my/index']
+        if (TAB_PAGES.some(p => url.startsWith(p))) {
+          wx.switchTab({ url })
+        } else {
+          wx.redirectTo({ url })
+        }
       } else {
         wx.navigateBack({ delta: 1 })
       }

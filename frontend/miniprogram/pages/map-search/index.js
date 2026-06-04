@@ -20,9 +20,6 @@ Page({
     this._locate()
   },
 
-  onShow() {
-  },
-
   _locate() {
     wx.getLocation({
       type: 'gcj02',
@@ -64,13 +61,15 @@ Page({
           _data: p,
         }))
       this.setData({ markers, _propertyMap: this._buildMap(res.list || []) })
-    } catch (_) {}
+    } catch (_) {
+      wx.showToast({ title: '加载失败，请重试', icon: 'none' })
+    }
   },
 
   _shortPrice(p) {
     const v = p.total_price
     if (!v) return '--'
-    if (p.property_type === '租房') return v + '元/月'
+    if (p.property_type === 'rent') return v + '元/月'
     return v >= 10000 ? (v / 10000).toFixed(0) + '亿' : v + '万'
   },
 

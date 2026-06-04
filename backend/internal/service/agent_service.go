@@ -97,13 +97,13 @@ func (s *AgentService) UpdateProfile(agentID uint64, req *UpdateProfileReq) (*mo
 	return agent, s.agentRepo.Update(agent)
 }
 
-// ClaimProperty 认领房源
-func (s *AgentService) ClaimProperty(userID, propertyID uint64) error {
-	agent, err := s.agentRepo.FindByUserID(userID)
-	if err != nil || agent == nil {
-		return fmt.Errorf("销售员档案不存在，请先完善个人信息")
+// ClaimProperty 认领房源，任意登录用户均可认领（自动创建经纪人档案）
+func (s *AgentService) ClaimProperty(userID, propertyID uint64, commission *float64) error {
+	agent, err := s.GetOrCreateAgent(userID)
+	if err != nil {
+		return err
 	}
-	return s.agentRepo.ClaimProperty(agent.ID, propertyID)
+	return s.agentRepo.ClaimProperty(agent.ID, propertyID, commission)
 }
 
 // UnclaimProperty 取消认领

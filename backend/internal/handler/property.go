@@ -134,7 +134,7 @@ func (h *PropertyHandler) GetAgentProperties(c *gin.Context) {
 	response.SuccessPage(c, list, total, page, limit)
 }
 
-// Create 创建房源（销售员/管理员）
+// Create 创建房源（任意登录用户）
 func (h *PropertyHandler) Create(c *gin.Context) {
 	var req service.CreatePropertyReq
 	if err := c.ShouldBind(&req); err != nil {
@@ -143,14 +143,20 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 	}
 
 	userID := middleware.GetCurrentUserID(c)
-	property, err := h.propertySvc.CreateWithOwner(&req, userID)
+	agent, err := h.agentSvc.GetOrCreateAgent(userID)
+	if err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+
+	property, err := h.propertySvc.CreateWithOwner(&req, userID, agent)
 	if err != nil {
 		response.Fail(c, 500, err.Error())
 		return
 	}
 
 	// 自动认领自己创建的房源
-	_ = h.agentSvc.ClaimProperty(userID, property.ID)
+	_ = h.agentSvc.ClaimProperty(userID, property.ID, nil)
 
 	response.Success(c, property)
 }
@@ -225,8 +231,13 @@ func (h *PropertyHandler) Claim(c *gin.Context) {
 		return
 	}
 
+	var body struct {
+		ClaimCommission *float64 `json:"claim_commission"`
+	}
+	_ = c.ShouldBindJSON(&body)
+
 	userID := middleware.GetCurrentUserID(c)
-	if err := h.agentSvc.ClaimProperty(userID, id); err != nil {
+	if err := h.agentSvc.ClaimProperty(userID, id, body.ClaimCommission); err != nil {
 		response.Fail(c, 500, err.Error())
 		return
 	}

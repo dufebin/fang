@@ -28,10 +28,6 @@
       <text class="action-icon-text">+</text>
       <text>发布房源</text>
     </view>
-    <view class="action-item" bindtap="onViewAppointments">
-      <text class="action-icon-text">📅</text>
-      <text>我的预约</text>
-    </view>
     <view class="action-item" bindtap="onEditProfile">
       <text class="action-icon-text">✎</text>
       <text>编辑资料</text>
@@ -46,11 +42,10 @@
   <view class="tab-bar">
     <view class="tab-item {{activeTab === 'my' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="my">我的房源</view>
     <view class="tab-item {{activeTab === 'claimed' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="claimed">推广中</view>
-    <view class="tab-item {{activeTab === 'appt' ? 'tab-active' : ''}}" bindtap="onTabTap" data-tab="appt">待处理预约</view>
   </view>
 
   <!-- 房源列表 -->
-  <view wx:if="{{activeTab !== 'appt'}}" class="list-wrap">
+  <view class="list-wrap">
     <block wx:if="{{propertyList.length}}">
       <view class="property-wrap" wx:for="{{propertyList}}" wx:key="id">
         <property-card property="{{item}}" showStatus="{{true}}" />
@@ -63,21 +58,4 @@
     <empty-state wx:else text="暂无房源" btn-text="发布房源" bindaction="onAddProperty" />
   </view>
 
-  <!-- 预约列表 -->
-  <view wx:else class="appt-list">
-    <block wx:if="{{apptList.length}}">
-      <view class="appt-card" wx:for="{{apptList}}" wx:key="id">
-        <view class="appt-info">
-          <view class="appt-user">{{item.user_name}}</view>
-          <view class="appt-prop">{{item.property_title}}</view>
-          <view class="appt-time">{{item.scheduledAt}}</view>
-        </view>
-        <view class="appt-btns">
-          <view class="appt-btn-confirm" bindtap="onConfirmAppt" data-id="{{item.id}}">确认</view>
-          <view class="appt-btn-cancel" bindtap="onRejectAppt" data-id="{{item.id}}">拒绝</view>
-        </view>
-      </view>
-    </block>
-    <empty-state wx:else text="暂无待处理预约" />
-  </view>
 </view>

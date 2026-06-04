@@ -67,7 +67,9 @@ Page({
         noMore: newList.length < PAGE_SIZE,
         _firstLoaded: true,
       })
-    } catch (_) {}
+    } catch (_) {
+      wx.showToast({ title: '加载失败，请下拉刷新', icon: 'none' })
+    }
 
     this.setData({ loading: false })
   },

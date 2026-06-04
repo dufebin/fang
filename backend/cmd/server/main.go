@@ -70,7 +70,13 @@ func main() {
 
 	wxClient := wechat.NewClient(cfg.WeChat.AppID, cfg.WeChat.AppSecret, rdb)
 
-	store, err := storage.NewLocalStorage(cfg.Storage.LocalPath, cfg.Storage.BaseURL)
+	var store storage.Storage
+	if cfg.Storage.Type == "cos" {
+		cosCfg := cfg.Storage.COS
+		store, err = storage.NewCOSStorage(cosCfg.SecretID, cosCfg.SecretKey, cosCfg.Bucket, cosCfg.Region)
+	} else {
+		store, err = storage.NewLocalStorage(cfg.Storage.LocalPath, cfg.Storage.BaseURL)
+	}
 	if err != nil {
 		log.Fatalf("初始化存储失败: %v", err)
 	}
@@ -190,15 +196,16 @@ func registerRoutes(
 	{
 		user.POST("/favorites/:property_id", userActionH.ToggleFavorite)
 		user.GET("/favorites", userActionH.ListFavorites)
-		user.POST("/appointments", userActionH.CreateAppointment)
-		user.GET("/appointments", userActionH.ListUserAppointments)
-		user.PUT("/appointments/:id/cancel", userActionH.CancelAppointment)
 		user.GET("/history", userActionH.ListBrowseHistory)
 		user.GET("/notifications", userActionH.ListNotifications)
 		user.PUT("/notifications/:id/read", userActionH.MarkNotificationRead)
 		user.PUT("/notifications/read-all", userActionH.MarkAllNotificationsRead)
 		user.POST("/agent-apply", userActionH.SubmitApplication)
 		user.GET("/agent-apply", userActionH.GetMyApplication)
+		// 任意登录用户可录入和认领房源
+		user.POST("/properties", propertyH.Create)
+		user.POST("/properties/:id/claim", propertyH.Claim)
+		user.DELETE("/properties/:id/claim", propertyH.Unclaim)
 	}
 
 	// 经纪人接口
@@ -208,18 +215,13 @@ func registerRoutes(
 		agent.PUT("/profile", agentH.UpdateProfile)
 		agent.GET("/properties", agentH.GetMyProperties)
 		agent.GET("/all-properties", propertyH.List)
-		agent.POST("/properties", propertyH.Create)
 		agent.PUT("/properties/:id", propertyH.UpdateProperty)
 		agent.GET("/properties/:id", propertyH.GetAgentPropertyDetail)
 		agent.DELETE("/properties/:id", propertyH.DeleteAgentProperty)
 		agent.DELETE("/properties/:id/images/:imgId", propertyH.DeleteAgentPropertyImage)
 		agent.PUT("/properties/:id/status", propertyH.UpdateAgentPropertyStatus)
-		agent.POST("/properties/:id/claim", propertyH.Claim)
-		agent.DELETE("/properties/:id/claim", propertyH.Unclaim)
 		agent.POST("/properties/:id/images", propertyH.UploadImage)
 		agent.POST("/properties/:id/video", propertyH.UploadVideo)
-		agent.GET("/appointments", userActionH.ListAgentAppointments)
-		agent.PUT("/appointments/:id/status", userActionH.UpdateAgentAppointmentStatus)
 		agent.GET("/stats", userActionH.GetAgentStats)
 	}
 

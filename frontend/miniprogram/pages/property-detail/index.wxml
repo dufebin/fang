@@ -24,7 +24,6 @@
       </swiper-item>
     </swiper>
     <view class="img-count">{{swiperCurrent+1}}/{{mediaItems.length}}</view>
-    <!-- 标签 -->
     <view class="tag-type">{{property.property_type}}</view>
     <view wx:if="{{property.is_verified}}" class="tag-verified">已核验</view>
   </view>
@@ -45,6 +44,11 @@
       <text>{{floorText}}</text>
       <text class="dot">·</text>
       <text>{{property.district}}</text>
+    </view>
+    <!-- 佣金展示 -->
+    <view wx:if="{{commissionText}}" class="commission-row">
+      <text class="commission-label">佣金</text>
+      <text class="commission-val">{{commissionText}}</text>
     </view>
     <view wx:if="{{tags.length}}" class="tag-list">
       <text class="prop-tag" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
@@ -109,33 +113,32 @@
     <agent-card agent="{{agent}}" showActions="{{true}}" />
   </view>
 
-  <!-- 预约看房 -->
+  <!-- 认领房源 -->
   <view class="section">
-    <view class="section-title">预约看房</view>
-    <view class="appt-row">
-      <picker mode="date" value="{{apptDate}}" bindchange="onDateChange">
-        <view class="appt-picker">{{apptDate || '选择日期'}}</view>
-      </picker>
-      <picker mode="time" value="{{apptTime}}" bindchange="onTimeChange">
-        <view class="appt-picker">{{apptTime || '选择时间'}}</view>
-      </picker>
+    <view class="section-title">推广此房源</view>
+    <view wx:if="{{isClaimed}}" class="claim-claimed-row">
+      <text class="claim-claimed-text">已认领</text>
+      <view wx:if="{{myClaimCommission != null}}" class="claim-commission-info">
+        <text>我的佣金：{{myClaimCommission}}元</text>
+      </view>
+      <view class="claim-share-btn" bindtap="onShare">生成分享链接</view>
+      <view class="claim-cancel-btn" bindtap="onUnclaim">取消认领</view>
     </view>
-    <view class="appt-note-wrap">
-      <textarea class="appt-note" placeholder="备注（选填）" value="{{apptNote}}" bindinput="onNoteInput" maxlength="200" />
+    <view wx:else class="claim-row">
+      <view class="claim-input-wrap">
+        <input class="claim-commission-input" type="digit" placeholder="我的佣金（元，选填）" value="{{claimCommissionInput}}" bindinput="onClaimCommissionInput" />
+      </view>
+      <view class="claim-btn" bindtap="onClaim">认领并推广</view>
     </view>
-    <view class="appt-btn" bindtap="onSubmitAppt">提交预约</view>
   </view>
 
-  <!-- 底部安全区 -->
   <view class="safe-bottom" />
 </view>
 
-<!-- 加载中 -->
 <view wx:elif="{{!loadingFailed}}" class="loading-page">
   <text>加载中...</text>
 </view>
 
-<!-- 加载失败 -->
 <view wx:else class="loading-page" bindtap="onReload">
   <view class="error-icon">😞</view>
   <text>加载失败，点击重试</text>

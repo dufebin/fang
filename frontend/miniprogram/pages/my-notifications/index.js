@@ -13,7 +13,9 @@ Page({
       const res = await listNotifications()
       const list = (res || []).map(n => ({ ...n, createdAt: formatDate(n.created_at) }))
       this.setData({ list })
-    } catch (_) {}
+    } catch (_) {
+      wx.showToast({ title: '加载失败，请下拉刷新', icon: 'none' })
+    }
     this.setData({ loading: false })
   },
 
@@ -23,7 +25,9 @@ Page({
       await markRead(id)
       const list = this.data.list.map(n => n.id === id ? { ...n, is_read: true } : n)
       this.setData({ list })
-    } catch (_) {}
+    } catch (_) {
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
   },
 
   async onReadAll() {
@@ -31,6 +35,8 @@ Page({
       await markAllRead()
       const list = this.data.list.map(n => ({ ...n, is_read: true }))
       this.setData({ list })
-    } catch (_) {}
+    } catch (_) {
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
   },
 })

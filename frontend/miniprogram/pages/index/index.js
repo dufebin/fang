@@ -8,13 +8,16 @@ Page({
     hotProperties: [],
     articles: [],
     loading: true,
+    _loaded: false,
   },
 
   onLoad() {
     this._loadAll()
   },
 
+  // 从子页返回时刷新（onLoad 只触发一次，tab 切换靠 onShow）
   onShow() {
+    if (this.data._loaded) this._loadAll()
   },
 
   async _loadAll() {
@@ -24,7 +27,7 @@ Page({
       this._loadHotProperties(),
       this._loadArticles(),
     ])
-    this.setData({ loading: false })
+    this.setData({ loading: false, _loaded: true })
   },
 
   async _loadBanners() {

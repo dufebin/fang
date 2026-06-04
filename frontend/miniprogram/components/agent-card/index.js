@@ -6,6 +6,14 @@ Component({
     showActions: { type: Boolean, value: true },
   },
 
+  observers: {
+    agent(a) {
+      this.setData({
+        avatarUrl: a.avatar ? fullImageURL(a.avatar) : '/assets/icons/default-avatar.png',
+      })
+    },
+  },
+
   methods: {
     onCall() {
       const phone = this.properties.agent.phone
@@ -17,15 +25,6 @@ Component({
       const code = this.properties.agent.agent_code
       if (!code) return
       wx.navigateTo({ url: `/pages/agent-home/index?code=${code}` })
-    },
-  },
-
-  lifetimes: {
-    attached() {
-      const a = this.properties.agent
-      this.setData({
-        avatarUrl: a.avatar ? fullImageURL(a.avatar) : '/assets/icons/default-avatar.png',
-      })
     },
   },
 

@@ -31,7 +31,9 @@ Page({
         statusText: STATUS_MAP[a.status] || a.status,
       }))
       this.setData({ list })
-    } catch (_) {}
+    } catch (_) {
+      wx.showToast({ title: '加载失败，请下拉刷新', icon: 'none' })
+    }
     this.setData({ loading: false })
   },
 

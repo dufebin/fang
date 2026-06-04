@@ -302,6 +302,12 @@ export default function PropertiesPage() {
       search: false,
       render: (_, r) => r.total_price ? `${r.total_price}万` : r.monthly_rent ? `${r.monthly_rent}元/月` : '面议',
     },
+    {
+      title: '佣金(元)',
+      dataIndex: 'commission',
+      search: false,
+      render: (_, r) => r.commission != null ? `${r.commission}元` : '-',
+    },
     { title: '浏览量', dataIndex: 'view_count', search: false, sorter: true },
     {
       title: '状态',
@@ -611,6 +617,11 @@ export default function PropertiesPage() {
               <InputNumber style={{ width: '100%' }} min={0} />
             </Form.Item>
           </Col>
+          <Col span={8}>
+            <Form.Item name="commission" label="佣金(元)">
+              <InputNumber style={{ width: '100%' }} min={0} />
+            </Form.Item>
+          </Col>
         </Row>
 
         <Row gutter={16}>
@@ -917,6 +928,11 @@ export default function PropertiesPage() {
             </Col>
             <Col span={8}>
               <Form.Item name="monthly_rent" label="月租金(元)">
+                <InputNumber style={{ width: '100%' }} min={0} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="commission" label="佣金(元)">
                 <InputNumber style={{ width: '100%' }} min={0} />
               </Form.Item>
             </Col>

@@ -11,10 +11,15 @@ import (
 	"time"
 )
 
+// Storage abstracts file persistence. Save/SaveVideo return the stored key.
+// URL() resolves any stored value — new key, legacy "/uploads/..." path, or
+// already-absolute URL — to a publicly accessible URL. Switching buckets or
+// CDN only requires a config change; no DB migration needed.
 type Storage interface {
 	Save(file multipart.File, header *multipart.FileHeader) (string, error)
 	SaveVideo(file multipart.File, header *multipart.FileHeader) (string, error)
-	Delete(url string) error
+	Delete(key string) error
+	URL(key string) string
 }
 
 type LocalStorage struct {
@@ -73,18 +78,24 @@ func (s *LocalStorage) Save(file multipart.File, header *multipart.FileHeader) (
 	return s.urlPath + relPath, nil
 }
 
-func (s *LocalStorage) Delete(fileURL string) error {
-	var relPath string
-	switch {
-	case strings.HasPrefix(fileURL, s.BaseURL):
-		relPath = strings.TrimPrefix(fileURL, s.BaseURL)
-	case strings.HasPrefix(fileURL, s.urlPath+"/"):
-		relPath = strings.TrimPrefix(fileURL, s.urlPath)
-	default:
+func (s *LocalStorage) URL(key string) string {
+	if strings.HasPrefix(key, "http://") || strings.HasPrefix(key, "https://") {
+		return key
+	}
+	// normalize: strip leading slash so we always join cleanly
+	key = strings.TrimPrefix(key, "/")
+	return strings.TrimRight(s.BaseURL, "/") + "/" + key
+}
+
+func (s *LocalStorage) Delete(key string) error {
+	// accept both a stored key and a full URL
+	key = strings.TrimPrefix(key, s.BaseURL)
+	key = strings.TrimPrefix(key, s.urlPath)
+	key = strings.TrimPrefix(key, "/")
+	if key == "" {
 		return nil
 	}
-	fullPath := filepath.Join(s.BasePath, relPath)
-	return os.Remove(fullPath)
+	return os.Remove(filepath.Join(s.BasePath, filepath.FromSlash(key)))
 }
 
 func (s *LocalStorage) SaveVideo(file multipart.File, header *multipart.FileHeader) (string, error) {

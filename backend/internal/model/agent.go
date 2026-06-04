@@ -30,10 +30,11 @@ type Agent struct {
 func (Agent) TableName() string { return "agents" }
 
 type AgentProperty struct {
-	ID         uint64    `gorm:"primaryKey;autoIncrement" json:"id"`
-	AgentID    uint64    `gorm:"uniqueIndex:uk_agent_property;not null;index" json:"agent_id"`
-	PropertyID uint64    `gorm:"uniqueIndex:uk_agent_property;not null;index" json:"property_id"`
-	ClaimedAt  time.Time `gorm:"autoCreateTime" json:"claimed_at"`
+	ID              uint64    `gorm:"primaryKey;autoIncrement" json:"id"`
+	AgentID         uint64    `gorm:"uniqueIndex:uk_agent_property;not null;index" json:"agent_id"`
+	PropertyID      uint64    `gorm:"uniqueIndex:uk_agent_property;not null;index" json:"property_id"`
+	ClaimCommission *float64  `gorm:"type:decimal(10,2)" json:"claim_commission"`
+	ClaimedAt       time.Time `gorm:"autoCreateTime" json:"claimed_at"`
 }
 
 func (AgentProperty) TableName() string { return "agent_properties" }

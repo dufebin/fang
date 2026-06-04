@@ -28,24 +28,25 @@ func NewPropertyService(
 }
 
 type CreatePropertyReq struct {
-	Title        string                `form:"title" json:"title" binding:"required"`
-	PropertyType string                `form:"property_type" json:"property_type" binding:"required"`
-	Province     string                `form:"province" json:"province"`
-	City         string                `form:"city" json:"city" binding:"required"`
-	District     string                `form:"district" json:"district" binding:"required"`
-	Address      string                `form:"address" json:"address"`
-	TotalPrice   *float64              `form:"total_price" json:"total_price"`
-	UnitPrice    *float64              `form:"unit_price" json:"unit_price"`
-	MonthlyRent  *float64              `form:"monthly_rent" json:"monthly_rent"`
-	Area         float64               `form:"area" json:"area" binding:"required,gt=0"`
-	Bedrooms     uint8                 `form:"bedrooms" json:"bedrooms"`
-	LivingRooms  uint8                 `form:"living_rooms" json:"living_rooms"`
-	Bathrooms    uint8                 `form:"bathrooms" json:"bathrooms"`
-	Floor        *int16                `form:"floor" json:"floor"`
-	TotalFloors  *int16                `form:"total_floors" json:"total_floors"`
-	Decoration   string                `form:"decoration" json:"decoration"`
-	Direction    string                `form:"direction" json:"direction"`
-	Description  string                `form:"description" json:"description"`
+	Title        string   `form:"title" json:"title" binding:"required"`
+	PropertyType string   `form:"property_type" json:"property_type" binding:"required"`
+	Province     string   `form:"province" json:"province"`
+	City         string   `form:"city" json:"city" binding:"required"`
+	District     string   `form:"district" json:"district" binding:"required"`
+	Address      string   `form:"address" json:"address"`
+	TotalPrice   *float64 `form:"total_price" json:"total_price"`
+	UnitPrice    *float64 `form:"unit_price" json:"unit_price"`
+	MonthlyRent  *float64 `form:"monthly_rent" json:"monthly_rent"`
+	Area         float64  `form:"area" json:"area" binding:"required,gt=0"`
+	Bedrooms     uint8    `form:"bedrooms" json:"bedrooms"`
+	LivingRooms  uint8    `form:"living_rooms" json:"living_rooms"`
+	Bathrooms    uint8    `form:"bathrooms" json:"bathrooms"`
+	Floor        *int16   `form:"floor" json:"floor"`
+	TotalFloors  *int16   `form:"total_floors" json:"total_floors"`
+	Decoration   string   `form:"decoration" json:"decoration"`
+	Direction    string   `form:"direction" json:"direction"`
+	Description  string   `form:"description" json:"description"`
+	Commission   *float64 `form:"commission" json:"commission"`
 }
 
 type PropertyDetailResp struct {
@@ -54,17 +55,20 @@ type PropertyDetailResp struct {
 }
 
 type AgentCard struct {
-	ID          uint64 `json:"id"`
-	Name        string `json:"name"`
-	Phone       string `json:"phone"`
-	WechatID    string `json:"wechat_id"`
-	WechatQRURL string `json:"wechat_qr_url"`
-	AvatarURL   string `json:"avatar_url"`
-	Bio         string `json:"bio"`
-	AgentCode   string `json:"agent_code"`
+	ID              uint64   `json:"id"`
+	Name            string   `json:"name"`
+	Phone           string   `json:"phone"`
+	WechatID        string   `json:"wechat_id"`
+	WechatQRURL     string   `json:"wechat_qr_url"`
+	AvatarURL       string   `json:"avatar_url"`
+	Bio             string   `json:"bio"`
+	AgentCode       string   `json:"agent_code"`
+	ClaimCommission *float64 `json:"claim_commission"`
 }
 
 // GetDetailWithAgent 获取房源详情（含销售员信息）
+// 有 agentCode：显示该认领人名片 + 其 claim_commission
+// 无 agentCode：显示录入人（owner_agent）名片 + 房源原始 commission
 func (s *PropertyService) GetDetailWithAgent(propertyID uint64, agentCode string) (*PropertyDetailResp, error) {
 	property, err := s.propertyRepo.FindByID(propertyID)
 	if err != nil {
@@ -76,23 +80,37 @@ func (s *PropertyService) GetDetailWithAgent(propertyID uint64, agentCode string
 
 	resp := &PropertyDetailResp{Property: property}
 
+	var displayAgent *model.Agent
+
 	if agentCode != "" {
-		agent, err := s.agentRepo.FindByCode(agentCode)
+		displayAgent, err = s.agentRepo.FindByCode(agentCode)
 		if err != nil {
 			return nil, err
 		}
-		if agent != nil && agent.Status == model.AgentStatusActive {
-			resp.Agent = &AgentCard{
-				ID:          agent.ID,
-				Name:        agent.Name,
-				Phone:       agent.Phone,
-				WechatID:    agent.WechatID,
-				WechatQRURL: agent.WechatQRURL,
-				AvatarURL:   agent.AvatarURL,
-				Bio:         agent.Bio,
-				AgentCode:   agent.AgentCode,
-			}
+		if displayAgent != nil && displayAgent.Status != model.AgentStatusActive {
+			displayAgent = nil
 		}
+	}
+
+	if displayAgent == nil && property.OwnerAgentID != nil {
+		displayAgent, _ = s.agentRepo.FindByID(*property.OwnerAgentID)
+	}
+
+	if displayAgent != nil {
+		card := &AgentCard{
+			ID:          displayAgent.ID,
+			Name:        displayAgent.Name,
+			Phone:       displayAgent.Phone,
+			WechatID:    displayAgent.WechatID,
+			WechatQRURL: displayAgent.WechatQRURL,
+			AvatarURL:   displayAgent.AvatarURL,
+			Bio:         displayAgent.Bio,
+			AgentCode:   displayAgent.AgentCode,
+		}
+		if agentCode != "" {
+			card.ClaimCommission, _ = s.agentRepo.GetClaimCommission(displayAgent.ID, propertyID)
+		}
+		resp.Agent = card
 	}
 
 	return resp, nil
@@ -137,6 +155,7 @@ func (s *PropertyService) Create(req *CreatePropertyReq, createdBy uint64) (*mod
 		TotalFloors:  req.TotalFloors,
 		Direction:    req.Direction,
 		Description:  req.Description,
+		Commission:   req.Commission,
 		Status:       model.PropertyStatusAvailable,
 		CreatedBy:    createdBy,
 	}
@@ -272,6 +291,7 @@ type UpdatePropertyReq struct {
 	BuildingAge   *int16   `json:"building_age"`
 	Parking       *int16   `json:"parking"`
 	HasElevator   *bool    `json:"has_elevator"`
+	Commission    *float64 `json:"commission"`
 }
 
 // UpdateProperty 更新房源（仅 owner_agent 或 admin）
@@ -377,19 +397,20 @@ func (s *PropertyService) UpdateProperty(id, userID uint64, isAdmin bool, req *U
 	if req.HasElevator != nil {
 		property.HasElevator = *req.HasElevator
 	}
+	if req.Commission != nil {
+		property.Commission = req.Commission
+	}
 
 	return property, s.propertyRepo.Update(property)
 }
 
-// Create 扩展：创建时绑定 owner_agent
-func (s *PropertyService) CreateWithOwner(req *CreatePropertyReq, createdBy uint64) (*model.Property, error) {
+// CreateWithOwner 创建房源并绑定录入人为 owner_agent（会自动创建经纪人档案）
+func (s *PropertyService) CreateWithOwner(req *CreatePropertyReq, createdBy uint64, agent *model.Agent) (*model.Property, error) {
 	property, err := s.Create(req, createdBy)
 	if err != nil {
 		return nil, err
 	}
-	// 绑定 owner_agent
-	agent, err := s.agentRepo.FindByUserID(createdBy)
-	if err == nil && agent != nil {
+	if agent != nil {
 		property.OwnerAgentID = &agent.ID
 		_ = s.propertyRepo.Update(property)
 	}

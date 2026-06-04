@@ -59,6 +59,7 @@ type Property struct {
 	Parking       *int16         `json:"parking"`
 	HasElevator   bool           `gorm:"not null;default:false" json:"has_elevator"`
 	IsVerified    bool           `gorm:"not null;default:false" json:"is_verified"`
+	Commission    *float64       `gorm:"type:decimal(10,2)" json:"commission"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
 

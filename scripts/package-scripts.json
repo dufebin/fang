@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "# 微信小程序上传脚本": "",
+    "wx:upload": "node scripts/miniprogram-upload.js",
+    "wx:upload:dev": "node scripts/miniprogram-upload.js --env dev",
+    "wx:upload:test": "node scripts/miniprogram-upload.js --env test",
+    "wx:upload:prod": "node scripts/miniprogram-upload.js --env prod",
+    "wx:preview": "node scripts/miniprogram-upload.js --preview",
+    "wx:preview:page": "node scripts/miniprogram-upload.js --preview --page"
+  }
+}

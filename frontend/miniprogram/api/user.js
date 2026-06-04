@@ -49,11 +49,6 @@ function markAllRead() {
   return request({ url: '/user/notifications/read-all', method: 'PUT' })
 }
 
-// 开发用：模拟经纪人登录
-function mockAgentLogin() {
-  return request({ url: '/dev/mock-agent-login', method: 'POST' })
-}
-
 // 提交入驻申请
 function submitAgentApply(data) {
   return request({ url: '/user/agent-apply', method: 'POST', data })
@@ -68,7 +63,6 @@ module.exports = {
   mpLogin,
   updateProfile,
   getMe,
-  mockAgentLogin,
   toggleFavorite,
   listFavorites,
   listHistory,

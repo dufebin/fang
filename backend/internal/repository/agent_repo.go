@@ -72,11 +72,31 @@ func (r *AgentRepo) Delete(id uint64) error {
 	return r.db.Delete(&model.Agent{}, id).Error
 }
 
-// ClaimProperty 销售员认领房源
-func (r *AgentRepo) ClaimProperty(agentID, propertyID uint64) error {
-	ap := model.AgentProperty{AgentID: agentID, PropertyID: propertyID}
-	return r.db.Where("agent_id = ? AND property_id = ?", agentID, propertyID).
-		FirstOrCreate(&ap).Error
+// ClaimProperty 销售员认领房源，commission 不为 nil 时同步更新对外佣金
+func (r *AgentRepo) ClaimProperty(agentID, propertyID uint64, commission *float64) error {
+	var ap model.AgentProperty
+	result := r.db.Where("agent_id = ? AND property_id = ?", agentID, propertyID).FirstOrCreate(&ap, model.AgentProperty{
+		AgentID:    agentID,
+		PropertyID: propertyID,
+	})
+	if result.Error != nil {
+		return result.Error
+	}
+	if commission != nil {
+		ap.ClaimCommission = commission
+		return r.db.Save(&ap).Error
+	}
+	return nil
+}
+
+// GetClaimCommission 获取认领人对某房源设定的佣金
+func (r *AgentRepo) GetClaimCommission(agentID, propertyID uint64) (*float64, error) {
+	var ap model.AgentProperty
+	err := r.db.Where("agent_id = ? AND property_id = ?", agentID, propertyID).First(&ap).Error
+	if err != nil {
+		return nil, nil
+	}
+	return ap.ClaimCommission, nil
 }
 
 // UnclaimProperty 取消认领
