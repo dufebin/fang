@@ -101,10 +101,13 @@ func (s *AgentApplicationService) Review(id, reviewerID uint64, req *ReviewReq) 
 			agent := &model.Agent{
 				UserID:    a.UserID,
 				Name:      a.RealName,
+				Phone:     a.Phone,
 				AgentCode: generateAgentCode(),
 				Status:    model.AgentStatusActive,
 			}
-			_ = s.agentRepo.Create(agent)
+			if err := s.agentRepo.Create(agent); err != nil {
+				return err
+			}
 		}
 	} else {
 		a.Status = model.ApplicationStatusRejected
