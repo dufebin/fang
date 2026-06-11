@@ -1,4 +1,5 @@
 const { getMe, listFavorites, listHistory, listNotifications } = require('../../api/user')
+const { setToken } = require('../../utils/auth')
 const { listMyAppointments } = require('../../api/appointment')
 const { fullImageURL } = require('../../utils/format')
 const { isLoggedIn } = require('../../utils/auth')
@@ -45,6 +46,7 @@ Page({
         })
       }
       const fresh = await getMe()
+      if (fresh.new_token) setToken(fresh.new_token)
       getApp().globalData.userInfo = fresh
       this.setData({
         userInfo: fresh,
