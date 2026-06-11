@@ -63,16 +63,23 @@ func (h *AuthHandler) WeChatRedirect(c *gin.Context) {
 // Me 获取当前用户信息
 func (h *AuthHandler) Me(c *gin.Context) {
 	userID := middleware.GetCurrentUserID(c)
-	role := middleware.GetCurrentRole(c)
 	openID, _ := c.Get("open_id")
 
-	result := gin.H{
-		"user_id": userID,
-		"open_id": openID,
-		"role":    role,
+	user, err := h.authSvc.GetUserByID(userID)
+	if err != nil || user == nil {
+		response.Fail(c, 401, "用户不存在")
+		return
 	}
 
-	if role == model.RoleAgent {
+	result := gin.H{
+		"user_id":  userID,
+		"open_id":  openID,
+		"role":     user.Role,
+		"nickname": user.Nickname,
+		"avatar":   user.AvatarURL,
+	}
+
+	if user.Role == model.RoleAgent {
 		agent, err := h.agentSvc.FindByUserID(userID)
 		if err == nil && agent != nil {
 			result["agent_id"] = agent.ID

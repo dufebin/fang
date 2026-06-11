@@ -133,3 +133,7 @@ func (s *AuthService) WeChatLogin(code string) (*LoginResult, error) {
 
 	return &LoginResult{Token: jwtToken, User: user}, nil
 }
+
+func (s *AuthService) GetUserByID(id uint64) (*model.User, error) {
+	return s.userRepo.FindByID(id)
+}
