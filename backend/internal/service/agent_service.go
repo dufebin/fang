@@ -58,6 +58,7 @@ func (s *AgentService) GetOrCreateAgent(userID uint64) (*model.Agent, error) {
 	agent = &model.Agent{
 		UserID:    userID,
 		Name:      user.Nickname,
+		Phone:     "",
 		AvatarURL: user.AvatarURL,
 		AgentCode: generateAgentCode(),
 		Status:    model.AgentStatusActive,
@@ -113,6 +114,20 @@ func (s *AgentService) UnclaimProperty(userID, propertyID uint64) error {
 		return fmt.Errorf("销售员档案不存在")
 	}
 	return s.agentRepo.UnclaimProperty(agent.ID, propertyID)
+}
+
+// GetClaimStatus 查询用户对某房源的认领状态和佣金
+func (s *AgentService) GetClaimStatus(userID, propertyID uint64) (bool, *float64, error) {
+	agent, err := s.agentRepo.FindByUserID(userID)
+	if err != nil || agent == nil {
+		return false, nil, nil
+	}
+	claimed, err := s.agentRepo.IsPropertyClaimed(agent.ID, propertyID)
+	if err != nil || !claimed {
+		return false, nil, err
+	}
+	commission, _ := s.agentRepo.GetClaimCommission(agent.ID, propertyID)
+	return true, commission, nil
 }
 
 // CreateByAdmin 管理员创建销售员

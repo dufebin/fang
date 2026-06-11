@@ -1,23 +1,47 @@
 package handler
 
 import (
+	"context"
+	"fmt"
 	"strconv"
+	"strings"
 
 	"fangchan/internal/middleware"
 	"fangchan/internal/repository"
 	"fangchan/internal/service"
 	"fangchan/pkg/response"
+	"fangchan/pkg/storage"
+	"fangchan/pkg/wechat"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PropertyHandler struct {
-	propertySvc *service.PropertyService
-	agentSvc    *service.AgentService
+	propertySvc   *service.PropertyService
+	agentSvc      *service.AgentService
+	userActionSvc *service.UserActionService
+	store         storage.Storage
+	wxClient      *wechat.Client
 }
 
-func NewPropertyHandler(propertySvc *service.PropertyService, agentSvc *service.AgentService) *PropertyHandler {
-	return &PropertyHandler{propertySvc: propertySvc, agentSvc: agentSvc}
+func NewPropertyHandler(propertySvc *service.PropertyService, agentSvc *service.AgentService, userActionSvc *service.UserActionService, store storage.Storage, wxClient *wechat.Client) *PropertyHandler {
+	return &PropertyHandler{propertySvc: propertySvc, agentSvc: agentSvc, userActionSvc: userActionSvc, store: store, wxClient: wxClient}
+}
+
+// UploadEditorImage 富文本编辑器图片上传（登录用户可用）
+func (h *PropertyHandler) UploadEditorImage(c *gin.Context) {
+	file, header, err := c.Request.FormFile("image")
+	if err != nil {
+		response.BadRequest(c, "请选择图片文件")
+		return
+	}
+	defer file.Close()
+	url, err := h.store.Save(file, header)
+	if err != nil {
+		response.Fail(c, 500, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"url": url})
 }
 
 // GetDetail H5获取房源详情（含销售员信息）
@@ -43,6 +67,19 @@ func (h *PropertyHandler) GetDetail(c *gin.Context) {
 	openID, _ := c.Get("open_id")
 	openIDStr, _ := openID.(string)
 	go h.propertySvc.RecordView(id, agentCode, openIDStr, c.ClientIP())
+
+	// 可选登录：有 token 则检查收藏/认领状态
+	if token := extractBearerToken(c); token != "" {
+		if claims, err := middleware.ParseToken(token); err == nil && claims.UserID > 0 {
+			if ok, _ := h.userActionSvc.IsFavorited(claims.UserID, id); ok {
+				detail.IsFavorited = true
+			}
+			if claimed, commission, _ := h.agentSvc.GetClaimStatus(claims.UserID, id); claimed {
+				detail.IsClaimed = true
+				detail.MyClaimCommission = commission
+			}
+		}
+	}
 
 	response.Success(c, detail)
 }
@@ -416,4 +453,32 @@ func (h *PropertyHandler) UpdateStatus(c *gin.Context) {
 	}
 
 	response.Success(c, gin.H{"updated": true})
+}
+
+// GetWxaCode 生成带参数的小程序码，供海报使用
+func (h *PropertyHandler) GetWxaCode(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+	agentCode := c.Query("a")
+	scene := fmt.Sprintf("id=%d", id)
+	if agentCode != "" {
+		scene = fmt.Sprintf("id=%d&a=%s", id, agentCode)
+	}
+	png, err := h.wxClient.GetWxaCodeUnlimit(context.Background(), scene, "pages/property-detail/index")
+	if err != nil {
+		response.Fail(c, 500, "生成小程序码失败: "+err.Error())
+		return
+	}
+	c.Data(200, "image/png", png)
+}
+
+func extractBearerToken(c *gin.Context) string {
+	bearer := c.GetHeader("Authorization")
+	if strings.HasPrefix(bearer, "Bearer ") {
+		return strings.TrimPrefix(bearer, "Bearer ")
+	}
+	return c.Query("token")
 }

@@ -51,7 +51,11 @@ type CreatePropertyReq struct {
 
 type PropertyDetailResp struct {
 	*model.Property
-	Agent *AgentCard `json:"agent,omitempty"`
+	Agent             *AgentCard `json:"agent,omitempty"`
+	OwnerAgentCode    string     `json:"owner_agent_code,omitempty"`
+	IsFavorited       bool       `json:"is_favorited"`
+	IsClaimed         bool       `json:"is_claimed"`
+	MyClaimCommission *float64   `json:"my_claim_commission"`
 }
 
 type AgentCard struct {
@@ -81,6 +85,14 @@ func (s *PropertyService) GetDetailWithAgent(propertyID uint64, agentCode string
 	resp := &PropertyDetailResp{Property: property}
 
 	var displayAgent *model.Agent
+	var ownerAgent *model.Agent
+
+	if property.OwnerAgentID != nil {
+		ownerAgent, _ = s.agentRepo.FindByID(*property.OwnerAgentID)
+	}
+	if ownerAgent != nil {
+		resp.OwnerAgentCode = ownerAgent.AgentCode
+	}
 
 	if agentCode != "" {
 		displayAgent, err = s.agentRepo.FindByCode(agentCode)
@@ -92,8 +104,8 @@ func (s *PropertyService) GetDetailWithAgent(propertyID uint64, agentCode string
 		}
 	}
 
-	if displayAgent == nil && property.OwnerAgentID != nil {
-		displayAgent, _ = s.agentRepo.FindByID(*property.OwnerAgentID)
+	if displayAgent == nil {
+		displayAgent = ownerAgent
 	}
 
 	if displayAgent != nil {
@@ -224,13 +236,59 @@ func (s *PropertyService) List(page, limit int, filter repository.PropertyFilter
 	return s.propertyRepo.List(page, limit, filter)
 }
 
-// GetAgentProperties 获取销售员认领的房源
+// GetAgentProperties 获取销售员所有相关房源（自己录入+认领），用于公开主页
 func (s *PropertyService) GetAgentProperties(agentID uint64, page, limit int) ([]model.Property, int64, error) {
-	ids, err := s.agentRepo.GetClaimedPropertyIDs(agentID)
+	claimedIDs, err := s.agentRepo.GetClaimedPropertyIDs(agentID)
+	if err != nil {
+		return nil, 0, err
+	}
+	ownedIDs, err := s.propertyRepo.GetIDsByOwnerAgent(agentID)
+	if err != nil {
+		return nil, 0, err
+	}
+	seen := make(map[uint64]bool, len(ownedIDs))
+	for _, id := range ownedIDs {
+		seen[id] = true
+	}
+	for _, id := range claimedIDs {
+		if !seen[id] {
+			seen[id] = true
+			ownedIDs = append(ownedIDs, id)
+		}
+	}
+	return s.propertyRepo.ListByIDs(ownedIDs, page, limit)
+}
+
+// GetOwnedProperties 获取销售员自己录入的房源
+func (s *PropertyService) GetOwnedProperties(agentID uint64, page, limit int) ([]model.Property, int64, error) {
+	ids, err := s.propertyRepo.GetIDsByOwnerAgent(agentID)
 	if err != nil {
 		return nil, 0, err
 	}
 	return s.propertyRepo.ListByIDs(ids, page, limit)
+}
+
+// GetClaimedProperties 获取销售员认领推广的房源（排除自己录入的）
+func (s *PropertyService) GetClaimedProperties(agentID uint64, page, limit int) ([]model.Property, int64, error) {
+	claimedIDs, err := s.agentRepo.GetClaimedPropertyIDs(agentID)
+	if err != nil {
+		return nil, 0, err
+	}
+	ownedIDs, err := s.propertyRepo.GetIDsByOwnerAgent(agentID)
+	if err != nil {
+		return nil, 0, err
+	}
+	owned := make(map[uint64]bool, len(ownedIDs))
+	for _, id := range ownedIDs {
+		owned[id] = true
+	}
+	filtered := claimedIDs[:0]
+	for _, id := range claimedIDs {
+		if !owned[id] {
+			filtered = append(filtered, id)
+		}
+	}
+	return s.propertyRepo.ListByIDs(filtered, page, limit)
 }
 
 // DeleteProperty 删除房源（仅 owner_agent 或 admin）

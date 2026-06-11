@@ -157,3 +157,9 @@ func (r *PropertyRepo) DeleteImages(propertyID uint64, imageIDs []uint64) error 
 func (r *PropertyRepo) RecordView(view *model.PropertyView) error {
 	return r.db.Create(view).Error
 }
+
+func (r *PropertyRepo) GetIDsByOwnerAgent(agentID uint64) ([]uint64, error) {
+	var ids []uint64
+	err := r.db.Model(&model.Property{}).Where("owner_agent_id = ?", agentID).Pluck("id", &ids).Error
+	return ids, err
+}

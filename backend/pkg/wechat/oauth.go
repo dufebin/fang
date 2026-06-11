@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -13,10 +14,11 @@ import (
 )
 
 const (
-	oauthTokenURL   = "https://api.weixin.qq.com/sns/oauth2/access_token"
-	userInfoURL     = "https://api.weixin.qq.com/sns/userinfo"
-	accessTokenURL  = "https://api.weixin.qq.com/cgi-bin/token"
+	oauthTokenURL     = "https://api.weixin.qq.com/sns/oauth2/access_token"
+	userInfoURL       = "https://api.weixin.qq.com/sns/userinfo"
+	accessTokenURL    = "https://api.weixin.qq.com/cgi-bin/token"
 	jscode2sessionURL = "https://api.weixin.qq.com/sns/jscode2session"
+	wxaCodeUnlimitURL = "https://api.weixin.qq.com/wxa/getwxacodeunlimit"
 )
 
 type Client struct {
@@ -214,4 +216,34 @@ func (c *Client) GetAccessToken(ctx context.Context) (string, error) {
 	}
 
 	return tokenResp.AccessToken, nil
+}
+
+// GetWxaCodeUnlimit 生成小程序码（不限制访问次数）
+// scene 最多32字符，如 "id=17&a=AGT001"
+// page 如 "pages/property-detail/index"
+func (c *Client) GetWxaCodeUnlimit(ctx context.Context, scene, page string) ([]byte, error) {
+	token, err := c.GetAccessToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+	body, _ := json.Marshal(map[string]interface{}{
+		"scene": scene,
+		"page":  page,
+		"width": 280,
+	})
+	resp, err := http.Post(wxaCodeUnlimitURL+"?access_token="+token,
+		"application/json", strings.NewReader(string(body)))
+	if err != nil {
+		return nil, fmt.Errorf("request wxacode: %w", err)
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	// 若返回 JSON（通常是错误）而非 PNG，则报错
+	if len(data) > 0 && data[0] == '{' {
+		return nil, fmt.Errorf("wxacode error: %s", string(data))
+	}
+	return data, nil
 }

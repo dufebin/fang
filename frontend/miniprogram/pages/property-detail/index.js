@@ -23,6 +23,7 @@ Page({
     isClaimed: false,
     myClaimCommission: null,
     claimCommissionInput: '',
+    isOwner: false,
   },
 
   onLoad(options) {
@@ -74,6 +75,9 @@ Page({
         monthlyText = m >= 10000 ? (m / 10000).toFixed(2) + '万/月' : Math.round(m) + '元/月'
       }
 
+      const myAgentCode = wx.getStorageSync('agentCode') || ''
+      const isOwner = !!(myAgentCode && property.owner_agent_code && myAgentCode === property.owner_agent_code)
+
       this.setData({
         property,
         agent,
@@ -87,7 +91,10 @@ Page({
         tags,
         monthlyText,
         isFav: property.is_favorited || false,
+        isClaimed: property.is_claimed || false,
+        myClaimCommission: property.my_claim_commission != null ? property.my_claim_commission : null,
         loadingFailed: false,
+        isOwner,
       })
 
       wx.setNavigationBarTitle({ title: property.title || '房源详情' })
@@ -111,8 +118,12 @@ Page({
     if (!requireLogin()) return
     try {
       const res = await toggleFavorite(this._propertyId)
-      this.setData({ isFav: res.is_favorited })
+      this.setData({ isFav: res.favorited })
     } catch (_) {}
+  },
+
+  onEditProperty() {
+    wx.navigateTo({ url: `/pages/property-edit/index?id=${this._propertyId}` })
   },
 
   onLoanCalc() {
@@ -157,11 +168,9 @@ Page({
   },
 
   onShare() {
-    const agentCode = wx.getStorageSync('agentCode') || ''
-    const shareUrl = `/pages/property-detail/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`
-    wx.setClipboardData({
-      data: shareUrl,
-      success: () => wx.showToast({ title: '链接已复制' }),
+    const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode || ''
+    wx.navigateTo({
+      url: `/pages/property-poster/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`,
     })
   },
 

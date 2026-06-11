@@ -72,7 +72,14 @@ func (h *AgentHandler) GetMyProperties(c *gin.Context) {
 		return
 	}
 
-	list, total, err := h.propertySvc.GetAgentProperties(agent.ID, page, limit)
+	role := c.DefaultQuery("role", "owner")
+	var list interface{}
+	var total int64
+	if role == "claimed" {
+		list, total, err = h.propertySvc.GetClaimedProperties(agent.ID, page, limit)
+	} else {
+		list, total, err = h.propertySvc.GetOwnedProperties(agent.ID, page, limit)
+	}
 	if err != nil {
 		response.ServerError(c, err)
 		return

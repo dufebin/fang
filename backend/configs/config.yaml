@@ -29,7 +29,7 @@ wechat:
   app_secret: "e2cefc2d3658d52884d68e8d8a6e5c1e"
   token: "your-wechat-token"
   encoding_aes_key: "5CRh0ZnTEMkXrNt9mUZ7WxlhJWr6cpBHAaKjxiBhdXY="
-  oauth_redirect_url: "https://yourdomain.com/api/auth/wechat/callback"
+  oauth_redirect_url: "https://fapi.deephealth.net/api/auth/wechat/callback"
 
 storage:
   type: "cos"  # local or cos

@@ -1,6 +1,7 @@
 const { createProperty, updateProperty, getAgentPropertyDetail, deletePropertyImage, updatePropertyStatus } = require('../../api/property')
 const { uploadPropertyImage, uploadPropertyVideo } = require('../../api/agent')
 const { fullImageURL, relativeImageURL } = require('../../utils/format')
+const { upload } = require('../../utils/request')
 const { QQMAP_KEY } = require('../../utils/config')
 
 const DECORATIONS = ['毛坯', '简装', '精装', '豪华装修']
@@ -38,7 +39,6 @@ Page({
       description: '',
     },
     status: 'available',
-    descLength: 0,
     regionValue: ['', '', ''],
     locating: false,
     images: [],
@@ -96,7 +96,6 @@ Page({
           description: p.description || '',
         },
         images: (p.images || []).map(img => ({ id: img.id, url: fullImageURL(img.url) })),
-        descLength: (p.description || '').length,
         regionValue: [p.province || '', p.city || '', p.district || ''],
         videoUrl,
         _originalVideoUrl: videoUrl,
@@ -110,9 +109,52 @@ Page({
 
   onInput(e) {
     const field = e.currentTarget.dataset.field
-    const update = { [`form.${field}`]: e.detail.value }
-    if (field === 'description') update.descLength = e.detail.value.length
-    this.setData(update)
+    this.setData({ [`form.${field}`]: e.detail.value })
+  },
+
+  // ── 富文本编辑器 ──
+  onEditorReady() {
+    wx.createSelectorQuery().select('#desc-editor').context((res) => {
+      this.editorCtx = res.context
+      // 编辑模式：回填已有 HTML
+      const html = this.data.form.description
+      if (html) this.editorCtx.setContents({ html, success: () => {} })
+    }).exec()
+  },
+
+  onEditorInput(e) {
+    this.setData({ 'form.description': e.detail.html })
+  },
+
+  onFormat(e) {
+    const { name, value } = e.currentTarget.dataset
+    if (!this.editorCtx) return
+    this.editorCtx.format(name, value || true)
+  },
+
+  async onEditorInsertImage() {
+    if (!this.editorCtx) return
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      success: async (res) => {
+        const path = res.tempFiles[0].tempFilePath
+        wx.showLoading({ title: '上传中...' })
+        try {
+          const data = await upload({ url: '/user/upload/image', filePath: path, name: 'image' })
+          this.editorCtx.insertImage({
+            src: data.url,
+            width: '100%',
+            data: { path },
+          })
+        } catch (_) {
+          wx.showToast({ title: '图片上传失败', icon: 'none' })
+        } finally {
+          wx.hideLoading()
+        }
+      },
+    })
   },
 
   onStepper(e) {

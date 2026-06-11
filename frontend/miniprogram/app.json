@@ -18,6 +18,7 @@
     "pages/agent-profile/index",
     "pages/agent-apply/index",
     "pages/property-edit/index",
+    "pages/property-poster/index",
     "pages/login/index"
   ],
   "tabBar": {

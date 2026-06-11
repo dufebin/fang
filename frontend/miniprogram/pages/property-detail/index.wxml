@@ -32,7 +32,8 @@
   <view class="price-block">
     <view class="price-row">
       <text class="price-num">{{priceText}}</text>
-      <view wx:if="{{isFav}}" class="fav-btn fav-active" bindtap="onToggleFav">♥</view>
+      <view wx:if="{{isOwner}}" class="edit-btn" bindtap="onEditProperty">编辑</view>
+      <view wx:elif="{{isFav}}" class="fav-btn fav-active" bindtap="onToggleFav">♥</view>
       <view wx:else class="fav-btn" bindtap="onToggleFav">♡</view>
     </view>
     <view class="property-title">{{property.title}}</view>
@@ -97,7 +98,7 @@
   <!-- 房源描述 -->
   <view wx:if="{{property.description}}" class="section">
     <view class="section-title">房源描述</view>
-    <view class="description-text">{{property.description}}</view>
+    <rich-text class="description-text" nodes="{{property.description}}" />
   </view>
 
   <!-- 贷款计算入口 -->
@@ -113,22 +114,40 @@
     <agent-card agent="{{agent}}" showActions="{{true}}" />
   </view>
 
-  <!-- 认领房源 -->
-  <view class="section">
-    <view class="section-title">推广此房源</view>
-    <view wx:if="{{isClaimed}}" class="claim-claimed-row">
-      <text class="claim-claimed-text">已认领</text>
-      <view wx:if="{{myClaimCommission != null}}" class="claim-commission-info">
-        <text>我的佣金：{{myClaimCommission}}元</text>
-      </view>
-      <view class="claim-share-btn" bindtap="onShare">生成分享链接</view>
-      <view class="claim-cancel-btn" bindtap="onUnclaim">取消认领</view>
-    </view>
-    <view wx:else class="claim-row">
-      <view class="claim-input-wrap">
-        <input class="claim-commission-input" type="digit" placeholder="我的佣金（元，选填）" value="{{claimCommissionInput}}" bindinput="onClaimCommissionInput" />
+  <!-- 认领并推广（自己的房源不显示） -->
+  <view wx:if="{{!isOwner}}" class="section claim-section">
+    <view class="section-title">认领并推广</view>
+
+    <!-- 未认领 -->
+    <view wx:if="{{!isClaimed}}" class="claim-unclaimed">
+      <view class="claim-desc">认领后可对外推广此房源，成交后按约定佣金结算</view>
+      <view class="claim-form">
+        <view class="claim-label">期望佣金（元，选填）</view>
+        <view class="claim-input-wrap">
+          <input
+            class="claim-commission-input"
+            type="digit"
+            placeholder="不填则以房源标注佣金为准"
+            placeholder-class="claim-placeholder"
+            value="{{claimCommissionInput}}"
+            bindinput="onClaimCommissionInput"
+          />
+        </view>
       </view>
       <view class="claim-btn" bindtap="onClaim">认领并推广</view>
+    </view>
+
+    <!-- 已认领 -->
+    <view wx:else class="claim-claimed">
+      <view class="claim-status-row">
+        <view class="claim-status-badge">已认领</view>
+        <view wx:if="{{myClaimCommission != null}}" class="claim-commission-pill">佣金 {{myClaimCommission}} 元</view>
+      </view>
+      <view class="claim-desc">您已认领此房源，生成专属海报进行推广</view>
+      <view class="claim-actions">
+        <view class="claim-share-btn" bindtap="onShare">生成推广海报</view>
+        <view class="claim-cancel-btn" bindtap="onUnclaim">取消认领</view>
+      </view>
     </view>
   </view>
 

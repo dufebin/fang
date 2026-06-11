@@ -95,6 +95,16 @@
   color: #0284C7;
 }
 
+.edit-btn {
+  padding: 10rpx 28rpx;
+  border-radius: 32rpx;
+  background: #E0F2FE;
+  color: #0284C7;
+  font-size: 26rpx;
+  font-weight: 500;
+  border: 1rpx solid #0284C7;
+}
+
 .fav-btn {
   font-size: 48rpx;
   color: #ccc;
@@ -249,6 +259,144 @@
   border-radius: 44rpx;
   font-size: 30rpx;
   font-weight: 500;
+}
+
+/* 佣金展示行 */
+.commission-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+
+.commission-label {
+  font-size: 22rpx;
+  color: #fff;
+  background: #F59E0B;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  font-weight: 500;
+}
+
+.commission-val {
+  font-size: 28rpx;
+  color: #D97706;
+  font-weight: 700;
+}
+
+/* ── 认领并推广区块 ── */
+.claim-section {
+  padding-bottom: 36rpx;
+}
+
+.claim-desc {
+  font-size: 26rpx;
+  color: #64748B;
+  line-height: 1.7;
+  margin-bottom: 28rpx;
+}
+
+/* 未认领 */
+.claim-form {
+  margin-bottom: 28rpx;
+}
+
+.claim-label {
+  font-size: 24rpx;
+  color: #94A3B8;
+  margin-bottom: 12rpx;
+}
+
+.claim-input-wrap {
+  background: #F8FAFC;
+  border: 2rpx solid #E2E8F0;
+  border-radius: 16rpx;
+  padding: 0 28rpx;
+  height: 92rpx;
+  display: flex;
+  align-items: center;
+}
+
+.claim-commission-input {
+  flex: 1;
+  height: 92rpx;
+  font-size: 30rpx;
+  color: #1E293B;
+  background: transparent;
+}
+
+.claim-placeholder {
+  color: #CBD5E1;
+  font-size: 26rpx;
+}
+
+.claim-btn {
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  box-shadow: 0 8rpx 24rpx rgba(2, 132, 199, 0.35);
+}
+
+/* 已认领 */
+.claim-status-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.claim-status-badge {
+  background: #DCFCE7;
+  color: #16A34A;
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+.claim-commission-pill {
+  background: #FEF3C7;
+  color: #D97706;
+  font-size: 24rpx;
+  font-weight: 500;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+.claim-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.claim-share-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 6rpx 18rpx rgba(2, 132, 199, 0.30);
+}
+
+.claim-cancel-btn {
+  width: 180rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #F1F5F9;
+  color: #94A3B8;
+  border-radius: 44rpx;
+  font-size: 26rpx;
 }
 
 .safe-bottom {

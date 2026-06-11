@@ -101,7 +101,7 @@ func main() {
 
 	// Handlers
 	authHandler := handler.NewAuthHandler(authSvc, agentSvc, cfg.WeChat.AppID, cfg.WeChat.OAuthRedirectURL)
-	propertyHandler := handler.NewPropertyHandler(propertySvc, agentSvc)
+	propertyHandler := handler.NewPropertyHandler(propertySvc, agentSvc, userActionSvc, store, wxClient)
 	agentHandler := handler.NewAgentHandler(agentSvc, propertySvc, wxClient)
 	adminHandler := handler.NewAdminHandler(propertySvc, agentSvc, userRepo, store, cfg.Admin.Username, cfg.Admin.Password)
 	contentHandler := handler.NewContentHandler(contentSvc)
@@ -182,6 +182,7 @@ func registerRoutes(
 	{
 		h5.GET("/properties", propertyH.List)
 		h5.GET("/property/:id", propertyH.GetDetail)
+		h5.GET("/property/:id/wxacode", propertyH.GetWxaCode)
 		h5.GET("/agent/:agent_code", agentH.GetAgentByCode)
 		h5.GET("/wechat/jssdk-config", agentH.GetJSSDKConfig)
 		// 内容
@@ -203,6 +204,7 @@ func registerRoutes(
 		user.POST("/agent-apply", userActionH.SubmitApplication)
 		user.GET("/agent-apply", userActionH.GetMyApplication)
 		// 任意登录用户可录入和认领房源
+		user.POST("/upload/image", propertyH.UploadEditorImage)
 		user.POST("/properties", propertyH.Create)
 		user.POST("/properties/:id/claim", propertyH.Claim)
 		user.DELETE("/properties/:id/claim", propertyH.Unclaim)

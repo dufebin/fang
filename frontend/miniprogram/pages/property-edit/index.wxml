@@ -180,14 +180,29 @@
     </view>
   </view>
 
-  <!-- 房源描述 -->
+  <!-- 房源描述（富文本） -->
   <view class="card">
     <view class="card-header">
       <view class="header-bar"></view>
       <text class="card-title">房源描述</text>
     </view>
-    <textarea class="desc-area" placeholder="描述房源特点、周边配套、交通等..." value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="1000" />
-    <text class="desc-count">{{descLength}}/1000</text>
+    <view class="editor-toolbar">
+      <view class="toolbar-btn" bindtap="onFormat" data-name="bold"><text class="tb-bold">B</text></view>
+      <view class="toolbar-btn" bindtap="onFormat" data-name="italic"><text class="tb-italic">I</text></view>
+      <view class="toolbar-btn" bindtap="onFormat" data-name="underline"><text class="tb-underline">U</text></view>
+      <view class="toolbar-sep"></view>
+      <view class="toolbar-btn" bindtap="onFormat" data-name="list" data-value="ordered"><text>有序</text></view>
+      <view class="toolbar-btn" bindtap="onFormat" data-name="list" data-value="bullet"><text>无序</text></view>
+      <view class="toolbar-sep"></view>
+      <view class="toolbar-btn" bindtap="onEditorInsertImage"><text>图片</text></view>
+    </view>
+    <editor
+      id="desc-editor"
+      class="desc-editor"
+      placeholder="描述房源特点、周边配套、交通等..."
+      bindinput="onEditorInput"
+      bindready="onEditorReady"
+    />
   </view>
 
   <!-- 房源状态（仅编辑） -->
