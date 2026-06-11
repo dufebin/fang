@@ -44,8 +44,8 @@ Page({
     }
     this.setData({ loading: true })
     try {
-      const { name, bio } = this.data.form
-      await submitAgentApply({ real_name: name, intro: bio })
+      const { name, phone, years, bio } = this.data.form
+      await submitAgentApply({ real_name: name, phone, years: Number(years) || 0, intro: bio })
       const cfg = STATUS_CONFIG.pending
       this.setData({ applied: true, statusIcon: cfg.icon, statusText: cfg.text, statusHint: cfg.hint })
     } catch (_) {

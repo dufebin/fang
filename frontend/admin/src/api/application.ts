@@ -3,10 +3,10 @@ import request from './request'
 export interface AgentApplication {
   id: number
   user_id: number
-  name: string
+  real_name: string
   phone: string
-  bio?: string
-  years?: number
+  years: number
+  intro?: string
   status: 'pending' | 'approved' | 'rejected'
   reject_reason?: string
   user?: { nickname: string; avatar: string }

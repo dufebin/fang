@@ -24,6 +24,8 @@ func NewAgentApplicationService(
 
 type SubmitApplicationReq struct {
 	RealName  string `json:"real_name" binding:"required"`
+	Phone     string `json:"phone"`
+	Years     int    `json:"years"`
 	IDCard    string `json:"id_card"`
 	LicenseNo string `json:"license_no"`
 	Company   string `json:"company"`
@@ -45,6 +47,8 @@ func (s *AgentApplicationService) Submit(userID uint64, req *SubmitApplicationRe
 	a := &model.AgentApplication{
 		UserID:    userID,
 		RealName:  req.RealName,
+		Phone:     req.Phone,
+		Years:     req.Years,
 		IDCard:    req.IDCard,
 		LicenseNo: req.LicenseNo,
 		Company:   req.Company,

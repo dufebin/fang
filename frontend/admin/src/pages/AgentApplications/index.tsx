@@ -26,8 +26,8 @@ export default function AgentApplicationsPage() {
       search: false,
       render: (_, r) => (
         <Space>
-          <Avatar src={r.user?.avatar} size={36}>{r.name?.[0]}</Avatar>
-          <span>{r.name}</span>
+          <Avatar src={r.user?.avatar} size={36}>{r.real_name?.[0]}</Avatar>
+          <span>{r.real_name}</span>
         </Space>
       ),
     },
@@ -51,7 +51,7 @@ export default function AgentApplicationsPage() {
     },
     {
       title: '简介',
-      dataIndex: 'bio',
+      dataIndex: 'intro',
       search: false,
       ellipsis: true,
       render: (v) => v || '--',
