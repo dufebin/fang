@@ -138,6 +138,39 @@ Nginx (80)
 
 ---
 
+## 🚢 一键部署脚本
+
+根目录提供四个部署脚本，直接在开发机运行即可完成编译 + 上传：
+
+| 脚本 | 说明 |
+|------|------|
+| `deploy-backend.sh` | 编译 Go 后端，rsync 到服务器并重启进程 |
+| `deploy-admin.sh` | 构建管理后台，rsync 到服务器 |
+| `deploy-h5.sh` | 构建 H5 移动端，rsync 到服务器 |
+| `deploy-miniprogram.sh` | 编译并上传微信小程序至微信后台 |
+
+```bash
+bash deploy-backend.sh
+bash deploy-admin.sh
+bash deploy-h5.sh
+bash deploy-miniprogram.sh
+```
+
+**小程序上传说明：**
+
+- 密钥文件 `frontend/miniprogram/private.wx6a8d8faa1f9cc7c8.key` 需提前从微信公众平台下载
+  （开发 → 开发管理 → 小程序代码上传 → 下载密钥）
+- 上传服务器 IP（`111.229.9.22`）需在微信公众平台 IP 白名单中登记
+- 版本号默认取当天日期，描述默认取最新 git commit message，可通过环境变量覆盖：
+
+```bash
+VERSION=1.2.0 DESC="修复登录问题" bash deploy-miniprogram.sh
+```
+
+上传成功后在微信公众平台 → 版本管理中将其设为体验版进行测试。
+
+---
+
 ## 📄 环境变量
 
 敏感配置通过环境变量覆盖（`configs/config.yaml` 为基础配置）：

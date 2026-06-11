@@ -25,8 +25,8 @@ redis:
   db: 0
 
 wechat:
-  app_id: "your-wechat-app-id"
-  app_secret: "your-wechat-app-secret"
+  app_id: "wx6a8d8faa1f9cc7c8"
+  app_secret: "e2cefc2d3658d52884d68e8d8a6e5c1e"
   token: "your-wechat-token"
   encoding_aes_key: ""
   oauth_redirect_url: "https://yourdomain.com/api/auth/wechat/callback"
