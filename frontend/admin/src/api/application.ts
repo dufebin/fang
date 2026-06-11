@@ -18,9 +18,9 @@ export function getApplications(params: { page?: number; limit?: number; status?
 }
 
 export function approveApplication(id: number) {
-  return request.put(`/admin/applications/${id}/review`, { action: 'approve' })
+  return request.put(`/admin/applications/${id}/review`, { approved: true })
 }
 
 export function rejectApplication(id: number, reason: string) {
-  return request.put(`/admin/applications/${id}/review`, { action: 'reject', reason })
+  return request.put(`/admin/applications/${id}/review`, { approved: false, reject_reason: reason })
 }
