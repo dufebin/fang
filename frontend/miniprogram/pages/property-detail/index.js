@@ -1,8 +1,8 @@
 const { getPropertyDetail, claimProperty, unclaimProperty } = require('../../api/property')
-const { toggleFavorite } = require('../../api/user')
+const { toggleFavorite, getMe } = require('../../api/user')
 const { fullImageURL, formatPrice, formatArea, formatLayout, formatFloor } = require('../../utils/format')
 const { calcEqualInstallment } = require('../../utils/loan')
-const { requireLogin } = require('../../utils/auth')
+const { requireLogin, isLoggedIn } = require('../../utils/auth')
 
 Page({
   data: {
@@ -24,6 +24,7 @@ Page({
     myClaimCommission: null,
     claimCommissionInput: '',
     isOwner: false,
+    canShowClaimSection: false,
   },
 
   onLoad(options) {
@@ -75,8 +76,21 @@ Page({
         monthlyText = m >= 10000 ? (m / 10000).toFixed(2) + '万/月' : Math.round(m) + '元/月'
       }
 
+      const loggedIn = isLoggedIn()
+      let currentUserId = getApp().globalData.userInfo && getApp().globalData.userInfo.user_id
+      if (!currentUserId && loggedIn) {
+        try {
+          const me = await getMe()
+          currentUserId = me.user_id
+          getApp().globalData.userInfo = { ...(getApp().globalData.userInfo || {}), ...me }
+        } catch (_) {}
+      }
+
       const myAgentCode = wx.getStorageSync('agentCode') || ''
-      const isOwner = !!(myAgentCode && property.owner_agent_code && myAgentCode === property.owner_agent_code)
+      const isOwnerByAgentCode = !!(myAgentCode && property.owner_agent_code && myAgentCode === property.owner_agent_code)
+      const isOwnerByUserID = !!(currentUserId && property.created_by && Number(currentUserId) === Number(property.created_by))
+      const isOwner = isOwnerByAgentCode || isOwnerByUserID
+      const canShowClaimSection = loggedIn && !currentUserId ? false : !isOwner
 
       this.setData({
         property,
@@ -95,6 +109,7 @@ Page({
         myClaimCommission: property.my_claim_commission != null ? property.my_claim_commission : null,
         loadingFailed: false,
         isOwner,
+        canShowClaimSection,
       })
 
       wx.setNavigationBarTitle({ title: property.title || '房源详情' })
@@ -139,6 +154,10 @@ Page({
 
   async onClaim() {
     if (!requireLogin()) return
+    if (this.data.isOwner) {
+      wx.showToast({ title: '不能认领自己录入的房源', icon: 'none' })
+      return
+    }
     const raw = this.data.claimCommissionInput
     if (raw !== '' && (isNaN(Number(raw)) || Number(raw) < 0)) {
       wx.showToast({ title: '请输入有效的佣金金额', icon: 'none' })

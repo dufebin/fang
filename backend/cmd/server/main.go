@@ -73,7 +73,7 @@ func main() {
 	var store storage.Storage
 	if cfg.Storage.Type == "cos" {
 		cosCfg := cfg.Storage.COS
-		store, err = storage.NewCOSStorage(cosCfg.SecretID, cosCfg.SecretKey, cosCfg.Bucket, cosCfg.Region)
+		store, err = storage.NewCOSStorage(cosCfg.SecretID, cosCfg.SecretKey, cosCfg.Bucket, cosCfg.Region, cosCfg.BaseURL)
 	} else {
 		store, err = storage.NewLocalStorage(cfg.Storage.LocalPath, cfg.Storage.BaseURL)
 	}
@@ -92,11 +92,16 @@ func main() {
 
 	// Services
 	authSvc := service.NewAuthService(userRepo, wxClient)
-	agentSvc := service.NewAgentService(agentRepo, userRepo)
+	agentSvc := service.NewAgentService(agentRepo, userRepo, propertyRepo)
 	propertySvc := service.NewPropertyService(propertyRepo, agentRepo, store)
 	contentSvc := service.NewContentService(contentRepo)
 	userActionSvc := service.NewUserActionService(userActionRepo, agentRepo)
-	agentAppSvc := service.NewAgentApplicationService(agentAppRepo, agentRepo, userRepo)
+	agentAppSvc := service.NewAgentApplicationService(
+		agentAppRepo,
+		agentRepo,
+		userRepo,
+		cfg.AgentApplication.AutoApprove,
+	)
 	statsSvc := service.NewStatsService(statsRepo)
 
 	// Handlers
@@ -236,7 +241,7 @@ func registerRoutes(
 		// 房源
 		admin.GET("/properties", adminH.ListProperties)
 		admin.POST("/upload/image", adminH.UploadImage)
-			admin.POST("/properties", adminH.CreateProperty)
+		admin.POST("/properties", adminH.CreateProperty)
 		admin.GET("/properties/:id", adminH.GetPropertyDetail)
 		admin.POST("/properties/:id/images", adminH.UploadPropertyImage)
 		admin.DELETE("/properties/:id/images/:imgId", adminH.DeletePropertyImage)

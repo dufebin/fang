@@ -47,7 +47,8 @@
 }
 
 .btn-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20rpx;
   margin-top: 12rpx;
   width: 100%;
@@ -67,7 +68,6 @@
 }
 
 .share-btn {
-  flex: 1;
   height: 88rpx;
   line-height: 88rpx;
   text-align: center;
@@ -76,6 +76,21 @@
   border-radius: 44rpx;
   font-size: 30rpx;
   border: 1rpx solid rgba(255,255,255,0.2);
+}
+
+.friend-btn {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  width: 100%;
+}
+
+.friend-btn::after {
+  border: none;
+}
+
+.copy-btn-block {
+  grid-column: 1 / span 2;
 }
 
 .error-wrap {

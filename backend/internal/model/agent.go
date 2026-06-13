@@ -17,6 +17,7 @@ type Agent struct {
 	WechatID     string      `gorm:"size:64;default:''" json:"wechat_id"`
 	WechatQRURL  string      `gorm:"size:512;default:''" json:"wechat_qr_url"`
 	AvatarURL    string      `gorm:"size:512;default:''" json:"avatar_url"`
+	Title        string      `gorm:"size:50;default:''" json:"title"`
 	Bio          string      `gorm:"size:200;default:''" json:"bio"`
 	AgentCode    string      `gorm:"uniqueIndex;size:10;not null" json:"agent_code"`
 	Status       AgentStatus `gorm:"type:enum('active','inactive');not null;default:'active'" json:"status"`

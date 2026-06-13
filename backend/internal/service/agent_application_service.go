@@ -9,17 +9,24 @@ import (
 )
 
 type AgentApplicationService struct {
-	repo      *repository.AgentApplicationRepo
-	agentRepo *repository.AgentRepo
-	userRepo  *repository.UserRepo
+	repo        *repository.AgentApplicationRepo
+	agentRepo   *repository.AgentRepo
+	userRepo    *repository.UserRepo
+	autoApprove bool
 }
 
 func NewAgentApplicationService(
 	repo *repository.AgentApplicationRepo,
 	agentRepo *repository.AgentRepo,
 	userRepo *repository.UserRepo,
+	autoApprove bool,
 ) *AgentApplicationService {
-	return &AgentApplicationService{repo: repo, agentRepo: agentRepo, userRepo: userRepo}
+	return &AgentApplicationService{
+		repo:        repo,
+		agentRepo:   agentRepo,
+		userRepo:    userRepo,
+		autoApprove: autoApprove,
+	}
 }
 
 type SubmitApplicationReq struct {
@@ -55,7 +62,21 @@ func (s *AgentApplicationService) Submit(userID uint64, req *SubmitApplicationRe
 		Intro:     req.Intro,
 		Status:    model.ApplicationStatusPending,
 	}
-	return a, s.repo.Create(a)
+	if err := s.repo.Create(a); err != nil {
+		return nil, err
+	}
+	if s.autoApprove {
+		if err := s.approveApplication(a); err != nil {
+			return nil, err
+		}
+		now := time.Now()
+		a.Status = model.ApplicationStatusApproved
+		a.ReviewedAt = &now
+		if err := s.repo.Update(a); err != nil {
+			return nil, err
+		}
+	}
+	return a, nil
 }
 
 func (s *AgentApplicationService) GetByUser(userID uint64) (*model.AgentApplication, error) {
@@ -85,34 +106,44 @@ func (s *AgentApplicationService) Review(id, reviewerID uint64, req *ReviewReq) 
 	a.ReviewedAt = &now
 
 	if req.Approved {
-		a.Status = model.ApplicationStatusApproved
-		// 升级用户角色为 agent
-		user, err := s.userRepo.FindByID(a.UserID)
-		if err != nil || user == nil {
-			return fmt.Errorf("用户不存在")
-		}
-		user.Role = model.RoleAgent
-		if err := s.userRepo.Update(user); err != nil {
+		if err := s.approveApplication(a); err != nil {
 			return err
 		}
-		// 创建经纪人档案（如果不存在）
-		existing, _ := s.agentRepo.FindByUserID(a.UserID)
-		if existing == nil {
-			agent := &model.Agent{
-				UserID:    a.UserID,
-				Name:      a.RealName,
-				Phone:     a.Phone,
-				AgentCode: generateAgentCode(),
-				Status:    model.AgentStatusActive,
-			}
-			if err := s.agentRepo.Create(agent); err != nil {
-				return err
-			}
-		}
+		a.Status = model.ApplicationStatusApproved
 	} else {
 		a.Status = model.ApplicationStatusRejected
 		a.RejectReason = req.RejectReason
 	}
 
 	return s.repo.Update(a)
+}
+
+func (s *AgentApplicationService) approveApplication(a *model.AgentApplication) error {
+	// 升级用户角色为 agent
+	user, err := s.userRepo.FindByID(a.UserID)
+	if err != nil || user == nil {
+		return fmt.Errorf("用户不存在")
+	}
+	user.Role = model.RoleAgent
+	if err := s.userRepo.Update(user); err != nil {
+		return err
+	}
+	// 创建经纪人档案（如果不存在）
+	existing, err := s.agentRepo.FindByUserID(a.UserID)
+	if err != nil {
+		return err
+	}
+	if existing == nil {
+		agent := &model.Agent{
+			UserID:    a.UserID,
+			Name:      a.RealName,
+			Phone:     a.Phone,
+			AgentCode: generateAgentCode(),
+			Status:    model.AgentStatusActive,
+		}
+		if err := s.agentRepo.Create(agent); err != nil {
+			return err
+		}
+	}
+	return nil
 }

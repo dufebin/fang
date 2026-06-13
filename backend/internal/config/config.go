@@ -8,12 +8,13 @@ import (
 )
 
 type Config struct {
-	App      AppConfig      `yaml:"app"`
-	Admin    AdminConfig    `yaml:"admin"`
-	Database DatabaseConfig `yaml:"database"`
-	Redis    RedisConfig    `yaml:"redis"`
-	WeChat   WeChatConfig   `yaml:"wechat"`
-	Storage  StorageConfig  `yaml:"storage"`
+	App              AppConfig              `yaml:"app"`
+	Admin            AdminConfig            `yaml:"admin"`
+	Database         DatabaseConfig         `yaml:"database"`
+	Redis            RedisConfig            `yaml:"redis"`
+	WeChat           WeChatConfig           `yaml:"wechat"`
+	Storage          StorageConfig          `yaml:"storage"`
+	AgentApplication AgentApplicationConfig `yaml:"agent_application"`
 }
 
 type AdminConfig struct {
@@ -61,11 +62,16 @@ type StorageConfig struct {
 	COS       COSConfig `yaml:"cos"`
 }
 
+type AgentApplicationConfig struct {
+	AutoApprove bool `yaml:"auto_approve"`
+}
+
 type COSConfig struct {
 	SecretID  string `yaml:"secret_id"`
 	SecretKey string `yaml:"secret_key"`
 	Bucket    string `yaml:"bucket"`
 	Region    string `yaml:"region"`
+	BaseURL   string `yaml:"base_url"`
 }
 
 func (d *DatabaseConfig) DSN() string {
@@ -86,7 +92,11 @@ func Load(path string) (*Config, error) {
 	// 替换环境变量
 	data = []byte(os.ExpandEnv(string(data)))
 
-	cfg := &Config{}
+	cfg := &Config{
+		AgentApplication: AgentApplicationConfig{
+			AutoApprove: true,
+		},
+	}
 	if err := yaml.Unmarshal(data, cfg); err != nil {
 		return nil, fmt.Errorf("parse config: %w", err)
 	}

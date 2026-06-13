@@ -9,7 +9,8 @@
     <image class="poster-image" src="{{posterPath}}" mode="aspectFit" show-menu-by-longpress />
     <view class="btn-row">
       <view class="save-btn" bindtap="onSave">保存到相册</view>
-      <view class="share-btn" bindtap="onShareLink">复制推广链接</view>
+      <button class="share-btn friend-btn" open-type="share">分享给好友</button>
+      <view class="share-btn copy-btn-block" bindtap="onShareLink">复制推广链接</view>
     </view>
   </view>
 
@@ -19,6 +20,5 @@
     <text class="retry-text">点击重试</text>
   </view>
 
-  <!-- 离屏 Canvas，用于绘制海报 -->
   <canvas type="2d" id="poster-canvas" class="offscreen-canvas" />
 </view>

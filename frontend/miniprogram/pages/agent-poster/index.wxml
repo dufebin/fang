@@ -5,15 +5,24 @@
       <view class="poster-agent">
         <image class="poster-avatar" src="{{avatarUrl}}" mode="aspectFill" />
         <view class="poster-info">
-          <view class="poster-name">{{agent.name}}</view>
+          <view class="poster-name">{{agent.name || '房产顾问'}}</view>
           <view class="poster-title">{{agent.title || '房产经纪人'}}</view>
-          <view class="poster-phone">{{agent.phone}}</view>
+          <view class="poster-phone">电话：{{agent.phone || '暂无联系方式'}}</view>
+          <view wx:if="{{agent.wechat_id}}" class="poster-wechat">微信：{{agent.wechat_id}}</view>
+          <view wx:if="{{agent.agent_code}}" class="poster-code">经纪人编号：{{agent.agent_code}}</view>
         </view>
       </view>
       <view class="poster-slogan">专业房产服务，诚信为本</view>
       <view class="poster-qr-area">
-        <view class="poster-qr-placeholder">📱</view>
-        <view class="poster-qr-hint">扫码看我的房源</view>
+        <image wx:if="{{qrUrl}}" class="poster-qr-image" src="{{qrUrl}}" mode="aspectFill" />
+        <view wx:else class="poster-qr-placeholder">
+          <view class="poster-qr-placeholder-text">二维码</view>
+          <view class="poster-qr-placeholder-text">暂不可用</view>
+        </view>
+        <view class="poster-qr-texts">
+          <view class="poster-qr-hint">{{qrUrl ? '扫码添加微信咨询房源' : '当前二维码暂不可用'}}</view>
+          <view class="poster-qr-sub">{{qrUrl ? '获取带看、议价与签约服务' : '请优先使用电话联系'}}</view>
+        </view>
       </view>
     </view>
   </view>

@@ -24,7 +24,20 @@ Page({
   async _loadStats() {
     try {
       const res = await getStats()
-      this.setData({ stats: res || {} })
+      const stats = res || {}
+      const pickNumber = (primary, fallback) => {
+        if (typeof primary === 'number') return primary
+        if (typeof fallback === 'number') return fallback
+        return 0
+      }
+      this.setData({
+        stats: {
+          property_count: pickNumber(stats.property_count, stats.claims),
+          total_views: pickNumber(stats.total_views, stats.views),
+          appointment_count: pickNumber(stats.appointment_count, stats.appointments),
+          favorite_count: pickNumber(stats.favorite_count),
+        },
+      })
     } catch (_) {}
   },
 

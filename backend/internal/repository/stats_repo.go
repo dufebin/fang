@@ -126,6 +126,12 @@ func (r *StatsRepo) ConversionFunnel() ([]FunnelStage, error) {
 }
 
 type AgentStats struct {
+	PropertyCount    int64 `json:"property_count"`
+	TotalViews       int64 `json:"total_views"`
+	AppointmentCount int64 `json:"appointment_count"`
+	FavoriteCount    int64 `json:"favorite_count"`
+
+	// 兼容旧前端字段
 	Views        int64 `json:"views"`
 	Claims       int64 `json:"claims"`
 	Appointments int64 `json:"appointments"`
@@ -133,8 +139,32 @@ type AgentStats struct {
 
 func (r *StatsRepo) AgentStats(agentID uint64) (*AgentStats, error) {
 	s := &AgentStats{}
-	r.db.Table("browse_histories").Where("agent_code IN (SELECT agent_code FROM agents WHERE id = ?)", agentID).Count(&s.Views)
-	r.db.Table("agent_properties").Where("agent_id = ?", agentID).Count(&s.Claims)
-	r.db.Table("appointments").Where("agent_id = ?", agentID).Count(&s.Appointments)
+
+	relatedPropertySubQuery := r.db.Table("properties").
+		Select("id").
+		Where("owner_agent_id = ?", agentID).
+		Or("id IN (?)", r.db.Table("agent_properties").Select("property_id").Where("agent_id = ?", agentID))
+
+	if err := r.db.Table("properties").Where("id IN (?)", relatedPropertySubQuery).Count(&s.PropertyCount).Error; err != nil {
+		return nil, err
+	}
+	if err := r.db.Table("properties").Where("id IN (?)", relatedPropertySubQuery).
+		Select("COALESCE(SUM(view_count), 0)").Scan(&s.TotalViews).Error; err != nil {
+		return nil, err
+	}
+	if err := r.db.Table("favorites").Where("property_id IN (?)", relatedPropertySubQuery).Count(&s.FavoriteCount).Error; err != nil {
+		return nil, err
+	}
+	if err := r.db.Table("appointments").Where("agent_id = ?", agentID).Count(&s.AppointmentCount).Error; err != nil {
+		return nil, err
+	}
+	if err := r.db.Table("agent_properties").Where("agent_id = ?", agentID).Count(&s.Claims).Error; err != nil {
+		return nil, err
+	}
+
+	// 兼容旧前端字段
+	s.Views = s.TotalViews
+	s.Appointments = s.AppointmentCount
+
 	return s, nil
 }

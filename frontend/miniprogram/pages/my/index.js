@@ -57,22 +57,36 @@ Page({
   },
 
   async _loadStats() {
-    try {
-      const [favRes, apptRes, histRes, notifRes] = await Promise.all([
-        listFavorites({ page: 1, page_size: 1 }),
-        listMyAppointments(),
-        listHistory({ page: 1, page_size: 1 }),
-        listNotifications({ unread_only: true }),
-      ])
-      this.setData({
-        stats: {
-          favoriteCount: favRes.total || 0,
-          appointmentCount: (apptRes || []).length,
-          historyCount: histRes.total || 0,
-        },
-        unreadCount: (notifRes || []).filter(n => !n.is_read).length,
-      })
-    } catch (_) {}
+    const [favRet, apptRet, histRet, notifRet] = await Promise.allSettled([
+      listFavorites({ page: 1, limit: 1 }),
+      listMyAppointments({ page: 1, limit: 1 }),
+      listHistory({ page: 1, limit: 1 }),
+      listNotifications({ unread_only: true }),
+    ])
+
+    const favRes = favRet.status === 'fulfilled' ? favRet.value : null
+    const apptRes = apptRet.status === 'fulfilled' ? apptRet.value : null
+    const histRes = histRet.status === 'fulfilled' ? histRet.value : null
+    const notifRes = notifRet.status === 'fulfilled' ? notifRet.value : null
+
+    const appointmentList = Array.isArray(apptRes)
+      ? apptRes
+      : (apptRes && Array.isArray(apptRes.list) ? apptRes.list : [])
+    const notificationList = Array.isArray(notifRes)
+      ? notifRes
+      : (notifRes && Array.isArray(notifRes.list) ? notifRes.list : [])
+    const unreadCount = typeof (notifRes && notifRes.unread) === 'number'
+      ? notifRes.unread
+      : notificationList.filter(n => !n.is_read).length
+
+    this.setData({
+      stats: {
+        favoriteCount: (favRes && typeof favRes.total === 'number') ? favRes.total : 0,
+        appointmentCount: appointmentList.length,
+        historyCount: (histRes && typeof histRes.total === 'number') ? histRes.total : 0,
+      },
+      unreadCount,
+    })
   },
 
   onLogin() { wx.navigateTo({ url: '/pages/login/index' }) },

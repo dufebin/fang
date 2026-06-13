@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -41,7 +42,7 @@ func (h *PropertyHandler) UploadEditorImage(c *gin.Context) {
 		response.Fail(c, 500, err.Error())
 		return
 	}
-	response.Success(c, gin.H{"url": url})
+	response.Success(c, gin.H{"url": h.store.URL(url)})
 }
 
 // GetDetail H5获取房源详情（含销售员信息）
@@ -71,6 +72,8 @@ func (h *PropertyHandler) GetDetail(c *gin.Context) {
 	// 可选登录：有 token 则检查收藏/认领状态
 	if token := extractBearerToken(c); token != "" {
 		if claims, err := middleware.ParseToken(token); err == nil && claims.UserID > 0 {
+			// 记录登录用户浏览历史（用于“我的-浏览历史/浏览次数”）
+			h.userActionSvc.RecordBrowse(claims.UserID, id, agentCode)
 			if ok, _ := h.userActionSvc.IsFavorited(claims.UserID, id); ok {
 				detail.IsFavorited = true
 			}
@@ -192,9 +195,6 @@ func (h *PropertyHandler) Create(c *gin.Context) {
 		return
 	}
 
-	// 自动认领自己创建的房源
-	_ = h.agentSvc.ClaimProperty(userID, property.ID, nil)
-
 	response.Success(c, property)
 }
 
@@ -275,6 +275,14 @@ func (h *PropertyHandler) Claim(c *gin.Context) {
 
 	userID := middleware.GetCurrentUserID(c)
 	if err := h.agentSvc.ClaimProperty(userID, id, body.ClaimCommission); err != nil {
+		if errors.Is(err, service.ErrClaimOwnProperty) {
+			response.Fail(c, 400, err.Error())
+			return
+		}
+		if errors.Is(err, service.ErrPropertyNotFound) {
+			response.NotFound(c)
+			return
+		}
 		response.Fail(c, 500, err.Error())
 		return
 	}

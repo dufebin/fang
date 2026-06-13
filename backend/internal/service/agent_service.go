@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -10,16 +11,23 @@ import (
 )
 
 type AgentService struct {
-	agentRepo *repository.AgentRepo
-	userRepo  *repository.UserRepo
+	agentRepo    *repository.AgentRepo
+	userRepo     *repository.UserRepo
+	propertyRepo *repository.PropertyRepo
 }
 
-func NewAgentService(agentRepo *repository.AgentRepo, userRepo *repository.UserRepo) *AgentService {
-	return &AgentService{agentRepo: agentRepo, userRepo: userRepo}
+var (
+	ErrClaimOwnProperty = errors.New("不能认领自己录入的房源")
+	ErrPropertyNotFound = errors.New("房源不存在")
+)
+
+func NewAgentService(agentRepo *repository.AgentRepo, userRepo *repository.UserRepo, propertyRepo *repository.PropertyRepo) *AgentService {
+	return &AgentService{agentRepo: agentRepo, userRepo: userRepo, propertyRepo: propertyRepo}
 }
 
 type UpdateProfileReq struct {
 	Name        string `json:"name"`
+	Title       string `json:"title"`
 	Phone       string `json:"phone"`
 	WechatID    string `json:"wechat_id"`
 	WechatQRURL string `json:"wechat_qr_url"`
@@ -79,6 +87,9 @@ func (s *AgentService) UpdateProfile(agentID uint64, req *UpdateProfileReq) (*mo
 	if req.Name != "" {
 		agent.Name = req.Name
 	}
+	if req.Title != "" {
+		agent.Title = req.Title
+	}
 	if req.Phone != "" {
 		agent.Phone = req.Phone
 	}
@@ -100,9 +111,23 @@ func (s *AgentService) UpdateProfile(agentID uint64, req *UpdateProfileReq) (*mo
 
 // ClaimProperty 认领房源，任意登录用户均可认领（自动创建经纪人档案）
 func (s *AgentService) ClaimProperty(userID, propertyID uint64, commission *float64) error {
+	property, err := s.propertyRepo.FindByID(propertyID)
+	if err != nil {
+		return err
+	}
+	if property == nil {
+		return ErrPropertyNotFound
+	}
+	if property.CreatedBy == userID {
+		return ErrClaimOwnProperty
+	}
+
 	agent, err := s.GetOrCreateAgent(userID)
 	if err != nil {
 		return err
+	}
+	if property.OwnerAgentID != nil && *property.OwnerAgentID == agent.ID {
+		return ErrClaimOwnProperty
 	}
 	return s.agentRepo.ClaimProperty(agent.ID, propertyID, commission)
 }

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fangchan/internal/model"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -74,6 +75,17 @@ func (r *AgentRepo) Delete(id uint64) error {
 
 // ClaimProperty 销售员认领房源，commission 不为 nil 时同步更新对外佣金
 func (r *AgentRepo) ClaimProperty(agentID, propertyID uint64, commission *float64) error {
+	var property model.Property
+	if err := r.db.Select("id", "owner_agent_id").First(&property, propertyID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return fmt.Errorf("房源不存在")
+		}
+		return err
+	}
+	if property.OwnerAgentID != nil && *property.OwnerAgentID == agentID {
+		return fmt.Errorf("不能认领自己录入的房源")
+	}
+
 	var ap model.AgentProperty
 	result := r.db.Where("agent_id = ? AND property_id = ?", agentID, propertyID).FirstOrCreate(&ap, model.AgentProperty{
 		AgentID:    agentID,

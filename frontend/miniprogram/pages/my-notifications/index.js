@@ -11,7 +11,10 @@ Page({
     this.setData({ loading: true })
     try {
       const res = await listNotifications()
-      const list = (res || []).map(n => ({ ...n, createdAt: formatDate(n.created_at) }))
+      const rawList = Array.isArray(res)
+        ? res
+        : (res && Array.isArray(res.list) ? res.list : [])
+      const list = rawList.map(n => ({ ...n, createdAt: formatDate(n.created_at) }))
       this.setData({ list })
     } catch (_) {
       wx.showToast({ title: '加载失败，请下拉刷新', icon: 'none' })

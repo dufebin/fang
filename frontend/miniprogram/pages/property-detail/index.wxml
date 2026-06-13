@@ -115,7 +115,7 @@
   </view>
 
   <!-- 认领并推广（自己的房源不显示） -->
-  <view wx:if="{{!isOwner}}" class="section claim-section">
+  <view wx:if="{{canShowClaimSection}}" class="section claim-section">
     <view class="section-title">认领并推广</view>
 
     <!-- 未认领 -->

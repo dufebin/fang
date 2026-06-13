@@ -1,6 +1,6 @@
 const { getPropertyDetail } = require('../../api/property')
 const { fullImageURL, formatPrice, formatArea, formatLayout, formatFloor } = require('../../utils/format')
-const { BASE_URL } = require('../../utils/config')
+const { BASE_URL, H5_BASE_URL } = require('../../utils/config')
 
 const W = 750
 const H = 1280
@@ -14,7 +14,6 @@ Page({
     this._agentCode = options.a || wx.getStorageSync('agentCode') || ''
   },
 
-  // onReady 确保 canvas DOM 已渲染
   async onReady() {
     await this._generate()
   },
@@ -35,13 +34,14 @@ Page({
 
       const qrUrl = `${BASE_URL}/h5/property/${this._id}/wxacode${this._agentCode ? '?a=' + this._agentCode : ''}`
 
-      const [coverPath, qrPath, avatarPath] = await Promise.all([
+      const [coverPath, qrPath, wechatQrPath, avatarPath] = await Promise.all([
         coverUrl ? downloadToTemp(coverUrl).catch(() => null) : Promise.resolve(null),
         downloadToTemp(qrUrl).catch(() => null),
+        agent.wechat_qr_url ? downloadToTemp(fullImageURL(agent.wechat_qr_url)).catch(() => null) : Promise.resolve(null),
         agent.avatar_url ? downloadToTemp(fullImageURL(agent.avatar_url)).catch(() => null) : Promise.resolve(null),
       ])
 
-      const filePath = await drawPoster({ property, agent, coverPath, qrPath, avatarPath })
+      const filePath = await drawPoster(this, { property, agent, coverPath, qrPath, wechatQrPath, avatarPath })
       this.setData({ generating: false, posterPath: filePath })
     } catch (e) {
       console.error('[poster]', e)
@@ -67,14 +67,24 @@ Page({
   },
 
   onShareLink() {
-    const url = `/pages/property-detail/index?id=${this._id}${this._agentCode ? '&a=' + this._agentCode : ''}`
+    const query = this._agentCode ? `?a=${encodeURIComponent(this._agentCode)}` : ''
+    const url = `${H5_BASE_URL}/p/${this._id}${query}`
     wx.setClipboardData({ data: url, success: () => wx.showToast({ title: '链接已复制' }) })
   },
 
   onShareAppMessage() {
+    const path = `/pages/property-detail/index?id=${this._id}${this._agentCode ? '&a=' + encodeURIComponent(this._agentCode) : ''}`
     return {
       title: '为你推荐这套好房',
-      path: `/pages/property-detail/index?id=${this._id}${this._agentCode ? '&a=' + this._agentCode : ''}`,
+      path,
+      imageUrl: this.data.posterPath || '',
+    }
+  },
+
+  onShareTimeline() {
+    return {
+      title: '为你推荐这套好房',
+      query: `id=${this._id}${this._agentCode ? `&a=${encodeURIComponent(this._agentCode)}` : ''}`,
       imageUrl: this.data.posterPath || '',
     }
   },
@@ -82,8 +92,8 @@ Page({
 
 // ── Canvas drawing ──────────────────────────────────────────────────────────
 
-async function drawPoster({ property, agent, coverPath, qrPath, avatarPath }) {
-  const canvas = await getCanvas('#poster-canvas')
+async function drawPoster(page, { property, agent, coverPath, qrPath, wechatQrPath, avatarPath }) {
+  const canvas = await getCanvas(page, '#poster-canvas')
   canvas.width = W
   canvas.height = H
   const ctx = canvas.getContext('2d')
@@ -94,8 +104,13 @@ async function drawPoster({ property, agent, coverPath, qrPath, avatarPath }) {
 
   // Cover image
   if (coverPath) {
-    const img = await loadImage(canvas, coverPath)
-    ctx.drawImage(img, 0, 0, W, COVER_H)
+    try {
+      const img = await loadImage(canvas, coverPath)
+      ctx.drawImage(img, 0, 0, W, COVER_H)
+    } catch (_) {
+      ctx.fillStyle = '#DBEAFE'
+      ctx.fillRect(0, 0, W, COVER_H)
+    }
   } else {
     ctx.fillStyle = '#DBEAFE'
     ctx.fillRect(0, 0, W, COVER_H)
@@ -160,31 +175,54 @@ async function drawPoster({ property, agent, coverPath, qrPath, avatarPath }) {
   } else {
     avatarCircle(ctx, 32, AY, 88)
   }
+  const contactName = agent.name || '房产顾问'
+  const contactPhone = agent.phone || '暂无联系方式'
   ctx.fillStyle = '#111827'
   ctx.font = 'bold 30px sans-serif'
-  ctx.fillText(agent.name || '经纪人', 144, AY + 30)
-  ctx.fillStyle = '#9CA3AF'
-  ctx.font = '25px sans-serif'
-  ctx.fillText(agent.phone || agent.agent_code || '专业经纪人', 144, AY + 68)
+  ctx.fillText('联系人：' + clip(contactName, 12), 144, AY + 30)
+  ctx.fillStyle = '#4B5563'
+  ctx.font = '27px sans-serif'
+  ctx.fillText('电话：' + clip(String(contactPhone), 20), 144, AY + 68)
+  let agentInfoBottomY = AY + 68
+  if (agent.agent_code) {
+    ctx.fillStyle = '#6B7280'
+    ctx.font = '24px sans-serif'
+    ctx.fillText('经纪人编号：' + clip(agent.agent_code, 14), 144, AY + 102)
+    agentInfoBottomY = AY + 102
+  }
+  if (agent.wechat_id) {
+    ctx.fillStyle = '#6B7280'
+    ctx.font = '24px sans-serif'
+    ctx.fillText('微信：' + clip(agent.wechat_id, 18), 144, AY + 136)
+    agentInfoBottomY = AY + 136
+  }
 
   // QR section
-  const QY = AY + 116
+  const QY = Math.max(AY + 116, agentInfoBottomY + 28)
   ctx.fillStyle = '#F9FAFB'
   ctx.beginPath()
   roundRect(ctx, 32, QY, W - 64, 196, 16)
   ctx.fill()
 
-  if (qrPath) {
-    const qrImg = await loadImage(canvas, qrPath)
-    ctx.drawImage(qrImg, 52, QY + 18, 160, 160)
-  }
+  const qrSource = await drawQrWithFallback(ctx, canvas, [qrPath, wechatQrPath], 52, QY + 18)
   ctx.fillStyle = '#111827'
   ctx.font = 'bold 30px sans-serif'
-  ctx.fillText('扫码查看房源详情', 240, QY + 64)
+  let qrTitle = '扫码联系经纪人'
+  if (qrSource === 'mini') qrTitle = '扫码查看房源详情'
+  if (qrSource === 'none') qrTitle = '二维码暂不可用'
+  ctx.fillText(qrTitle, 240, QY + 64)
   ctx.fillStyle = '#6B7280'
   ctx.font = '25px sans-serif'
-  ctx.fillText('微信扫描小程序码', 240, QY + 106)
-  ctx.fillText('查看完整房源信息', 240, QY + 144)
+  if (qrSource === 'mini') {
+    ctx.fillText('微信扫描小程序码', 240, QY + 106)
+    ctx.fillText('查看完整房源信息', 240, QY + 144)
+  } else if (qrSource === 'wechat') {
+    ctx.fillText('微信扫码添加联系方式', 240, QY + 106)
+    ctx.fillText('获取看房与咨询服务', 240, QY + 144)
+  } else {
+    ctx.fillText('当前二维码暂不可用', 240, QY + 106)
+    ctx.fillText('请使用上方电话联系', 240, QY + 144)
+  }
 
   // Footer
   ctx.fillStyle = '#0284C7'
@@ -196,23 +234,24 @@ async function drawPoster({ property, agent, coverPath, qrPath, avatarPath }) {
   ctx.textAlign = 'left'
 
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('导出画布超时，请重试')), 15000)
+    const timer = setTimeout(() => reject(new Error('导出超时，请重试')), 15000)
     wx.canvasToTempFilePath({
       canvas,
       fileType: 'jpg',
       quality: 0.92,
       success: r => { clearTimeout(timer); resolve(r.tempFilePath) },
       fail: e => { clearTimeout(timer); reject(e) },
-    })
+    }, page)
   })
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-function getCanvas(selector) {
+function getCanvas(page, selector) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('canvas 未就绪，请重试')), 5000)
     wx.createSelectorQuery()
+      .in(page)
       .select(selector)
       .fields({ node: true, size: true })
       .exec(res => {
@@ -225,9 +264,10 @@ function getCanvas(selector) {
 
 function loadImage(canvas, src) {
   return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('图片加载超时')), 10000)
     const img = canvas.createImage()
-    img.onload = () => resolve(img)
-    img.onerror = reject
+    img.onload = () => { clearTimeout(timer); resolve(img) }
+    img.onerror = (e) => { clearTimeout(timer); reject(e) }
     img.src = src
   })
 }
@@ -261,6 +301,32 @@ function avatarCircle(ctx, x, y, size) {
   ctx.beginPath()
   ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2)
   ctx.fill()
+}
+
+function drawQrPlaceholder(ctx, x, y) {
+  ctx.fillStyle = '#FFFFFF'
+  ctx.fillRect(x, y, 160, 160)
+  ctx.strokeStyle = '#CBD5E1'
+  ctx.lineWidth = 2
+  ctx.strokeRect(x + 1, y + 1, 158, 158)
+  ctx.fillStyle = '#94A3B8'
+  ctx.font = '22px sans-serif'
+  ctx.fillText('二维码', x + 46, y + 76)
+  ctx.fillText('加载失败', x + 36, y + 108)
+}
+
+async function drawQrWithFallback(ctx, canvas, paths, x, y) {
+  for (let i = 0; i < paths.length; i += 1) {
+    const path = paths[i]
+    if (!path) continue
+    try {
+      const qrImg = await loadImage(canvas, path)
+      ctx.drawImage(qrImg, x, y, 160, 160)
+      return i === 0 ? 'mini' : 'wechat'
+    } catch (_) {}
+  }
+  drawQrPlaceholder(ctx, x, y)
+  return 'none'
 }
 
 function clip(str, max) {
