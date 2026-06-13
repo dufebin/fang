@@ -82,7 +82,8 @@ func (s *LocalStorage) URL(key string) string {
 	if strings.HasPrefix(key, "http://") || strings.HasPrefix(key, "https://") {
 		return key
 	}
-	// normalize: strip leading slash so we always join cleanly
+	// strip urlPath prefix to avoid doubling it when BaseURL already contains the path
+	key = strings.TrimPrefix(key, s.urlPath)
 	key = strings.TrimPrefix(key, "/")
 	return strings.TrimRight(s.BaseURL, "/") + "/" + key
 }

@@ -351,5 +351,5 @@ func (h *AdminHandler) UploadImage(c *gin.Context) {
 		response.Fail(c, 500, err.Error())
 		return
 	}
-	response.Success(c, gin.H{"url": url})
+	response.Success(c, gin.H{"url": h.store.URL(url)})
 }

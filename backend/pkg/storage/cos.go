@@ -18,7 +18,7 @@ type COSStorage struct {
 	baseURL string
 }
 
-func NewCOSStorage(secretID, secretKey, bucket, region string) (*COSStorage, error) {
+func NewCOSStorage(secretID, secretKey, bucket, region, baseURL string) (*COSStorage, error) {
 	bucketURL := fmt.Sprintf("https://%s.cos.%s.myqcloud.com", bucket, region)
 	u, err := url.Parse(bucketURL)
 	if err != nil {
@@ -33,7 +33,10 @@ func NewCOSStorage(secretID, secretKey, bucket, region string) (*COSStorage, err
 			},
 		},
 	)
-	return &COSStorage{client: client, baseURL: bucketURL}, nil
+	if baseURL == "" {
+		baseURL = bucketURL
+	}
+	return &COSStorage{client: client, baseURL: baseURL}, nil
 }
 
 func (s *COSStorage) Save(file multipart.File, header *multipart.FileHeader) (string, error) {
