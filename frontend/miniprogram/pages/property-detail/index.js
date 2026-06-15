@@ -1,6 +1,6 @@
 const { getPropertyDetail, claimProperty, unclaimProperty } = require('../../api/property')
 const { toggleFavorite, getMe } = require('../../api/user')
-const { fullImageURL, formatPrice, formatArea, formatLayout, formatFloor, formatDate, timeAgo, statusLabel } = require('../../utils/format')
+const { fullImageURL, formatPrice, formatArea, formatLayout, formatFloor, formatDate, timeAgo, formatPropertyType, statusLabel } = require('../../utils/format')
 const { calcEqualInstallment } = require('../../utils/loan')
 const { requireLogin, isLoggedIn } = require('../../utils/auth')
 
@@ -108,7 +108,7 @@ Page({
       const dealInfoList = [
         { label: '区域', value: locationText },
         { label: '详细地址', value: addressText },
-        { label: '房源类型', value: property.property_type || '--' },
+        { label: '房源类型', value: formatPropertyType(property.property_type) },
         { label: '交易状态', value: statusText || '--' },
         { label: '挂牌时间', value: publishDateText },
         { label: '佣金说明', value: commissionText || '暂无佣金信息' },
@@ -141,6 +141,7 @@ Page({
       this.setData({
         property,
         agent,
+        propertyTypeText: formatPropertyType(property.property_type),
         images: imageStrings,
         mediaItems,
         priceText,

@@ -155,6 +155,10 @@ func (s *AgentService) GetClaimStatus(userID, propertyID uint64) (bool, *float64
 	return true, commission, nil
 }
 
+func (s *AgentService) GetClaimCommissionByAgentID(agentID, propertyID uint64) (*float64, error) {
+	return s.agentRepo.GetClaimCommission(agentID, propertyID)
+}
+
 // CreateByAdmin 管理员创建销售员
 func (s *AgentService) CreateByAdmin(req *CreateAgentReq) (*model.Agent, error) {
 	existing, err := s.agentRepo.FindByUserID(req.UserID)

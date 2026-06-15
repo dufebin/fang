@@ -70,6 +70,18 @@ function timeAgo(dateStr) {
   return formatDate(dateStr)
 }
 
+// 房源类型文字
+function formatPropertyType(type) {
+  const map = {
+    second_hand: '二手房',
+    new_home: '新房',
+    rent: '租房',
+    decoration: '装修',
+    commercial: '商铺办公',
+  }
+  return map[type] || type || '--'
+}
+
 // 房源状态文字
 function statusLabel(status) {
   const map = {
@@ -102,6 +114,7 @@ module.exports = {
   relativeImageURL,
   formatDate,
   timeAgo,
+  formatPropertyType,
   statusLabel,
   statusClass,
 }

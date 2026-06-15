@@ -80,6 +80,23 @@ func (h *PropertyHandler) GetDetail(c *gin.Context) {
 			if claimed, commission, _ := h.agentSvc.GetClaimStatus(claims.UserID, id); claimed {
 				detail.IsClaimed = true
 				detail.MyClaimCommission = commission
+				// 无 agentCode 时（认领人自己查看），联系人显示认领人自己
+				if agentCode == "" {
+					if ca, err := h.agentSvc.FindByUserID(claims.UserID); err == nil && ca != nil {
+						claimCommission, _ := h.agentSvc.GetClaimCommissionByAgentID(ca.ID, id)
+						detail.Agent = &service.AgentCard{
+							ID:              ca.ID,
+							Name:            ca.Name,
+							Phone:           ca.Phone,
+							WechatID:        ca.WechatID,
+							WechatQRURL:     ca.WechatQRURL,
+							AvatarURL:       ca.AvatarURL,
+							Bio:             ca.Bio,
+							AgentCode:       ca.AgentCode,
+							ClaimCommission: claimCommission,
+						}
+					}
+				}
 			}
 		}
 	}

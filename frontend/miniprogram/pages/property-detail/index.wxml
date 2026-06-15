@@ -27,7 +27,7 @@
     <!-- 悬浮标记块 -->
     <view class="media-overlay-top">
       <view class="media-tags">
-        <view class="tag-glass">{{property.property_type}}</view>
+        <view class="tag-glass">{{propertyTypeText}}</view>
         <view wx:if="{{property.is_verified}}" class="tag-glass tag-success">✓ 已核验</view>
       </view>
     </view>
@@ -39,7 +39,10 @@
   <!-- 价格与标题 -->
   <view class="section card-top-radius shadow-sm">
     <view class="price-row">
-      <text class="price-main-huge">{{priceText}}</text>
+      <view class="price-col">
+        <text class="price-main-huge">{{priceText}}</text>
+        <text wx:if="{{unitPriceText !== '--'}}" class="unit-price-sub">约 {{unitPriceText}}</text>
+      </view>
       <view class="action-icons">
         <view wx:if="{{isOwner}}" class="action-btn-small" bindtap="onEditProperty">编辑</view>
         <view wx:else class="action-btn-small" bindtap="onToggleFav">
@@ -68,8 +71,8 @@
     </view>
     
     <view class="district-row">
-      <text class="icon-location">📍</text>
-      <text>{{property.district}}</text>
+      <view class="loc-dot"></view>
+      <text>{{locationText}}</text>
     </view>
 
     <!-- 佣金展示 -->
@@ -83,37 +86,41 @@
     </view>
   </view>
 
-  <!-- 贷款计算入口 -->
-  <view class="loan-banner hover-scale" bindtap="onLoanCalc">
-    <view class="loan-banner-left">
-      <text class="icon-calc">🧮</text>
-      <text class="loan-banner-title">月供估算</text>
-    </view>
-    <view class="loan-banner-right">
-      <text class="loan-banner-val">{{monthlyText}}</text>
-      <text class="loan-banner-arrow">></text>
+  <!-- 房源数据：热度 / 时间 / 状态 + 贷款估算入口 -->
+  <view class="stat-section">
+    <view class="signal-grid">
+      <view class="signal-item">
+        <text class="signal-val">{{heatText}}</text>
+        <text class="signal-label">浏览热度</text>
+      </view>
+      <view class="signal-divider"></view>
+      <view class="signal-item">
+        <text class="signal-val">{{publishAgoText}}</text>
+        <text class="signal-label">发布时间</text>
+      </view>
+      <view class="signal-divider"></view>
+      <view class="signal-item">
+        <text class="signal-val">{{statusText || '--'}}</text>
+        <text class="signal-label">房源状态</text>
+      </view>
     </view>
     <view wx:if="{{trustSignals.length}}" class="trust-list">
       <text class="trust-pill" wx:for="{{trustSignals}}" wx:key="*this">{{item}}</text>
     </view>
-    <view class="signal-grid">
-      <view class="signal-item">
-        <text class="signal-label">浏览热度</text>
-        <text class="signal-val">{{heatText}}</text>
+    <view class="loan-entry hover-scale" bindtap="onLoanCalc">
+      <view class="loan-entry-left">
+        <view class="loan-entry-icon">月供</view>
+        <text class="loan-entry-title">月供估算</text>
       </view>
-      <view class="signal-item">
-        <text class="signal-label">发布时间</text>
-        <text class="signal-val">{{publishDateText}}</text>
-      </view>
-      <view class="signal-item">
-        <text class="signal-label">房源状态</text>
-        <text class="signal-val">{{statusText || '--'}}</text>
+      <view class="loan-entry-right">
+        <text class="loan-entry-val">{{monthlyText}}</text>
+        <text class="loan-entry-arrow">›</text>
       </view>
     </view>
   </view>
 
   <view wx:if="{{highlightCards.length}}" class="section">
-    <view class="section-title">核心卖点</view>
+    <view class="section-title-accent">核心卖点</view>
     <view class="highlight-grid">
       <view class="highlight-card" wx:for="{{highlightCards}}" wx:key="label">
         <view class="highlight-label">{{item.label}}</view>
@@ -124,7 +131,7 @@
   </view>
 
   <view wx:if="{{dealInfoList.length}}" class="section">
-    <view class="section-title">位置与交易信息</view>
+    <view class="section-title-accent">位置与交易信息</view>
     <view class="deal-info-list">
       <view class="deal-info-item" wx:for="{{dealInfoList}}" wx:key="label">
         <text class="deal-info-label">{{item.label}}</text>
@@ -221,7 +228,7 @@
         <text class="text-gray icon-large">⎘</text>
         <text class="action-btn-text">分享</text>
       </view>
-      <view class="action-main-btn hover-scale" bindtap="onContactAgent">
+      <view class="action-main-btn hover-scale" bindtap="onCallAgent">
         电话联系
       </view>
     </view>
