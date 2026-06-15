@@ -1,5 +1,5 @@
 .page {
-  background: #F0F9FF;
+  background: var(--color-bg);
   min-height: 100vh;
   padding: 24rpx;
 }
@@ -37,7 +37,7 @@
 
 .status-pending  { background: #fff7e6; color: #fa8c16; }
 .status-confirmed { background: #f0fff4; color: #52c41a; }
-.status-cancelled { background: #F0F9FF; color: #aaa; }
+.status-cancelled { background: var(--color-bg); color: #aaa; }
 .status-completed { background: #f0f5ff; color: #1890ff; }
 
 .appt-note {
@@ -54,8 +54,8 @@
 
 .action-cancel {
   font-size: 24rpx;
-  color: #0284C7;
+  color: var(--color-primary);
   padding: 8rpx 24rpx;
-  border: 1rpx solid #0284C7;
+  border: 1rpx solid var(--color-primary);
   border-radius: 20rpx;
 }

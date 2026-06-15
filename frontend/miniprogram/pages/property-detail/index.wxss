@@ -1,7 +1,10 @@
 .page {
-  background: #F0F9FF;
+  background: var(--color-bg);
   min-height: 100vh;
-  padding-bottom: 40rpx;
+}
+
+.pb-safe {
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
 .loading-page {
@@ -11,394 +14,432 @@
   justify-content: center;
   min-height: 100vh;
   font-size: 28rpx;
-  color: #bbb;
+  color: var(--color-text-muted);
 }
 
-.error-icon {
+.spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid rgba(15, 118, 110, 0.2);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.error-emoji {
   font-size: 80rpx;
-  margin-bottom: 20rpx;
 }
 
-/* 图片轮播 */
+/* 轮播图 Media Gallery */
 .swiper-wrap {
   position: relative;
   width: 100%;
-  height: 480rpx;
-  background: #111;
+  height: 560rpx;
+  background: #e2e8f0;
 }
 
-.img-swiper {
+.img-swiper, .swiper-img, .swiper-video {
   width: 100%;
-  height: 480rpx;
+  height: 100%;
 }
 
-.swiper-img {
-  width: 100%;
-  height: 480rpx;
-}
-
-.swiper-video {
-  width: 100%;
-  height: 480rpx;
-  background: #000;
-}
-
-.img-count {
+.media-overlay-top {
   position: absolute;
-  bottom: 20rpx;
-  right: 24rpx;
-  background: rgba(0,0,0,0.45);
-  color: #fff;
-  font-size: 22rpx;
-  padding: 4rpx 14rpx;
-  border-radius: 20rpx;
+  top: 30rpx;
+  left: 30rpx;
+  right: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
 }
 
-.tag-type {
-  position: absolute;
-  top: 20rpx;
-  left: 20rpx;
-  background: rgba(2,132,199,0.9);
-  color: #fff;
-  font-size: 22rpx;
-  padding: 4rpx 16rpx;
-  border-radius: 6rpx;
+.media-tags {
+  display: flex;
+  gap: 16rpx;
 }
 
-.tag-verified {
+.tag-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--color-text);
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 8rpx 20rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.tag-success {
+  color: #059669;
+  background: rgba(209, 250, 229, 0.9);
+}
+
+.media-overlay-bottom {
   position: absolute;
-  top: 20rpx;
-  left: 120rpx;
-  background: rgba(82,196,26,0.9);
+  bottom: 40rpx;
+  right: 30rpx;
+  pointer-events: none;
+}
+
+.img-count-glass {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
   color: #fff;
-  font-size: 22rpx;
-  padding: 4rpx 16rpx;
-  border-radius: 6rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  padding: 8rpx 24rpx;
+  border-radius: 30rpx;
+  font-family: var(--font-number);
+  letter-spacing: 2rpx;
+}
+
+/* 顶部圆角层卡片 (上浮在图片上) */
+.card-top-radius {
+  margin-top: -30rpx;
+  border-radius: 40rpx 40rpx 0 0;
+  position: relative;
+  z-index: 10;
+  padding-top: 40rpx;
+}
+
+.shadow-sm {
+  box-shadow: 0 -8rpx 24rpx rgba(0,0,0,0.04);
 }
 
 /* 价格块 */
-.price-block {
-  background: #fff;
-  padding: 28rpx;
-  margin-bottom: 16rpx;
-}
-
 .price-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20rpx;
 }
 
-.price-num {
-  font-size: 48rpx;
+.price-main-huge {
+  font-size: 56rpx;
   font-weight: 700;
-  color: #0284C7;
-}
-
-.edit-btn {
-  padding: 10rpx 28rpx;
-  border-radius: 32rpx;
-  background: #E0F2FE;
-  color: #0284C7;
-  font-size: 26rpx;
-  font-weight: 500;
-  border: 1rpx solid #0284C7;
-}
-
-.fav-btn {
-  font-size: 48rpx;
-  color: #ccc;
+  color: var(--color-price);
+  font-family: var(--font-number);
   line-height: 1;
 }
 
-.fav-active {
-  color: #0284C7;
+.action-icons {
+  display: flex;
+  gap: 20rpx;
 }
 
-.property-title {
-  font-size: 34rpx;
-  font-weight: 600;
-  color: #222;
-  margin-top: 12rpx;
-}
-
-.property-meta {
+.action-btn-small {
+  padding: 12rpx 24rpx;
+  background: var(--color-bg);
+  border-radius: 32rpx;
   font-size: 26rpx;
-  color: #888;
-  margin-top: 12rpx;
-}
-
-.dot {
-  margin: 0 8rpx;
-  color: #ddd;
-}
-
-.tag-list {
+  font-weight: 500;
+  color: var(--color-text);
+  border: 1rpx solid rgba(15, 118, 110, 0.1);
   display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-  margin-top: 16rpx;
+  align-items: center;
+  justify-content: center;
 }
 
-.prop-tag {
-  font-size: 22rpx;
-  color: #0284C7;
-  background: #E0F2FE;
-  border-radius: 4rpx;
-  padding: 4rpx 12rpx;
+.property-title-lg {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.4;
+  margin-bottom: 30rpx;
 }
 
-/* 通用 section */
-.section {
-  background: #fff;
-  padding: 28rpx;
-  margin-bottom: 16rpx;
-}
-
-.section-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #222;
-  margin-bottom: 20rpx;
-}
-
-/* 信息网格 */
-.info-grid {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.info-item {
-  width: 50%;
-  padding: 10rpx 0;
+/* 核心信息横向排列 */
+.property-meta-flex {
   display: flex;
   justify-content: space-between;
-  padding-right: 20rpx;
+  align-items: center;
+  padding: 30rpx 0;
+  border-top: 1rpx solid rgba(0,0,0,0.04);
+  border-bottom: 1rpx solid rgba(0,0,0,0.04);
+  margin-bottom: 24rpx;
 }
 
-.info-label {
-  font-size: 26rpx;
-  color: #888;
+.meta-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
 }
 
-.info-val {
-  font-size: 26rpx;
-  color: #333;
+.meta-val {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-price); /* highlight key info */
+  font-family: var(--font-number);
 }
 
-/* 描述 */
-.description-text {
+.meta-label {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.meta-divider {
+  width: 2rpx;
+  height: 40rpx;
+  background: rgba(0,0,0,0.06);
+}
+
+/* 地址行 */
+.district-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
   font-size: 28rpx;
-  color: #555;
-  line-height: 1.8;
+  color: var(--color-text);
+  padding: 10rpx 0;
 }
 
-/* 贷款入口 */
-.loan-entry {
-  background: #fff;
-  padding: 28rpx;
-  margin-bottom: 16rpx;
+.icon-location {
+  font-size: 32rpx;
+}
+
+/* 佣金 Banner */
+.commission-banner {
+  margin-top: 24rpx;
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
   display: flex;
   align-items: center;
   gap: 16rpx;
-  font-size: 28rpx;
-  color: #333;
 }
 
-.loan-val {
-  color: #0284C7;
-  font-weight: 600;
-  flex: 1;
-}
-
-.loan-hint {
-  font-size: 24rpx;
-  color: #888;
-}
-
-/* 预约 */
-.appt-row {
-  display: flex;
-  gap: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.appt-picker {
-  flex: 1;
-  height: 72rpx;
-  line-height: 72rpx;
-  background: #F0F9FF;
-  border-radius: 8rpx;
-  padding: 0 20rpx;
-  font-size: 26rpx;
-  color: #333;
-  text-align: center;
-}
-
-.appt-note-wrap {
-  margin-bottom: 20rpx;
-}
-
-.appt-note {
-  width: 100%;
-  min-height: 120rpx;
-  background: #F0F9FF;
-  border-radius: 8rpx;
-  padding: 16rpx 20rpx;
-  font-size: 26rpx;
-  color: #333;
-  box-sizing: border-box;
-}
-
-.appt-btn {
-  height: 88rpx;
-  line-height: 88rpx;
-  text-align: center;
-  background: #0284C7;
+.commission-badge {
+  background: #F59E0B;
   color: #fff;
-  border-radius: 44rpx;
-  font-size: 30rpx;
-  font-weight: 500;
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
 }
 
-/* 佣金展示行 */
-.commission-row {
+.commission-amount {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #B45309;
+  font-family: var(--font-number);
+}
+
+/* 贷款 Banner */
+.loan-banner {
+  margin: 0 30rpx 30rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(15, 118, 110, 0.05);
+}
+
+.loan-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.icon-calc {
+  font-size: 40rpx;
+}
+
+.loan-banner-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.loan-banner-right {
   display: flex;
   align-items: center;
   gap: 12rpx;
-  margin-top: 14rpx;
 }
 
-.commission-label {
-  font-size: 22rpx;
-  color: #fff;
-  background: #F59E0B;
-  padding: 4rpx 12rpx;
-  border-radius: 6rpx;
-  font-weight: 500;
+.loan-banner-val {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-cta);
+  font-family: var(--font-number);
 }
 
-.commission-val {
-  font-size: 28rpx;
-  color: #D97706;
+.loan-banner-arrow {
+  color: #cbd5e1;
   font-weight: 700;
 }
 
-/* ── 认领并推广区块 ── */
-.claim-section {
-  padding-bottom: 36rpx;
+/* 基础信息网格 */
+.info-grid-clean {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx 0;
 }
 
-.claim-desc {
-  font-size: 26rpx;
-  color: #64748B;
-  line-height: 1.7;
-  margin-bottom: 28rpx;
+.info-cell {
+  width: 50%;
+  display: flex;
+  gap: 24rpx;
+  font-size: 28rpx;
 }
 
-/* 未认领 */
-.claim-form {
-  margin-bottom: 28rpx;
+.info-lbl {
+  color: var(--color-text-muted);
+  width: 80rpx;
 }
 
-.claim-label {
+.info-txt {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.description-rich {
+  font-size: 28rpx;
+  color: var(--color-text);
+  line-height: 1.8;
+}
+
+/* 认领区 */
+.claim-section-new {
+  margin-bottom: 40rpx;
+}
+
+.claim-box {
+  background: #f8fafc;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  border: 1rpx dashed #cbd5e1;
+}
+
+.claim-box.active {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.claim-header {
+  margin-bottom: 24rpx;
+}
+
+.claim-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8rpx;
+}
+
+.claim-subtitle {
   font-size: 24rpx;
-  color: #94A3B8;
-  margin-bottom: 12rpx;
+  color: var(--color-text-muted);
 }
 
-.claim-input-wrap {
-  background: #F8FAFC;
-  border: 2rpx solid #E2E8F0;
+.claim-input-glass {
+  background: #fff;
   border-radius: 16rpx;
-  padding: 0 28rpx;
-  height: 92rpx;
+  padding: 0 24rpx;
+  height: 88rpx;
   display: flex;
   align-items: center;
+  box-shadow: inset 0 2rpx 4rpx rgba(0,0,0,0.02);
 }
 
-.claim-commission-input {
+.claim-input-field {
   flex: 1;
-  height: 92rpx;
+  height: 100%;
   font-size: 30rpx;
-  color: #1E293B;
-  background: transparent;
 }
 
-.claim-placeholder {
-  color: #CBD5E1;
+.claim-ph {
+  color: #94a3b8;
+}
+
+.claim-unit {
+  color: var(--color-text);
+  font-weight: 500;
+  margin-left: 16rpx;
+}
+
+.claim-status-badge-new {
+  display: inline-block;
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 8rpx 20rpx;
+  border-radius: 12rpx;
+  font-weight: 600;
   font-size: 26rpx;
+  margin-bottom: 20rpx;
 }
 
-.claim-btn {
-  height: 96rpx;
-  line-height: 96rpx;
-  text-align: center;
-  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+.claim-commission-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #ea580c;
+  margin-bottom: 30rpx;
+}
+
+.claim-actions-flex {
+  display: flex;
+}
+
+.ml-20 {
+  margin-left: 20rpx;
+}
+
+/* Sticky Bottom Action Bar */
+.bottom-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 999;
+  border-top: 1rpx solid rgba(255,255,255,0.3);
+  box-shadow: 0 -10rpx 30rpx rgba(0,0,0,0.05);
+}
+
+.action-bar-inner {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 30rpx;
+  height: 110rpx;
+}
+
+.action-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90rpx;
+  margin-right: 20rpx;
+}
+
+.icon-large {
+  font-size: 44rpx;
+  line-height: 1;
+  margin-bottom: 4rpx;
+}
+
+.action-btn-text {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+}
+
+.action-main-btn {
+  flex: 1;
+  height: 88rpx;
+  background: linear-gradient(135deg, var(--color-cta) 0%, var(--color-primary) 100%);
+  border-radius: 44rpx;
   color: #fff;
-  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 32rpx;
   font-weight: 600;
-  letter-spacing: 4rpx;
-  box-shadow: 0 8rpx 24rpx rgba(2, 132, 199, 0.35);
-}
-
-/* 已认领 */
-.claim-status-row {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 16rpx;
-}
-
-.claim-status-badge {
-  background: #DCFCE7;
-  color: #16A34A;
-  font-size: 24rpx;
-  font-weight: 600;
-  padding: 6rpx 20rpx;
-  border-radius: 20rpx;
-}
-
-.claim-commission-pill {
-  background: #FEF3C7;
-  color: #D97706;
-  font-size: 24rpx;
-  font-weight: 500;
-  padding: 6rpx 20rpx;
-  border-radius: 20rpx;
-}
-
-.claim-actions {
-  display: flex;
-  gap: 16rpx;
-  margin-top: 24rpx;
-}
-
-.claim-share-btn {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  text-align: center;
-  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
-  color: #fff;
-  border-radius: 44rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  box-shadow: 0 6rpx 18rpx rgba(2, 132, 199, 0.30);
-}
-
-.claim-cancel-btn {
-  width: 180rpx;
-  height: 88rpx;
-  line-height: 88rpx;
-  text-align: center;
-  background: #F1F5F9;
-  color: #94A3B8;
-  border-radius: 44rpx;
-  font-size: 26rpx;
-}
-
-.safe-bottom {
-  height: env(safe-area-inset-bottom);
+  box-shadow: 0 6rpx 20rpx rgba(3, 105, 161, 0.3);
+  margin-left: 20rpx;
 }

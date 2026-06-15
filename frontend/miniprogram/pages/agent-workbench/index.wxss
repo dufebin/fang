@@ -1,11 +1,11 @@
 .page {
-  background: #F0F9FF;
+  background: var(--color-bg);
   min-height: 100vh;
   padding-bottom: 40rpx;
 }
 
 .stats-card {
-  background: #0284C7;
+  background: var(--color-primary);
   padding: 32rpx;
 }
 
@@ -60,7 +60,7 @@
 
 .action-icon-text {
   font-size: 36rpx;
-  color: #0284C7;
+  color: var(--color-primary);
 }
 
 .tab-bar {
@@ -79,7 +79,7 @@
 }
 
 .tab-active {
-  color: #0284C7;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -91,7 +91,7 @@
   transform: translateX(-50%);
   width: 40rpx;
   height: 4rpx;
-  background: #0284C7;
+  background: var(--color-primary);
   border-radius: 2rpx;
 }
 
@@ -135,8 +135,8 @@
   font-size: 24rpx;
 }
 
-.appt-btn-confirm { background: #0284C7; color: #fff; }
-.appt-btn-cancel { background: #F0F9FF; color: #888; }
+.appt-btn-confirm { background: var(--color-primary); color: #fff; }
+.appt-btn-cancel { background: var(--color-bg); color: #888; }
 
 .property-wrap { margin-bottom: 16rpx; }
 
@@ -155,14 +155,14 @@
   padding: 8rpx 28rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
-  border: 1rpx solid #0284C7;
-  color: #0284C7;
+  border: 1rpx solid var(--color-primary);
+  color: var(--color-primary);
 }
 
 .action-delete {
   padding: 8rpx 28rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
-  background: #F0F9FF;
+  background: var(--color-bg);
   color: #888;
 }

@@ -1,7 +1,7 @@
-<view wx:if="{{property}}" class="page">
+<view wx:if="{{property}}" class="page pb-safe">
   <!-- 图片/视频轮播 -->
   <view class="swiper-wrap">
-    <swiper class="img-swiper" circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" bindchange="onSwiperChange">
+    <swiper class="img-swiper" circular indicator-dots="{{false}}" bindchange="onSwiperChange">
       <swiper-item wx:for="{{mediaItems}}" wx:key="index">
         <video
           wx:if="{{item.type === 'video'}}"
@@ -9,7 +9,7 @@
           src="{{item.url}}"
           controls
           show-center-play-btn
-          object-fit="contain"
+          object-fit="cover"
           enable-play-gesture
         />
         <image
@@ -23,142 +23,180 @@
         />
       </swiper-item>
     </swiper>
-    <view class="img-count">{{swiperCurrent+1}}/{{mediaItems.length}}</view>
-    <view class="tag-type">{{property.property_type}}</view>
-    <view wx:if="{{property.is_verified}}" class="tag-verified">已核验</view>
+    
+    <!-- 悬浮标记块 -->
+    <view class="media-overlay-top">
+      <view class="media-tags">
+        <view class="tag-glass">{{property.property_type}}</view>
+        <view wx:if="{{property.is_verified}}" class="tag-glass tag-success">✓ 已核验</view>
+      </view>
+    </view>
+    <view class="media-overlay-bottom">
+      <view class="img-count-glass">{{swiperCurrent+1}} / {{mediaItems.length}}</view>
+    </view>
   </view>
 
   <!-- 价格与标题 -->
-  <view class="price-block">
+  <view class="section card-top-radius shadow-sm">
     <view class="price-row">
-      <text class="price-num">{{priceText}}</text>
-      <view wx:if="{{isOwner}}" class="edit-btn" bindtap="onEditProperty">编辑</view>
-      <view wx:elif="{{isFav}}" class="fav-btn fav-active" bindtap="onToggleFav">♥</view>
-      <view wx:else class="fav-btn" bindtap="onToggleFav">♡</view>
+      <text class="price-main-huge">{{priceText}}</text>
+      <view class="action-icons">
+        <view wx:if="{{isOwner}}" class="action-btn-small" bindtap="onEditProperty">编辑</view>
+        <view wx:else class="action-btn-small" bindtap="onToggleFav">
+          <text class="{{isFav ? 'text-price' : 'text-gray'}}">{{isFav ? '♥' : '♡'}}</text>
+        </view>
+      </view>
     </view>
-    <view class="property-title">{{property.title}}</view>
-    <view class="property-meta">
-      <text>{{layoutText}}</text>
-      <text class="dot">·</text>
-      <text>{{areaText}}</text>
-      <text class="dot">·</text>
-      <text>{{floorText}}</text>
-      <text class="dot">·</text>
+    
+    <view class="property-title-lg">{{property.title}}</view>
+    
+    <view class="property-meta-flex">
+      <view class="meta-item">
+        <text class="meta-val">{{layoutText}}</text>
+        <text class="meta-label">户型</text>
+      </view>
+      <view class="meta-divider"></view>
+      <view class="meta-item">
+        <text class="meta-val">{{areaText}}</text>
+        <text class="meta-label">面积</text>
+      </view>
+      <view class="meta-divider"></view>
+      <view class="meta-item">
+        <text class="meta-val">{{floorText}}</text>
+        <text class="meta-label">楼层</text>
+      </view>
+    </view>
+    
+    <view class="district-row">
+      <text class="icon-location">📍</text>
       <text>{{property.district}}</text>
     </view>
+
     <!-- 佣金展示 -->
-    <view wx:if="{{commissionText}}" class="commission-row">
-      <text class="commission-label">佣金</text>
-      <text class="commission-val">{{commissionText}}</text>
+    <view wx:if="{{commissionText}}" class="commission-banner">
+      <text class="commission-badge">平台佣金</text>
+      <text class="commission-amount">{{commissionText}}</text>
     </view>
-    <view wx:if="{{tags.length}}" class="tag-list">
-      <text class="prop-tag" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+    
+    <view wx:if="{{tags.length}}" class="tag-list mt-20">
+      <text class="tag tag-primary" wx:for="{{tags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 贷款计算入口 -->
+  <view class="loan-banner hover-scale" bindtap="onLoanCalc">
+    <view class="loan-banner-left">
+      <text class="icon-calc">🧮</text>
+      <text class="loan-banner-title">月供估算</text>
+    </view>
+    <view class="loan-banner-right">
+      <text class="loan-banner-val">{{monthlyText}}</text>
+      <text class="loan-banner-arrow">></text>
     </view>
   </view>
 
   <!-- 基本信息 -->
   <view class="section">
-    <view class="section-title">基本信息</view>
-    <view class="info-grid">
-      <view class="info-item">
-        <text class="info-label">建筑面积</text>
-        <text class="info-val">{{areaText}}</text>
+    <view class="section-title-accent">基本信息</view>
+    <view class="info-grid-clean">
+      <view class="info-cell">
+        <text class="info-lbl">朝向</text>
+        <text class="info-txt">{{property.orientation || '--'}}</text>
       </view>
-      <view class="info-item">
-        <text class="info-label">户型</text>
-        <text class="info-val">{{layoutText}}</text>
+      <view class="info-cell">
+        <text class="info-lbl">装修</text>
+        <text class="info-txt">{{property.decoration || '--'}}</text>
       </view>
-      <view class="info-item">
-        <text class="info-label">楼层</text>
-        <text class="info-val">{{floorText}}</text>
+      <view class="info-cell">
+        <text class="info-lbl">电梯</text>
+        <text class="info-txt">{{property.has_elevator ? '有' : '无'}}</text>
       </view>
-      <view class="info-item">
-        <text class="info-label">朝向</text>
-        <text class="info-val">{{property.orientation || '--'}}</text>
+      <view class="info-cell">
+        <text class="info-lbl">车位</text>
+        <text class="info-txt">{{property.parking != null ? property.parking + '个' : '--'}}</text>
       </view>
-      <view class="info-item">
-        <text class="info-label">装修</text>
-        <text class="info-val">{{property.decoration || '--'}}</text>
-      </view>
-      <view class="info-item">
-        <text class="info-label">电梯</text>
-        <text class="info-val">{{property.has_elevator ? '有' : '无'}}</text>
-      </view>
-      <view class="info-item">
-        <text class="info-label">车位</text>
-        <text class="info-val">{{property.parking != null ? property.parking + '个' : '--'}}</text>
-      </view>
-      <view class="info-item">
-        <text class="info-label">楼龄</text>
-        <text class="info-val">{{property.building_age != null ? property.building_age + '年' : '--'}}</text>
+      <view class="info-cell">
+        <text class="info-lbl">楼龄</text>
+        <text class="info-txt">{{property.building_age != null ? property.building_age + '年' : '--'}}</text>
       </view>
     </view>
   </view>
 
   <!-- 房源描述 -->
   <view wx:if="{{property.description}}" class="section">
-    <view class="section-title">房源描述</view>
-    <rich-text class="description-text" nodes="{{property.description}}" />
-  </view>
-
-  <!-- 贷款计算入口 -->
-  <view class="loan-entry" bindtap="onLoanCalc">
-    <text>月供估算</text>
-    <text class="loan-val">{{monthlyText}}</text>
-    <text class="loan-hint">点击计算 ></text>
+    <view class="section-title-accent">房源描述</view>
+    <rich-text class="description-rich" nodes="{{property.description}}" />
   </view>
 
   <!-- 经纪人信息 -->
   <view class="section">
-    <view class="section-title">经纪人</view>
-    <agent-card agent="{{agent}}" showActions="{{true}}" />
+    <view class="section-title-accent">经纪人</view>
+    <agent-card agent="{{agent}}" showActions="{{false}}" />
   </view>
 
   <!-- 认领并推广（自己的房源不显示） -->
-  <view wx:if="{{canShowClaimSection}}" class="section claim-section">
-    <view class="section-title">认领并推广</view>
+  <view wx:if="{{canShowClaimSection}}" class="section claim-section-new">
+    <view class="section-title-accent">认领并推广</view>
 
     <!-- 未认领 -->
-    <view wx:if="{{!isClaimed}}" class="claim-unclaimed">
-      <view class="claim-desc">认领后可对外推广此房源，成交后按约定佣金结算</view>
-      <view class="claim-form">
-        <view class="claim-label">期望佣金（元，选填）</view>
-        <view class="claim-input-wrap">
-          <input
-            class="claim-commission-input"
-            type="digit"
-            placeholder="不填则以房源标注佣金为准"
-            placeholder-class="claim-placeholder"
-            value="{{claimCommissionInput}}"
-            bindinput="onClaimCommissionInput"
-          />
-        </view>
+    <view wx:if="{{!isClaimed}}" class="claim-box">
+      <view class="claim-header">
+        <text class="claim-title">成为此房源的推广者</text>
+        <text class="claim-subtitle">成交后按约定佣金结算</text>
       </view>
-      <view class="claim-btn" bindtap="onClaim">认领并推广</view>
+      <view class="claim-input-glass">
+        <input
+          class="claim-input-field"
+          type="digit"
+          placeholder="期望佣金 (选填)"
+          placeholder-class="claim-ph"
+          value="{{claimCommissionInput}}"
+          bindinput="onClaimCommissionInput"
+        />
+        <text class="claim-unit">元</text>
+      </view>
+      <view class="btn-primary mt-20 hover-scale" bindtap="onClaim">立即认领</view>
     </view>
 
     <!-- 已认领 -->
-    <view wx:else class="claim-claimed">
-      <view class="claim-status-row">
-        <view class="claim-status-badge">已认领</view>
-        <view wx:if="{{myClaimCommission != null}}" class="claim-commission-pill">佣金 {{myClaimCommission}} 元</view>
-      </view>
-      <view class="claim-desc">您已认领此房源，生成专属海报进行推广</view>
-      <view class="claim-actions">
-        <view class="claim-share-btn" bindtap="onShare">生成推广海报</view>
-        <view class="claim-cancel-btn" bindtap="onUnclaim">取消认领</view>
+    <view wx:else class="claim-box active">
+      <view class="claim-status-badge-new">✓ 已认领</view>
+      <view wx:if="{{myClaimCommission != null}}" class="claim-commission-text">专属佣金: {{myClaimCommission}} 元</view>
+      <view class="claim-actions-flex">
+        <view class="btn-primary flex-1 hover-scale" bindtap="onShare">生成推广海报</view>
+        <view class="btn-outline flex-1 ml-20 hover-scale" bindtap="onUnclaim">取消认领</view>
       </view>
     </view>
   </view>
 
-  <view class="safe-bottom" />
+  <!-- Bottom Padding for Sticky Bar -->
+  <view class="bottom-padding"></view>
+
+  <!-- 悬浮底部操作栏 Sticky Bottom Action Bar -->
+  <view class="bottom-action-bar glass">
+    <view class="action-bar-inner">
+      <view class="action-icon-btn hover-scale" bindtap="onToggleFav">
+        <text class="{{isFav ? 'text-price' : 'text-gray'}} icon-large">{{isFav ? '♥' : '♡'}}</text>
+        <text class="action-btn-text">收藏</text>
+      </view>
+      <view class="action-icon-btn hover-scale" bindtap="onShare">
+        <text class="text-gray icon-large">⎘</text>
+        <text class="action-btn-text">分享</text>
+      </view>
+      <view class="action-main-btn hover-scale" bindtap="onContactAgent">
+        电话联系
+      </view>
+    </view>
+  </view>
 </view>
 
 <view wx:elif="{{!loadingFailed}}" class="loading-page">
-  <text>加载中...</text>
+  <view class="spinner"></view>
+  <text class="mt-20">正在获取房源信息...</text>
 </view>
 
 <view wx:else class="loading-page" bindtap="onReload">
-  <view class="error-icon">😞</view>
-  <text>加载失败，点击重试</text>
+  <text class="error-emoji">😕</text>
+  <text class="mt-20">加载失败，点击重试</text>
 </view>
+

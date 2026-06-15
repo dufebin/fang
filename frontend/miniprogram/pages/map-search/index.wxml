@@ -12,22 +12,26 @@
     bindregionchange="onRegionChange"
   />
 
-  <!-- 顶部筛选 -->
+  <!-- 顶部筛选与定位 -->
   <view class="top-bar">
-    <view class="filter-btn" bindtap="onFilterTap">
-      <text>筛选</text>
+    <view class="filter-btn glass" bindtap="onFilterTap">
+      <text class="icon-filter">⎈</text>
+      <text>条件筛选</text>
       <view wx:if="{{hasFilter}}" class="filter-dot" />
     </view>
-    <view class="location-btn" bindtap="onLocate">
-      <text class="loc-icon-text">⊕</text>
+    <view class="location-btn glass hover-scale" bindtap="onLocate">
+      <text class="loc-icon-text">⌖</text>
     </view>
   </view>
 
-  <!-- 底部房源卡片 -->
-  <view class="bottom-panel {{selectedProperty ? 'panel-show' : ''}}">
-    <view class="panel-handle" bindtap="onClosePanel" />
-    <view wx:if="{{selectedProperty}}" class="panel-card">
-      <property-card property="{{selectedProperty}}" />
+  <!-- 悬浮半屏抽屉 (Bottom Sheet) -->
+  <view class="bottom-sheet {{selectedProperty ? 'sheet-show' : ''}}">
+    <view class="sheet-backdrop" bindtap="onClosePanel" wx:if="{{selectedProperty}}"></view>
+    <view class="sheet-content glass">
+      <view class="sheet-handle" bindtap="onClosePanel" />
+      <view wx:if="{{selectedProperty}}" class="sheet-card">
+        <property-card property="{{selectedProperty}}" compact="{{false}}" />
+      </view>
     </view>
   </view>
 

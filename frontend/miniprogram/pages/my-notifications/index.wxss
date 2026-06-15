@@ -1,10 +1,10 @@
-.page { background: #F0F9FF; min-height: 100vh; }
+.page { background: var(--color-bg); min-height: 100vh; }
 
 .read-all {
   text-align: right;
   padding: 16rpx 28rpx;
   font-size: 24rpx;
-  color: #0284C7;
+  color: var(--color-primary);
 }
 
 .notif-item {
@@ -22,7 +22,7 @@
   width: 14rpx;
   height: 14rpx;
   border-radius: 50%;
-  background: #0284C7;
+  background: var(--color-primary);
 }
 
 .notif-title {

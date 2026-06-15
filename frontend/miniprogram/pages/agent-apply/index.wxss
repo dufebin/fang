@@ -1,4 +1,4 @@
-.page { background: #F0F9FF; min-height: 100vh; padding: 24rpx; }
+.page { background: var(--color-bg); min-height: 100vh; padding: 24rpx; }
 
 .status-card {
   background: #fff;
@@ -19,7 +19,7 @@
 
 .form-input {
   height: 72rpx;
-  background: #F0F9FF;
+  background: var(--color-bg);
   border-radius: 8rpx;
   padding: 0 20rpx;
   font-size: 28rpx;
@@ -31,7 +31,7 @@
 .form-textarea {
   width: 100%;
   min-height: 160rpx;
-  background: #F0F9FF;
+  background: var(--color-bg);
   border-radius: 8rpx;
   padding: 16rpx 20rpx;
   font-size: 28rpx;
@@ -43,7 +43,7 @@
   height: 88rpx;
   line-height: 88rpx;
   text-align: center;
-  background: #0284C7;
+  background: var(--color-primary);
   color: #fff;
   border-radius: 44rpx;
   font-size: 30rpx;

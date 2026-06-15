@@ -125,7 +125,7 @@ async function drawPoster(page, { property, agent, coverPath, qrPath, wechatQrPa
 
   // Property type badge
   const typeLabel = typeMap(property.property_type)
-  ctx.fillStyle = '#0284C7'
+  ctx.fillStyle = '#0F766E'
   ctx.beginPath()
   roundRect(ctx, 32, COVER_H - 116, typeLabel.length * 16 + 40, 48, 10)
   ctx.fill()
@@ -225,7 +225,7 @@ async function drawPoster(page, { property, agent, coverPath, qrPath, wechatQrPa
   }
 
   // Footer
-  ctx.fillStyle = '#0284C7'
+  ctx.fillStyle = '#0F766E'
   ctx.fillRect(0, H - 72, W, 72)
   ctx.fillStyle = '#fff'
   ctx.font = 'bold 26px sans-serif'

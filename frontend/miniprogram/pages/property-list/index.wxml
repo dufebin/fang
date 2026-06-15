@@ -1,49 +1,52 @@
 <view class="page">
-  <!-- 搜索栏 -->
-  <view class="search-row">
-    <view class="search-box">
-      <image class="search-icon" src="../../assets/icons/search.png" />
-      <input
-        class="search-input"
-        placeholder="搜索小区、地址"
-        value="{{keyword}}"
-        bindinput="onKeywordInput"
-        bindconfirm="onSearch"
-        confirm-type="search"
-      />
-      <view wx:if="{{keyword}}" class="search-clear" bindtap="onClearSearch">×</view>
+  <!-- 固定的搜索和排序头 -->
+  <view class="sticky-header">
+    <!-- 搜索栏 -->
+    <view class="search-row">
+      <view class="search-box">
+        <image class="search-icon" src="../../assets/icons/search.png" />
+        <input
+          class="search-input"
+          placeholder="搜索小区、地址"
+          value="{{keyword}}"
+          bindinput="onKeywordInput"
+          bindconfirm="onSearch"
+          confirm-type="search"
+        />
+        <view wx:if="{{keyword}}" class="search-clear" bindtap="onClearSearch">×</view>
+      </view>
+      <view class="filter-btn" bindtap="onFilterTap">
+        <view class="filter-icon-text">☰</view>
+        <text>筛选</text>
+      </view>
     </view>
-    <view class="filter-btn" bindtap="onFilterTap">
-      <view class="filter-icon-text">☰</view>
-      <text>筛选</text>
-    </view>
-  </view>
 
-  <!-- 排序 tabs -->
-  <view class="sort-bar">
-    <view
-      wx:for="{{sortOptions}}"
-      wx:key="value"
-      class="sort-item {{sort === item.value ? 'sort-active' : ''}}"
-      data-val="{{item.value}}"
-      bindtap="onSortTap"
-    >{{item.label}}</view>
+    <!-- 排序 tabs -->
+    <view class="sort-bar">
+      <view
+        wx:for="{{sortOptions}}"
+        wx:key="value"
+        class="sort-item {{sort === item.value ? 'sort-active' : ''}}"
+        data-val="{{item.value}}"
+        bindtap="onSortTap"
+      >{{item.label}}</view>
+    </view>
   </view>
 
   <!-- 房源列表 -->
-  <view class="list-grid">
+  <view class="list-vertical">
     <block wx:if="{{list.length}}">
       <property-card
         wx:for="{{list}}"
         wx:key="id"
         property="{{item}}"
-        compact="{{true}}"
-        style="width: calc(50% - 8rpx)"
+        compact="{{false}}"
+        class="list-vertical-item"
       />
     </block>
     <view wx:elif="{{loading && !list.length && !_firstLoaded}}" class="loading-tip">加载中...</view>
     <empty-state wx:elif="{{!loading && !list.length && _firstLoaded}}" text="没有找到符合条件的房源" btn-text="清除筛选" bindaction="onClearFilter" />
-    <view wx:if="{{noMore && list.length}}" class="no-more no-more-grid">没有更多了</view>
+    <view wx:if="{{noMore && list.length}}" class="no-more">没有更多了</view>
   </view>
 
   <filter-drawer show="{{showFilter}}" bind:close="onFilterClose" bind:confirm="onFilterConfirm" />

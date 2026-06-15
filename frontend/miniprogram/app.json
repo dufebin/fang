@@ -23,7 +23,7 @@
   ],
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#0284C7",
+    "selectedColor": "#0F766E",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
@@ -58,7 +58,7 @@
     "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTitleText": "房产",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#F0F9FF"
+    "backgroundColor": "#F9FAFB"
   },
   "permission": {
     "scope.userLocation": {

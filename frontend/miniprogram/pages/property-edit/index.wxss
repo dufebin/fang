@@ -23,7 +23,7 @@
 .header-bar {
   width: 6rpx;
   height: 32rpx;
-  background: #0284C7;
+  background: var(--color-primary);
   border-radius: 3rpx;
   margin-right: 14rpx;
   flex-shrink: 0;
@@ -41,7 +41,7 @@
   color: #aaa;
 }
 
-.req { color: #0284C7; }
+.req { color: var(--color-primary); }
 
 /* Field rows */
 .field-row {
@@ -117,8 +117,8 @@
   padding: 10rpx 24rpx;
   border-radius: 100rpx;
   background: #E0F2FE;
-  border: 1rpx solid #0284C7;
-  color: #0284C7;
+  border: 1rpx solid var(--color-primary);
+  color: var(--color-primary);
   font-size: 24rpx;
   white-space: nowrap;
 }
@@ -221,9 +221,9 @@
 }
 
 .pill-active {
-  color: #0284C7;
+  color: var(--color-primary);
   background: #E0F2FE;
-  border-color: #0284C7;
+  border-color: var(--color-primary);
 }
 
 /* 富文本编辑器 */
@@ -401,7 +401,7 @@
   margin-top: 16rpx;
   text-align: center;
   font-size: 26rpx;
-  color: #0284C7;
+  color: var(--color-primary);
   padding: 12rpx 0;
 }
 
@@ -437,7 +437,7 @@
   height: 92rpx;
   line-height: 92rpx;
   text-align: center;
-  background: #0284C7;
+  background: var(--color-primary);
   color: #fff;
   border-radius: 46rpx;
   font-size: 32rpx;

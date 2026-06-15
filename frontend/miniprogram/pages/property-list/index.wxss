@@ -1,6 +1,13 @@
 .page {
-  background: #F0F9FF;
+  background: var(--color-bg);
   min-height: 100vh;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4rpx 12rpx rgba(15, 118, 110, 0.05);
 }
 
 .search-row {
@@ -15,7 +22,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background: #EFF7FB;
+  background: rgba(15, 118, 110, 0.05);
   border-radius: 40rpx;
   padding: 12rpx 24rpx;
 }
@@ -76,7 +83,7 @@
 }
 
 .sort-active {
-  color: #0284C7;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -88,15 +95,18 @@
   transform: translateX(-50%);
   width: 40rpx;
   height: 4rpx;
-  background: #0284C7;
+  background: var(--color-primary);
   border-radius: 2rpx;
 }
 
-.list-grid {
+.list-vertical {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  padding: 16rpx 20rpx;
+  flex-direction: column;
+  padding: 20rpx;
+}
+
+.list-vertical-item {
+  margin-bottom: 20rpx;
 }
 
 .loading-tip {

@@ -1,23 +1,33 @@
-/* 全局基础样式 */
+/* 全局 CSS 变量 */
 page {
-  background-color: #F0F9FF;
-  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  --color-primary: #0F766E;
+  --color-secondary: #14B8A6;
+  --color-cta: #0369A1;
+  --color-bg: #F0FDFA;
+  --color-text: #134E4A;
+  --color-text-muted: #475569;
+  --color-price: #E11D48;
+  --font-number: 'DIN Alternate', 'Inter', -apple-system, sans-serif;
+  
+  background-color: var(--color-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
   font-size: 28rpx;
-  color: #333;
+  color: var(--color-text);
   box-sizing: border-box;
 }
 
-
 /* 主题色 */
-.primary-color { color: #0284C7; }
-.primary-bg { background-color: #0284C7; }
+.primary-color { color: var(--color-primary); }
+.primary-bg { background-color: var(--color-primary); }
+.cta-color { color: var(--color-cta); }
+.cta-bg { background-color: var(--color-cta); }
 
 /* 文字 */
 .text-bold { font-weight: 600; }
-.text-gray { color: #999; }
+.text-gray { color: var(--color-text-muted); }
 .text-small { font-size: 24rpx; }
 .text-large { font-size: 36rpx; }
-.text-price { color: #0284C7; font-weight: 700; }
+.text-price { color: var(--color-price); font-weight: 700; font-family: var(--font-number); }
 
 /* Flex */
 .flex { display: flex; }
@@ -32,17 +42,26 @@ page {
 .p-20 { padding: 20rpx; }
 .p-30 { padding: 30rpx; }
 
-/* 卡片 */
+/* 卡片 - 加入更柔和的阴影 */
 .card {
   background: #fff;
   border-radius: 24rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 20rpx rgba(2,132,199,0.09);
+  box-shadow: 0 4rpx 24rpx rgba(15, 118, 110, 0.06);
 }
 
-/* 按钮 */
+/* 交互反馈 (Hover-class) */
+.hover-scale {
+  transform: scale(0.98);
+  transition: transform 0.2s ease;
+}
+.hover-darken {
+  opacity: 0.85;
+}
+
+/* 按钮 - CTA 颜色 */
 .btn-primary {
-  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  background: linear-gradient(135deg, #0369A1 0%, #0284C7 100%);
   color: #fff;
   border-radius: 48rpx;
   height: 88rpx;
@@ -51,17 +70,16 @@ page {
   font-size: 32rpx;
   font-weight: 600;
   border: none;
-  box-shadow: 0 4rpx 16rpx rgba(2,132,199,0.30);
+  box-shadow: 0 6rpx 20rpx rgba(3, 105, 161, 0.25);
 }
 
 .btn-primary::after { border: none; }
-
 .btn-primary:active { opacity: 0.85; }
 
 .btn-outline {
   background: transparent;
-  color: #0284C7;
-  border: 1.5rpx solid #0284C7;
+  color: var(--color-primary);
+  border: 1.5rpx solid var(--color-primary);
   border-radius: 48rpx;
   height: 88rpx;
   line-height: 88rpx;
@@ -70,8 +88,7 @@ page {
 }
 
 .btn-outline::after { border: none; }
-
-.btn-outline:active { background: #E0F2FE; }
+.btn-outline:active { background: rgba(15, 118, 110, 0.05); }
 
 /* 标签 */
 .tag {
@@ -83,15 +100,15 @@ page {
   font-weight: 500;
 }
 
-.tag-red { background: #E0F2FE; color: #0284C7; }
-.tag-blue { background: #e8f4ff; color: #1890ff; }
-.tag-green { background: #f0fff4; color: #52c41a; }
-.tag-gray { background: #f5f5f5; color: #999; }
+.tag-primary { background: rgba(15, 118, 110, 0.1); color: var(--color-primary); }
+.tag-secondary { background: rgba(20, 184, 166, 0.1); color: var(--color-secondary); }
+.tag-red { background: rgba(225, 29, 72, 0.1); color: var(--color-price); }
+.tag-gray { background: #f1f5f9; color: var(--color-text-muted); }
 
 /* 分割线 */
 .divider {
   height: 1rpx;
-  background: #f0f0f0;
+  background: #e2e8f0;
   margin: 0 30rpx;
 }
 
@@ -102,12 +119,13 @@ page {
 .price-main {
   font-size: 44rpx;
   font-weight: 700;
-  color: #0284C7;
+  color: var(--color-price);
+  font-family: var(--font-number);
 }
 
 .price-unit {
   font-size: 24rpx;
-  color: #0284C7;
+  color: var(--color-price);
   font-weight: 400;
 }
 
@@ -115,7 +133,7 @@ page {
 .load-more {
   text-align: center;
   padding: 30rpx;
-  color: #999;
+  color: var(--color-text-muted);
   font-size: 26rpx;
 }
 
@@ -135,26 +153,26 @@ page {
 }
 
 .list-item + .list-item {
-  border-top: 1rpx solid #f5f5f5;
+  border-top: 1rpx solid #f1f5f9;
 }
 
 .list-item:active {
-  background: #F0F9FF;
+  background: rgba(15, 118, 110, 0.02);
 }
 
 /* Section 标题 */
 .section-title {
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 600;
-  color: #222;
+  color: var(--color-text);
   padding: 30rpx 30rpx 20rpx;
 }
 
-/* Section 标题带左侧蓝色装饰条 */
+/* Section 标题带左侧装饰条 */
 .section-title-accent {
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--color-text);
   padding-left: 20rpx;
   position: relative;
 }
@@ -165,8 +183,21 @@ page {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 6rpx;
+  width: 8rpx;
   height: 32rpx;
-  background: #0284C7;
-  border-radius: 3rpx;
+  background: var(--color-primary);
+  border-radius: 4rpx;
+}
+
+/* Glassmorphism 毛玻璃工具类 */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.glass-dark {
+  background: rgba(19, 78, 74, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
 }

@@ -20,7 +20,7 @@
   width: 72rpx;
   height: 72rpx;
   border: 6rpx solid rgba(255,255,255,0.15);
-  border-top-color: #0284C7;
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -60,7 +60,7 @@
   height: 88rpx;
   line-height: 88rpx;
   text-align: center;
-  background: #0284C7;
+  background: var(--color-primary);
   color: #fff;
   border-radius: 44rpx;
   font-size: 30rpx;
@@ -102,7 +102,7 @@
 
 .error-icon { font-size: 72rpx; }
 .error-text { font-size: 28rpx; color: #aaa; }
-.retry-text { font-size: 24rpx; color: #0284C7; }
+.retry-text { font-size: 24rpx; color: var(--color-primary); }
 
 .offscreen-canvas {
   position: fixed;

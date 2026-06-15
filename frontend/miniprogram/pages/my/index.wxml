@@ -1,70 +1,85 @@
-<view class="page">
-  <!-- 用户信息头部 -->
-  <view class="profile-header" bindtap="{{isLoggedIn ? '' : 'onLogin'}}">
-    <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" />
-    <view wx:if="{{isLoggedIn}}" class="user-info">
-      <view class="nickname">{{userInfo.nickname || '用户'}}</view>
-      <view wx:if="{{isAgent}}" class="agent-badge">经纪人</view>
-    </view>
-    <view wx:else class="user-info">
-      <view class="nickname">点击登录</view>
-      <view class="login-hint">登录享受更多服务</view>
-    </view>
-  </view>
-
-  <!-- 数据概览（已登录） -->
-  <view wx:if="{{isLoggedIn}}" class="stats-row">
-    <view class="stat-item" bindtap="onFavorites">
-      <text class="stat-num">{{stats.favoriteCount}}</text>
-      <text class="stat-label">收藏</text>
-    </view>
-    <view class="stat-divider" />
-    <view class="stat-item" bindtap="onHistory">
-      <text class="stat-num">{{stats.historyCount}}</text>
-      <text class="stat-label">浏览</text>
+<view class="page pb-safe">
+  <!-- 渐变质感头部 -->
+  <view class="hero-header" bindtap="{{isLoggedIn ? '' : 'onLogin'}}">
+    <view class="hero-bg-glow"></view>
+    <view class="user-profile-flex">
+      <image class="avatar-glass" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:if="{{isLoggedIn}}" class="user-info">
+        <view class="nickname-lg">{{userInfo.nickname || '用户'}}</view>
+        <view wx:if="{{isAgent}}" class="agent-badge-glass">
+          <text class="badge-icon">★</text> 认证经纪人
+        </view>
+        <view wx:else class="user-meta">普通用户</view>
+      </view>
+      <view wx:else class="user-info">
+        <view class="nickname-lg">点击登录/注册</view>
+        <view class="login-hint-text">登录后享受更多房产服务</view>
+      </view>
+      <view class="profile-arrow">›</view>
     </view>
   </view>
 
-  <!-- 菜单列表 -->
-  <view class="menu-group">
-    <view class="menu-item" wx:if="{{isLoggedIn}}" bindtap="onFavorites">
-      <text class="menu-label">我的收藏</text>
-      <text class="menu-arrow">›</text>
+  <!-- 悬浮数据概览卡片 (Overlap Hero) -->
+  <view class="stats-overlap-card glass shadow-lg">
+    <view class="stat-item hover-scale" bindtap="onFavorites">
+      <text class="stat-num-font">{{isLoggedIn ? stats.favoriteCount : '--'}}</text>
+      <text class="stat-lbl">我的收藏</text>
     </view>
-    <view class="menu-item" wx:if="{{isLoggedIn}}" bindtap="onHistory">
-      <text class="menu-label">浏览历史</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{isLoggedIn}}" bindtap="onNotifications">
-      <text class="menu-label">消息通知</text>
-      <view wx:if="{{unreadCount > 0}}" class="badge">{{unreadCount}}</view>
-      <text class="menu-arrow">›</text>
+    <view class="stat-vertical-divider"></view>
+    <view class="stat-item hover-scale" bindtap="onHistory">
+      <text class="stat-num-font">{{isLoggedIn ? stats.historyCount : '--'}}</text>
+      <text class="stat-lbl">浏览历史</text>
     </view>
   </view>
 
-  <view class="menu-group">
-    <view class="menu-item" wx:if="{{isAgent}}" bindtap="onAgentWorkbench">
-      <text class="menu-label">经纪人工作台</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" wx:if="{{isLoggedIn && !isAgent}}" bindtap="onApplyAgent">
-      <text class="menu-label">申请成为经纪人</text>
-      <text class="menu-arrow">›</text>
+  <!-- 菜单组 1: 常用服务 -->
+  <view class="menu-section">
+    <view class="menu-group shadow-sm">
+      <view class="menu-item hover-scale" wx:if="{{isLoggedIn}}" bindtap="onFavorites">
+        <view class="menu-icon-wrap icon-red">♥</view>
+        <text class="menu-label">我的收藏</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item hover-scale" wx:if="{{isLoggedIn}}" bindtap="onHistory">
+        <view class="menu-icon-wrap icon-blue">◷</view>
+        <text class="menu-label">浏览记录</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item hover-scale" wx:if="{{isLoggedIn}}" bindtap="onNotifications">
+        <view class="menu-icon-wrap icon-yellow">🔔</view>
+        <text class="menu-label">消息中心</text>
+        <view wx:if="{{unreadCount > 0}}" class="badge-dot">{{unreadCount}}</view>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
   </view>
 
-  <view class="menu-group">
-    <view class="menu-item" bindtap="onLoanCalc">
-      <text class="menu-label">贷款计算器</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="onArticles">
-      <text class="menu-label">房产资讯</text>
-      <text class="menu-arrow">›</text>
+  <!-- 菜单组 2: 经纪人服务 -->
+  <view class="menu-section">
+    <view class="menu-title">专属服务</view>
+    <view class="menu-group shadow-sm">
+      <view class="menu-item hover-scale" wx:if="{{isAgent}}" bindtap="onAgentWorkbench">
+        <view class="menu-icon-wrap icon-teal">💼</view>
+        <text class="menu-label">经纪人工作台</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item hover-scale" wx:if="{{isLoggedIn && !isAgent}}" bindtap="onApplyAgent">
+        <view class="menu-icon-wrap icon-teal">★</view>
+        <text class="menu-label">申请成为经纪人</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item hover-scale" bindtap="onLoanCalc">
+        <view class="menu-icon-wrap icon-purple">🧮</view>
+        <text class="menu-label">房贷计算器</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item hover-scale" bindtap="onArticles">
+        <view class="menu-icon-wrap icon-gray">📰</view>
+        <text class="menu-label">房产资讯</text>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
   </view>
 
-  <view wx:if="{{isLoggedIn}}" class="logout-btn" bindtap="onLogout">退出登录</view>
-
-
+  <view wx:if="{{isLoggedIn}}" class="logout-btn hover-darken" bindtap="onLogout">退出登录</view>
 </view>
