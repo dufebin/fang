@@ -169,8 +169,27 @@ function upload(opts) {
         formData: formData,
         header: header,
         success: function(res) {
+          var statusCode = res && res.statusCode ? res.statusCode : 0
+          var raw = res ? res.data : ''
+
+          if (statusCode < 200 || statusCode >= 300) {
+            var statusMsg = '上传失败 ' + statusCode
+            if (statusCode === 413) {
+              statusMsg = '视频文件过大（建议95MB以内）'
+            } else {
+              try {
+                var errBody = typeof raw === 'string' ? JSON.parse(raw) : raw
+                if (errBody && (errBody.message || errBody.msg)) {
+                  statusMsg = errBody.message || errBody.msg
+                }
+              } catch (_) {}
+            }
+            reject(new Error(statusMsg))
+            return
+          }
+
           try {
-            var body = JSON.parse(res.data)
+            var body = typeof raw === 'string' ? JSON.parse(raw) : raw
             var result = body
             if (body && typeof body === 'object') {
               if ('code' in body) {
@@ -191,10 +210,12 @@ function upload(opts) {
             }
             resolve(result)
           } catch (e) {
-            reject(new Error('解析响应失败'))
+            reject(new Error('上传响应解析失败'))
           }
         },
-        fail: reject
+        fail: function(err) {
+          reject(new Error((err && err.errMsg) || '上传失败'))
+        }
       })
     } catch (e) {
       reject(e)

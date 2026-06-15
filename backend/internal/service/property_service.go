@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"math"
 
 	"fangchan/internal/model"
 	"fangchan/internal/repository"
@@ -171,10 +172,23 @@ func (s *PropertyService) Create(req *CreatePropertyReq, createdBy uint64) (*mod
 		Status:       model.PropertyStatusAvailable,
 		CreatedBy:    createdBy,
 	}
+	if property.UnitPrice == nil {
+		property.UnitPrice = deriveUnitPrice(property.TotalPrice, property.Area)
+	}
 	if req.Decoration != "" {
 		property.Decoration = model.Decoration(req.Decoration)
 	}
 	return property, s.propertyRepo.Create(property)
+}
+
+func deriveUnitPrice(totalPrice *float64, area float64) *float64 {
+	if totalPrice == nil || area <= 0 {
+		return nil
+	}
+	// total_price 单位为“万元”，换算为“元/㎡”
+	v := (*totalPrice * 10000) / area
+	rounded := math.Round(v*100) / 100
+	return &rounded
 }
 
 // UploadImage 上传房源图片
@@ -234,6 +248,10 @@ func (s *PropertyService) DeleteImage(propertyID, imageID uint64) error {
 // List 房源列表
 func (s *PropertyService) List(page, limit int, filter repository.PropertyFilter) ([]model.Property, int64, error) {
 	return s.propertyRepo.List(page, limit, filter)
+}
+
+func (s *PropertyService) HotDistricts(limit int, filter repository.PropertyFilter) ([]repository.DistrictCount, error) {
+	return s.propertyRepo.HotDistricts(limit, filter)
 }
 
 // GetAgentProperties 获取销售员所有相关房源（自己录入+认领），用于公开主页
@@ -397,6 +415,9 @@ func (s *PropertyService) UpdateProperty(id, userID uint64, isAdmin bool, req *U
 		property.MonthlyRent = req.MonthlyRent
 	}
 	if req.Area != nil {
+		if *req.Area <= 0 {
+			return nil, fmt.Errorf("建筑面积必须大于0")
+		}
 		property.Area = *req.Area
 	}
 	if req.Bedrooms != nil {
@@ -457,6 +478,12 @@ func (s *PropertyService) UpdateProperty(id, userID uint64, isAdmin bool, req *U
 	}
 	if req.Commission != nil {
 		property.Commission = req.Commission
+	}
+	// 仅在“总价或面积发生变化且未显式传 unit_price”时自动重算，避免误覆盖历史人工单价
+	if req.UnitPrice == nil && (req.TotalPrice != nil || req.Area != nil) {
+		if auto := deriveUnitPrice(property.TotalPrice, property.Area); auto != nil {
+			property.UnitPrice = auto
+		}
 	}
 
 	return property, s.propertyRepo.Update(property)

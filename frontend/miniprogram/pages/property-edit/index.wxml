@@ -26,7 +26,7 @@
     <view class="card-header">
       <view class="header-bar"></view>
       <text class="card-title">房源视频</text>
-      <text class="card-hint">最长2分钟</text>
+      <text class="card-hint">最长2分钟，建议95MB以内</text>
     </view>
     <view class="video-section">
       <view wx:if="{{videoUrl}}" class="video-wrap">

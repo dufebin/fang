@@ -153,6 +153,130 @@
 /* 核心信息横向排列 */
 .property-meta-flex {
   display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 20rpx 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(15, 118, 110, 0.04);
+  margin-bottom: 20rpx;
+}
+
+.meta-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.meta-val {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.meta-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.meta-divider {
+  width: 1rpx;
+  background: #eef2f7;
+  margin: 0 12rpx;
+}
+
+.district-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.highlight-label {
+  font-size: 22rpx;
+  color: #64748b;
+}
+
+.highlight-value {
+  font-size: 30rpx;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.highlight-desc {
+  font-size: 22rpx;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.deal-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.deal-info-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding-bottom: 18rpx;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.deal-info-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.deal-info-label {
+  width: 160rpx;
+  flex-shrink: 0;
+  font-size: 25rpx;
+  color: #64748b;
+}
+
+.deal-info-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: #0f172a;
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* 通用 section */
+.section {
+  background: #fff;
+  padding: 28rpx;
+  margin-bottom: 16rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 20rpx;
+}
+
+/* 信息网格 */
+.info-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  width: 50%;
+  padding: 10rpx 0;
+>>>>>>> 1e6cb64 (feat: 房产列表页优化与 agent-card 组件实现)
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 30rpx 0;
@@ -442,4 +566,63 @@
   font-weight: 600;
   box-shadow: 0 6rpx 20rpx rgba(3, 105, 161, 0.3);
   margin-left: 20rpx;
+}
+
+.bottom-action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 14rpx 20rpx calc(env(safe-area-inset-bottom) + 14rpx);
+  background: #fff;
+  border-top: 1rpx solid #e2e8f0;
+  z-index: 20;
+}
+
+.bar-fav {
+  width: 128rpx;
+  height: 78rpx;
+  border-radius: 39rpx;
+  border: 1rpx solid #cbd5e1;
+  color: #64748b;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.bar-fav-active {
+  color: #0284C7;
+  border-color: #0284C7;
+  background: #E0F2FE;
+}
+
+.bar-btn {
+  flex: 1;
+  height: 78rpx;
+  border-radius: 39rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bar-light {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.bar-primary {
+  color: #fff;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+}
+
+.bar-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }

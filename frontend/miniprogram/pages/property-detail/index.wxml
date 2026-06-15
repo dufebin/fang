@@ -93,6 +93,44 @@
       <text class="loan-banner-val">{{monthlyText}}</text>
       <text class="loan-banner-arrow">></text>
     </view>
+    <view wx:if="{{trustSignals.length}}" class="trust-list">
+      <text class="trust-pill" wx:for="{{trustSignals}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="signal-grid">
+      <view class="signal-item">
+        <text class="signal-label">浏览热度</text>
+        <text class="signal-val">{{heatText}}</text>
+      </view>
+      <view class="signal-item">
+        <text class="signal-label">发布时间</text>
+        <text class="signal-val">{{publishDateText}}</text>
+      </view>
+      <view class="signal-item">
+        <text class="signal-label">房源状态</text>
+        <text class="signal-val">{{statusText || '--'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{highlightCards.length}}" class="section">
+    <view class="section-title">核心卖点</view>
+    <view class="highlight-grid">
+      <view class="highlight-card" wx:for="{{highlightCards}}" wx:key="label">
+        <view class="highlight-label">{{item.label}}</view>
+        <view class="highlight-value">{{item.value}}</view>
+        <view class="highlight-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{dealInfoList.length}}" class="section">
+    <view class="section-title">位置与交易信息</view>
+    <view class="deal-info-list">
+      <view class="deal-info-item" wx:for="{{dealInfoList}}" wx:key="label">
+        <text class="deal-info-label">{{item.label}}</text>
+        <text class="deal-info-value">{{item.value}}</text>
+      </view>
+    </view>
   </view>
 
   <!-- 基本信息 -->
@@ -199,4 +237,3 @@
   <text class="error-emoji">😕</text>
   <text class="mt-20">加载失败，点击重试</text>
 </view>
-

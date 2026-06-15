@@ -2,15 +2,20 @@
   <view class="agent-info" bindtap="onViewHome">
     <image class="agent-avatar" src="{{avatarUrl}}" mode="aspectFill" />
     <view class="agent-detail">
-      <view class="agent-name">{{agent.name}}</view>
+      <view class="agent-name-row">
+        <view class="agent-name">{{agent.name}}</view>
+        <view wx:if="{{agent.title}}" class="agent-badge">专业顾问</view>
+      </view>
       <view wx:if="{{agent.title}}" class="agent-title">{{agent.title}}</view>
       <view wx:if="{{agent.bio}}" class="agent-bio">{{agent.bio}}</view>
+      <view wx:if="{{agent.phone}}" class="agent-phone-hint">电话咨询更高效 · 响应更快</view>
     </view>
   </view>
-  <view wx:if="{{showActions && agent.phone}}" class="agent-actions">
-    <view class="action-btn btn-call" bindtap="onCall">
-      <text class="action-icon-text">📞</text>
-      <text>电话咨询</text>
+  <view wx:if="{{showActions}}" class="agent-actions">
+    <view class="action-btn btn-light" bindtap="onViewHome">查看主页</view>
+    <view wx:if="{{agent.phone}}" class="action-btn btn-call" bindtap="onCall">
+      <text class="action-icon-text">电</text>
+      <text>立即咨询</text>
     </view>
   </view>
 </view>

@@ -71,6 +71,9 @@
   display: flex;
   background: #fff;
   border-bottom: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 9;
 }
 
 .sort-item {
@@ -118,12 +121,9 @@
 }
 
 .no-more {
+  width: 100%;
   text-align: center;
   font-size: 26rpx;
   color: #bbb;
   padding: 32rpx 0;
-}
-
-.no-more-grid {
-  width: 100%;
 }

@@ -4,6 +4,10 @@ function listProperties(params) {
   return request({ url: '/h5/properties', data: params })
 }
 
+function getHotDistricts(params) {
+  return request({ url: '/h5/properties/hot-districts', data: params })
+}
+
 function getPropertyDetail(id, agentCode) {
   return request({ url: `/h5/property/${id}`, data: agentCode ? { a: agentCode } : {} })
 }
@@ -57,6 +61,7 @@ function getAllProperties(params) {
 
 module.exports = {
   listProperties,
+  getHotDistricts,
   getPropertyDetail,
   getNearbyProperties,
   getAgentPropertyDetail,

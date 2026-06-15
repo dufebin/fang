@@ -276,13 +276,20 @@ Page({
   },
 
   onAddVideo() {
+    const MAX_VIDEO_SIZE = 95 * 1024 * 1024 // 95MB，预留 multipart 传输开销
     wx.chooseMedia({
       count: 1,
       mediaType: ['video'],
       sourceType: ['album', 'camera'],
       maxDuration: 120,
       success: res => {
-        const path = res.tempFiles[0].tempFilePath
+        const file = res.tempFiles[0]
+        if (!file) return
+        if (file.size && file.size > MAX_VIDEO_SIZE) {
+          wx.showToast({ title: '视频建议不超过95MB，请压缩后重试', icon: 'none' })
+          return
+        }
+        const path = file.tempFilePath
         this.setData({ _newVideoPath: path, videoUrl: path })
       },
     })

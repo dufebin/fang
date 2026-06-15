@@ -26,6 +26,11 @@ type PropertyFilter struct {
 	PreloadAgent   bool
 }
 
+type DistrictCount struct {
+	District string `json:"district"`
+	Count    int64  `json:"count"`
+}
+
 func NewPropertyRepo(db *gorm.DB) *PropertyRepo {
 	return &PropertyRepo{db: db}
 }
@@ -109,12 +114,40 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 		q = q.Order("total_price DESC")
 	case "area":
 		q = q.Order("area DESC")
+	case "views":
+		q = q.Order("view_count DESC")
 	default:
 		q = q.Order("created_at DESC")
 	}
 	err := q.Offset(offset).Limit(limit).Find(&properties).Error
 
 	return properties, total, err
+}
+
+func (r *PropertyRepo) HotDistricts(limit int, filter PropertyFilter) ([]DistrictCount, error) {
+	if limit <= 0 {
+		limit = 8
+	}
+	rows := make([]DistrictCount, 0, limit)
+	query := r.db.Model(&model.Property{}).
+		Select("district, COUNT(*) AS count").
+		Where("district <> ''")
+	if filter.PropertyType != "" {
+		query = query.Where("property_type = ?", filter.PropertyType)
+	}
+	if filter.Keyword != "" {
+		like := "%" + filter.Keyword + "%"
+		query = query.Where("district LIKE ? OR title LIKE ? OR address LIKE ?", like, like, like)
+	}
+	if filter.Status != "" {
+		query = query.Where("status = ?", filter.Status)
+	} else if !filter.IncludeOffline {
+		query = query.Where("status != ?", model.PropertyStatusOffline)
+	}
+	if err := query.Group("district").Order("count DESC").Limit(limit).Scan(&rows).Error; err != nil {
+		return nil, err
+	}
+	return rows, nil
 }
 
 // ListByIDs 按ID列表查询（销售员认领的房源）

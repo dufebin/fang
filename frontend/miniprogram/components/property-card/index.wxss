@@ -71,11 +71,35 @@
   white-space: nowrap;
 }
 
+.card-location {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #64748B;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .card-meta {
   font-size: 26rpx;
   color: #8a9ab0;
   margin-top: 10rpx;
   line-height: 1.5;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  margin-top: 12rpx;
+}
+
+.card-tag {
+  font-size: 20rpx;
+  color: #0369A1;
+  background: #E0F2FE;
+  border-radius: 20rpx;
+  padding: 4rpx 12rpx;
 }
 
 .dot {

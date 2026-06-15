@@ -186,6 +186,7 @@ func registerRoutes(
 	h5 := api.Group("/h5")
 	{
 		h5.GET("/properties", propertyH.List)
+		h5.GET("/properties/hot-districts", propertyH.HotDistricts)
 		h5.GET("/property/:id", propertyH.GetDetail)
 		h5.GET("/property/:id/wxacode", propertyH.GetWxaCode)
 		h5.GET("/agent/:agent_code", agentH.GetAgentByCode)

@@ -15,12 +15,18 @@
 
   <view class="card-body {{compact ? 'card-body-compact' : ''}}">
     <view class="card-title {{compact ? 'card-title-compact' : ''}}">{{property.title}}</view>
+    <view wx:if="{{!compact}}" class="card-location">
+      {{property.district || '区域待补充'}}<text wx:if="{{property.address}}"> · {{property.address}}</text>
+    </view>
     <view class="card-meta {{compact ? 'card-meta-compact' : ''}}">
       <text>{{fmt.formatLayout(property.bedrooms, property.living_rooms, property.bathrooms)}}</text>
       <text class="dot">·</text>
       <text>{{fmt.formatArea(property.area)}}</text>
-      <text wx:if="{{!compact}}" class="dot">·</text>
-      <text wx:if="{{!compact}}">{{property.district}}</text>
+      <text wx:if="{{!compact && property.unit_price}}" class="dot">·</text>
+      <text wx:if="{{!compact && property.unit_price}}">约{{property.unit_price}}元/㎡</text>
+    </view>
+    <view wx:if="{{!compact && quickTags.length}}" class="card-tags">
+      <text wx:for="{{quickTags}}" wx:key="*this" class="card-tag">{{item}}</text>
     </view>
     <view class="card-bottom {{compact ? 'card-bottom-compact' : ''}}">
       <text class="price-num {{compact ? 'price-compact' : ''}}">{{fmt.formatPrice(property.total_price, property.property_type === 'rent' ? 'rent' : 'sale')}}</text>

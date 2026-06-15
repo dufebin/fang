@@ -147,6 +147,26 @@ func (h *PropertyHandler) List(c *gin.Context) {
 	response.SuccessPage(c, list, total, page, limit)
 }
 
+// HotDistricts 热门区域（用于前端快捷筛选）
+func (h *PropertyHandler) HotDistricts(c *gin.Context) {
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "8"))
+	if limit > 20 {
+		limit = 20
+	}
+	filter := repository.PropertyFilter{
+		PropertyType:   c.Query("type"),
+		Keyword:        c.Query("keyword"),
+		Status:         c.Query("status"),
+		IncludeOffline: false,
+	}
+	rows, err := h.propertySvc.HotDistricts(limit, filter)
+	if err != nil {
+		response.ServerError(c, err)
+		return
+	}
+	response.Success(c, rows)
+}
+
 // GetAgentProperties 获取销售员认领的房源（通过agent_code）
 func (h *PropertyHandler) GetAgentProperties(c *gin.Context) {
 	agentCode := c.Param("agent_code")

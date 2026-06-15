@@ -33,6 +33,34 @@
     </view>
   </view>
 
+  <!-- 快捷区域筛选 -->
+  <scroll-view wx:if="{{quickDistricts.length}}" class="quick-district-scroll" scroll-x enable-flex>
+    <view class="quick-district-row">
+      <view class="quick-district-pill {{activeDistrict === '' ? 'quick-district-active' : ''}}" bindtap="onQuickDistrictTap" data-district="">
+        全部区域
+      </view>
+      <view
+        wx:for="{{quickDistricts}}"
+        wx:key="*this"
+        class="quick-district-pill {{activeDistrict === item ? 'quick-district-active' : ''}}"
+        bindtap="onQuickDistrictTap"
+        data-district="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 已选筛选条件 -->
+  <scroll-view wx:if="{{filterChips.length}}" class="filter-chip-scroll" scroll-x enable-flex>
+    <view class="filter-chip-row">
+      <view wx:for="{{filterChips}}" wx:key="key" class="filter-chip" bindtap="onRemoveFilterChip" data-key="{{item.key}}">
+        <text class="chip-label">{{item.label}}</text>
+        <text class="chip-close">×</text>
+      </view>
+    </view>
+  </scroll-view>
+
   <!-- 房源列表 -->
   <view class="list-vertical">
     <block wx:if="{{list.length}}">
