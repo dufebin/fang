@@ -10,10 +10,10 @@ function mpLogin(code, nickname, avatar) {
   })
 }
 
-// 上传头像（本地路径转 HTTP URL）
+// 上传头像（本地路径转 HTTP URL）- 登录前使用，无需 token
 function uploadAvatar(filePath) {
   return upload({
-    url: '/user/upload/avatar',
+    url: '/miniprogram/upload/avatar',
     filePath: filePath,
     name: 'avatar',
   })
