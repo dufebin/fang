@@ -5,6 +5,7 @@ import (
 	"fangchan/internal/model"
 	"fangchan/internal/service"
 	"fangchan/pkg/response"
+	"fangchan/pkg/storage"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,14 +13,16 @@ import (
 type AuthHandler struct {
 	authSvc  *service.AuthService
 	agentSvc *service.AgentService
+	storage  storage.Storage
 	wxAppID       string
 	wxRedirectURL string
 }
 
-func NewAuthHandler(authSvc *service.AuthService, agentSvc *service.AgentService, wxAppID, wxRedirectURL string) *AuthHandler {
+func NewAuthHandler(authSvc *service.AuthService, agentSvc *service.AgentService, stg storage.Storage, wxAppID, wxRedirectURL string) *AuthHandler {
 	return &AuthHandler{
 		authSvc:       authSvc,
 		agentSvc:      agentSvc,
+		storage:       stg,
 		wxAppID:       wxAppID,
 		wxRedirectURL: wxRedirectURL,
 	}
@@ -95,4 +98,22 @@ func (h *AuthHandler) Me(c *gin.Context) {
 	}
 
 	response.Success(c, result)
+}
+
+// UploadAvatar 上传用户头像 POST /user/upload/avatar
+func (h *AuthHandler) UploadAvatar(c *gin.Context) {
+	file, header, err := c.Request.FormFile("avatar")
+	if err != nil {
+		response.BadRequest(c, "请选择头像文件")
+		return
+	}
+	defer file.Close()
+
+	url, err := h.storage.Save(file, header)
+	if err != nil {
+		response.Fail(c, 500, "上传失败："+err.Error())
+		return
+	}
+
+	response.Success(c, gin.H{"url": url})
 }

@@ -105,7 +105,7 @@ func main() {
 	statsSvc := service.NewStatsService(statsRepo)
 
 	// Handlers
-	authHandler := handler.NewAuthHandler(authSvc, agentSvc, cfg.WeChat.AppID, cfg.WeChat.OAuthRedirectURL)
+	authHandler := handler.NewAuthHandler(authSvc, agentSvc, store, cfg.WeChat.AppID, cfg.WeChat.OAuthRedirectURL)
 	propertyHandler := handler.NewPropertyHandler(propertySvc, agentSvc, userActionSvc, store, wxClient)
 	agentHandler := handler.NewAgentHandler(agentSvc, propertySvc, wxClient)
 	adminHandler := handler.NewAdminHandler(propertySvc, agentSvc, userRepo, store, cfg.Admin.Username, cfg.Admin.Password)
@@ -209,6 +209,8 @@ func registerRoutes(
 		user.PUT("/notifications/read-all", userActionH.MarkAllNotificationsRead)
 		user.POST("/agent-apply", userActionH.SubmitApplication)
 		user.GET("/agent-apply", userActionH.GetMyApplication)
+		// 上传头像
+		user.POST("/upload/avatar", authH.UploadAvatar)
 		// 任意登录用户可录入和认领房源
 		user.POST("/upload/image", propertyH.UploadEditorImage)
 		user.POST("/properties", propertyH.Create)

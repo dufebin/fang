@@ -1,4 +1,5 @@
 const { request } = require('../utils/request')
+const { upload } = require('../utils/request')
 
 // 小程序登录
 function mpLogin(code, nickname, avatar) {
@@ -6,6 +7,15 @@ function mpLogin(code, nickname, avatar) {
     url: '/miniprogram/login',
     method: 'POST',
     data: { code, nickname, avatar },
+  })
+}
+
+// 上传头像（本地路径转 HTTP URL）
+function uploadAvatar(filePath) {
+  return upload({
+    url: '/user/upload/avatar',
+    filePath: filePath,
+    name: 'avatar',
   })
 }
 

@@ -1,5 +1,5 @@
 const { silentLogin, setToken } = require('../../utils/auth')
-const { mpLogin } = require('../../api/user')
+const { mpLogin, uploadAvatar } = require('../../api/user')
 
 const DEFAULT_AVATAR = '/assets/icons/default-avatar.png'
 // 微信占位昵称，出现时说明获取到的是默认值
@@ -50,13 +50,30 @@ Page({
     try {
       const code = await silentLogin()
 
-      // 只把真实 http(s) URL 传给后端；本地路径无法被服务端访问
-      const avatarToSend = this.data.avatarUrl.startsWith('http') ? this.data.avatarUrl : ''
+      let avatarToSend = ''
+      let finalAvatarUrl = this.data.avatarUrl
+
+      // 如果头像是本地路径（wxfile://），先上传到后端获取 HTTP URL
+      if (this.data.avatarUrl.startsWith('wxfile://')) {
+        try {
+          const uploadRes = await uploadAvatar(this.data.avatarUrl)
+          avatarToSend = uploadRes.url || ''
+          finalAvatarUrl = uploadRes.url || DEFAULT_AVATAR
+        } catch (uploadErr) {
+          console.error('头像上传失败:', uploadErr)
+          // 上传失败则不传头像，使用默认值
+          finalAvatarUrl = DEFAULT_AVATAR
+        }
+      } else if (this.data.avatarUrl.startsWith('http')) {
+        // 已经是 HTTP URL，直接发送
+        avatarToSend = this.data.avatarUrl
+      }
+
       const loginRes = await mpLogin(code, this.data.nickname, avatarToSend)
 
       setToken(loginRes.token)
-      // avatarUrl 作为即时展示用（wxfile:// 或 https:// 均可在小程序内显示）
-      getApp().onLoginSuccess({ ...loginRes.user, avatarUrl: this.data.avatarUrl }, loginRes.token)
+      // 使用最终头像 URL 显示
+      getApp().onLoginSuccess({ ...loginRes.user, avatarUrl: finalAvatarUrl }, loginRes.token)
 
       const url = this._redirect ? decodeURIComponent(this._redirect) : ''
       if (url) {
