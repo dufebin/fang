@@ -177,6 +177,8 @@ func registerRoutes(
 	{
 		mp.POST("/login", mpH.Login)
 		mp.PUT("/profile", middleware.AuthRequired(), mpH.UpdateProfile)
+		// 上传头像（登录前使用，用于登录时保存真实头像）
+		mp.POST("/upload/avatar", authH.UploadAvatar)
 	}
 
 	// 开发辅助接口

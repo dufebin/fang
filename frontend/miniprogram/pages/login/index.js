@@ -61,7 +61,8 @@ Page({
           finalAvatarUrl = uploadRes.url || DEFAULT_AVATAR
         } catch (uploadErr) {
           console.error('头像上传失败:', uploadErr)
-          // 上传失败则不传头像，使用默认值
+          // 上传失败则不传头像，使用默认值（不影响登录）
+          avatarToSend = ''
           finalAvatarUrl = DEFAULT_AVATAR
         }
       } else if (this.data.avatarUrl.startsWith('http')) {

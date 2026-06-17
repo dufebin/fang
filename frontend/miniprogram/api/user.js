@@ -71,6 +71,7 @@ function getMyApply() {
 
 module.exports = {
   mpLogin,
+  uploadAvatar,
   updateProfile,
   getMe,
   toggleFavorite,
