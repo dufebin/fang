@@ -2,7 +2,20 @@
 
 <view class="property-card {{compact ? 'property-card-compact' : ''}}" bindtap="onTap">
   <view class="card-image-wrap {{compact ? 'card-image-compact' : ''}}">
+    <!-- 四图拼接模式 -->
+    <view wx:if="{{fourImages && fourImgUrls.length}}" class="card-four-grid">
+      <image
+        wx:for="{{fourImgUrls}}"
+        wx:key="index"
+        class="card-grid-img"
+        src="{{item}}"
+        mode="aspectFill"
+        lazy-load
+      />
+    </view>
+    <!-- 单图模式（默认） -->
     <image
+      wx:else
       class="card-image"
       src="{{coverImage}}"
       mode="aspectFill"

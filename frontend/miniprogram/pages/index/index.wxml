@@ -1,120 +1,25 @@
 <view class="page">
-  <!-- 顶部玻璃态搜索栏 -->
-  <view class="search-bar glass" bindtap="onSearchTap">
-    <view class="search-bar-inner">
-      <image class="search-icon" src="../../assets/icons/search.png" />
-      <text class="search-placeholder">搜索小区、地址、房源</text>
+  <!-- 用户信息头部 -->
+  <view class="user-header">
+    <image class="user-avatar" src="{{avatarUrl}}" mode="aspectFill" bindtap="onAvatarTap" />
+    <view class="user-info" bindtap="onAgentTap">
+      <text class="user-name">{{userInfo.nickname || userInfo.nickName || '用户'}}</text>
+      <text class="user-cta">变成我的房源</text>
     </view>
+    <text class="user-arrow" bindtap="onAgentTap">›</text>
   </view>
 
-  <!-- 顶部占位，防止内容被 fixed 搜索栏遮挡 -->
-  <view class="search-placeholder-space"></view>
-
-  <!-- 轮播图 (带渐变遮罩) -->
-  <view class="banner-container">
-    <swiper wx:if="{{banners.length}}" class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff">
-      <swiper-item wx:for="{{banners}}" wx:key="id">
-        <image class="banner-img" src="{{item.imageUrl}}" mode="aspectFill" bindtap="onBannerTap" data-item="{{item}}" />
-      </swiper-item>
-    </swiper>
-    <view class="banner-overlay"></view>
-  </view>
-
-  <!-- 快捷入口 (2排4列) -->
-  <view class="quick-nav card">
-    <view class="nav-item hover-scale" bindtap="onNavTap" data-type="second_hand">
-      <view class="nav-icon-circle nav-primary">
-        <image class="nav-icon-svg" src="../../assets/icons/home.png" />
-      </view>
-      <text class="nav-text">二手房</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onNavTap" data-type="new_home">
-      <view class="nav-icon-circle nav-secondary">
-        <image class="nav-icon-svg" src="../../assets/icons/home.png" />
-      </view>
-      <text class="nav-text">新房</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onNavTap" data-type="rent">
-      <view class="nav-icon-circle nav-cta">
-        <image class="nav-icon-svg" src="../../assets/icons/home.png" />
-      </view>
-      <text class="nav-text">租房</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onMapTap">
-      <view class="nav-icon-circle nav-map">
-        <image class="nav-icon-svg" src="../../assets/icons/map.png" />
-      </view>
-      <text class="nav-text">地图找房</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onNavTap" data-type="decoration">
-      <view class="nav-icon-circle nav-gray">
-        <text class="nav-text-icon">修</text>
-      </view>
-      <text class="nav-text">装修</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onNavTap" data-type="commercial">
-      <view class="nav-icon-circle nav-gray">
-        <text class="nav-text-icon">商</text>
-      </view>
-      <text class="nav-text">商铺办公</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onCalcTap">
-      <view class="nav-icon-circle nav-gray">
-        <text class="nav-text-icon">算</text>
-      </view>
-      <text class="nav-text">贷款计算</text>
-    </view>
-    <view class="nav-item hover-scale" bindtap="onMoreTap">
-      <view class="nav-icon-circle nav-gray">
-        <text class="nav-text-icon">全</text>
-      </view>
-      <text class="nav-text">全部服务</text>
-    </view>
-  </view>
-
-  <!-- 推荐房源 -->
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title-accent">推荐房源</text>
-      <text class="section-more hover-darken" bindtap="onMoreTap">更多</text>
-    </view>
-    
-    <!-- 加载中 -->
-    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
-    
-    <!-- 数据：横向滚动卡片视图 -->
-    <scroll-view wx:elif="{{hotProperties.length}}" class="hot-carousel" scroll-x enable-flex>
-      <view class="carousel-inner">
-        <property-card
-          wx:for="{{hotProperties}}"
-          wx:key="id"
-          property="{{item}}"
-          compact="{{true}}"
-          class="carousel-item"
-        />
-      </view>
-    </scroll-view>
-    <empty-state wx:elif="{{!loading}}" text="暂无推荐房源" />
-  </view>
-
-  <!-- 最新资讯 -->
-  <view wx:if="{{articles.length || loading}}" class="section mb-20">
-    <view class="section-header">
-      <text class="section-title-accent">最新资讯</text>
-      <text class="section-more hover-darken" bindtap="onArticleMoreTap">更多</text>
-    </view>
-    <!-- 加载中 -->
-    <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
-    <!-- 数据 -->
-    <view wx:elif="{{articles.length}}" class="article-list">
-      <view class="article-item hover-scale" wx:for="{{articles}}" wx:key="id" bindtap="onArticleTap" data-id="{{item.id}}">
-        <image wx:if="{{item.cover_image}}" class="article-thumb" src="{{item.coverImageUrl}}" mode="aspectFill" />
-        <view class="article-info">
-          <view class="article-title">{{item.title}}</view>
-          <view class="article-date">{{item.publishedAt}}</view>
-        </view>
-      </view>
-    </view>
+  <!-- 房源列表 -->
+  <view class="list-wrap">
+    <property-card
+      wx:for="{{list}}"
+      wx:key="id"
+      property="{{item}}"
+      four-images="{{true}}"
+    />
+    <view wx:if="{{loading && !list.length}}" class="loading-tip">加载中...</view>
+    <empty-state wx:elif="{{!loading && !list.length && _firstLoaded}}" text="暂无房源" />
+    <view wx:if="{{noMore && list.length}}" class="no-more">没有更多了</view>
+    <view wx:if="{{loading && list.length}}" class="load-more-tip">加载中...</view>
   </view>
 </view>
-

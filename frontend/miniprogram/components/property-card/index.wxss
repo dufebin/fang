@@ -128,6 +128,21 @@
   color: #c0cad6;
 }
 
+/* 四图拼接模式 */
+.card-four-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+}
+
+.card-grid-img {
+  width: 50%;
+  height: 50%;
+  border: 1.5rpx solid #fff;
+  box-sizing: border-box;
+}
+
 /* compact 双列模式 */
 .property-card-compact {
   margin-bottom: 0;

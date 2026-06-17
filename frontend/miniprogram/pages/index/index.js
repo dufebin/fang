@@ -1,127 +1,95 @@
 const { listProperties } = require('../../api/property')
-const { listBanners, listArticles } = require('../../api/content')
-const { fullImageURL, formatDate } = require('../../utils/format')
+const { fullImageURL } = require('../../utils/format')
+const { isLoggedIn } = require('../../utils/auth')
+
+const PAGE_SIZE = 10
 
 Page({
   data: {
-    banners: [],
-    hotProperties: [],
-    articles: [],
-    loading: true,
-    _loaded: false,
+    userInfo: {},
+    avatarUrl: '/assets/icons/default-avatar.png',
+    list: [],
+    page: 1,
+    loading: false,
+    noMore: false,
+    _firstLoaded: false,
   },
 
   onLoad() {
-    this._loadAll()
+    this._loadUser()
+    this._loadList(true)
   },
 
-  // 从子页返回时刷新（onLoad 只触发一次，tab 切换靠 onShow）
   onShow() {
-    if (this.data._loaded) this._loadAll()
+    if (this.data._firstLoaded) {
+      this._loadUser()
+    }
   },
 
-  async _loadAll() {
+  _loadUser() {
+    try {
+      const user = getApp().globalData.userInfo
+      if (user) {
+        const src = user.avatar || user.avatarUrl || ''
+        // 本地资源路径不能走 fullImageURL（会拼接上传 base）
+        // http/https → 直接用；wxfile:// → 小程序内直接用；相对路径 → fullImageURL
+        let avatarUrl = '/assets/icons/default-avatar.png'
+        if (src && !src.startsWith('/assets/') && !src.startsWith('./')) {
+          avatarUrl = (src.startsWith('http') || src.startsWith('wxfile://'))
+            ? src
+            : fullImageURL(src)
+        }
+        this.setData({ userInfo: user, avatarUrl })
+      }
+    } catch (_) {}
+  },
+
+  async _loadList(reset) {
+    if (this.data.loading) return
+    if (!reset && this.data.noMore) return
+
+    const page = reset ? 1 : this.data.page
     this.setData({ loading: true })
-    await Promise.all([
-      this._loadBanners(),
-      this._loadHotProperties(),
-      this._loadArticles(),
-    ])
-    this.setData({ loading: false, _loaded: true })
-  },
 
-  async _loadBanners() {
     try {
-      const res = await listBanners({ position: 'home' })
-      console.log('[index] banners res:', JSON.stringify(res))
-      const banners = (res || []).map(function(b) {
-        return {
-          id: b.id,
-          image_url: b.image_url,
-          link_type: b.link_type,
-          link_value: b.link_value,
-          imageUrl: fullImageURL(b.image_url)
-        }
+      const res = await listProperties({ page, page_size: PAGE_SIZE, sort: 'created_at' })
+      const newList = res.list || []
+      this.setData({
+        list: reset ? newList : [...this.data.list, ...newList],
+        page: page + 1,
+        noMore: newList.length < PAGE_SIZE,
+        _firstLoaded: true,
       })
-      this.setData({ banners: banners })
-    } catch (e) {
-      console.error('[index] _loadBanners failed:', e)
+    } catch (_) {
+      wx.showToast({ title: '加载失败，请下拉刷新', icon: 'none' })
     }
+
+    this.setData({ loading: false })
   },
 
-  async _loadHotProperties() {
-    try {
-      const res = await listProperties({ page: 1, page_size: 6, sort: 'views' })
-      console.log('[index] properties res:', JSON.stringify(res))
-      // 兼容 res 可能是数组或带 list 字段的对象
-      var list = Array.isArray(res) ? res : (res && res.list ? res.list : [])
-      this.setData({ hotProperties: list })
-    } catch (e) {
-      console.error('[index] _loadHotProperties failed:', e)
+  onAvatarTap() {
+    if (!isLoggedIn()) {
+      wx.navigateTo({ url: '/pages/login/index' })
+      return
     }
+    wx.navigateTo({ url: '/pages/agent-workbench/index' })
   },
 
-  async _loadArticles() {
-    try {
-      const res = await listArticles({ page: 1, page_size: 3 })
-      console.log('[index] articles res:', JSON.stringify(res))
-      var list = Array.isArray(res) ? res : (res && res.list ? res.list : [])
-      var articles = list.map(function(a) {
-        return {
-          id: a.id,
-          title: a.title,
-          cover_image: a.cover_image,
-          published_at: a.published_at,
-          coverImageUrl: fullImageURL(a.cover_image),
-          publishedAt: formatDate(a.published_at)
-        }
+  onAgentTap() {
+    if (!isLoggedIn()) {
+      wx.navigateTo({
+        url: '/pages/login/index?redirect=' + encodeURIComponent('/pages/agent-apply/index'),
       })
-      this.setData({ articles: articles })
-    } catch (e) {
-      console.error('[index] _loadArticles failed:', e)
+      return
     }
+    wx.navigateTo({ url: '/pages/agent-apply/index' })
   },
 
-  onSearchTap() {
-    wx.switchTab({ url: '/pages/property-list/index' })
-  },
-
-  onBannerTap(e) {
-    const item = e.currentTarget.dataset.item
-    if (item.link_type === 'property' && item.link_value) {
-      wx.navigateTo({ url: `/pages/property-detail/index?id=${item.link_value}` })
-    } else if (item.link_type === 'article' && item.link_value) {
-      wx.navigateTo({ url: `/pages/article-detail/index?id=${item.link_value}` })
-    }
-  },
-
-  onNavTap(e) {
-    const type = e.currentTarget.dataset.type
-    getApp().globalData.pendingFilter = { type: type }
-    wx.switchTab({ url: '/pages/property-list/index' })
-  },
-
-  onMapTap() {
-    wx.switchTab({ url: '/pages/map-search/index' })
-  },
-
-  onCalcTap() {
-    wx.navigateTo({ url: '/pages/loan-calculator/index' })
-  },
-
-  onMoreTap() {
-    wx.switchTab({ url: '/pages/property-list/index' })
-  },
-
-  onArticleMoreTap() {
-    wx.navigateTo({ url: '/pages/article-list/index' })
-  },
-
-  onArticleTap(e) {
-    wx.navigateTo({ url: `/pages/article-detail/index?id=${e.currentTarget.dataset.id}` })
+  onReachBottom() {
+    this._loadList(false)
   },
 
   onPullDownRefresh() {
-    this._loadAll().then(() => wx.stopPullDownRefresh())
+    this._loadList(true).then(() => wx.stopPullDownRefresh())
   },
 })

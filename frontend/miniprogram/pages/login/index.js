@@ -1,50 +1,69 @@
 const { silentLogin, setToken } = require('../../utils/auth')
 const { mpLogin } = require('../../api/user')
 
-// Promise 化 wx.getUserProfile
-function getUserProfile(opts) {
-  return new Promise((resolve, reject) => {
-    wx.getUserProfile({
-      ...opts,
-      success: resolve,
-      fail: reject,
-    })
-  })
-}
+const DEFAULT_AVATAR = '/assets/icons/default-avatar.png'
+// 微信占位昵称，出现时说明获取到的是默认值
+const WX_PLACEHOLDER_NICK = '微信用户'
 
 Page({
-  data: { loading: false },
+  data: {
+    loading: false,
+    avatarUrl: DEFAULT_AVATAR,
+    nickname: '',
+  },
 
   onLoad(options) {
     this._redirect = options.redirect || ''
+    this._tryAutoProfile()
+  },
+
+  // 静默尝试获取微信资料（开发工具 / 旧版微信有效；新版微信返回占位符会被过滤）
+  _tryAutoProfile() {
+    const self = this
+    wx.getUserInfo({
+      withCredentials: false,
+      success(res) {
+        const info = res.userInfo || {}
+        if (info.nickName && info.nickName !== WX_PLACEHOLDER_NICK) {
+          self.setData({
+            nickname: info.nickName,
+            avatarUrl: info.avatarUrl || DEFAULT_AVATAR,
+          })
+        }
+      },
+      fail() {},
+    })
+  },
+
+  // open-type="chooseAvatar" 回调，生产环境获取真实微信头像的唯一方式
+  onChooseAvatar(e) {
+    this.setData({ avatarUrl: e.detail.avatarUrl || DEFAULT_AVATAR })
+  },
+
+  // type="nickname" 输入框，微信会自动弹出昵称建议
+  onNicknameInput(e) {
+    this.setData({ nickname: e.detail.value })
   },
 
   async onLogin() {
     this.setData({ loading: true })
     try {
-      // 1. 获取微信登录凭证
       const code = await silentLogin()
 
-      // 2. 获取用户基本信息（新版 API）
-      const profileRes = await getUserProfile({ desc: '用于完善个人资料' })
-      const userInfo = profileRes.userInfo
+      // 只把真实 http(s) URL 传给后端；本地路径无法被服务端访问
+      const avatarToSend = this.data.avatarUrl.startsWith('http') ? this.data.avatarUrl : ''
+      const loginRes = await mpLogin(code, this.data.nickname, avatarToSend)
 
-      // 3. 后端登录，返回 { token, user }
-      const loginRes = await mpLogin(code, userInfo.nickName, userInfo.avatarUrl)
-
-      // 4. 持久化 JWT，更新全局状态
       setToken(loginRes.token)
-      getApp().onLoginSuccess({ ...userInfo, role: loginRes.user.role }, loginRes.token)
+      // avatarUrl 作为即时展示用（wxfile:// 或 https:// 均可在小程序内显示）
+      getApp().onLoginSuccess({ ...loginRes.user, avatarUrl: this.data.avatarUrl }, loginRes.token)
 
-      // 5. 跳转（tab 页必须用 switchTab）
-      if (this._redirect) {
-        const url = decodeURIComponent(this._redirect)
+      const url = this._redirect ? decodeURIComponent(this._redirect) : ''
+      if (url) {
         const TAB_PAGES = ['/pages/index/index', '/pages/property-list/index', '/pages/map-search/index', '/pages/my/index']
-        if (TAB_PAGES.some(p => url.startsWith(p))) {
-          wx.switchTab({ url })
-        } else {
-          wx.redirectTo({ url })
-        }
+        TAB_PAGES.some(p => url.startsWith(p))
+          ? wx.switchTab({ url })
+          : wx.navigateTo({ url })
       } else {
         wx.navigateBack({ delta: 1 })
       }

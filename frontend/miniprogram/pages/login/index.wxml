@@ -1,14 +1,27 @@
 <view class="page">
-  <view class="logo-wrap">
-    <view class="logo-icon">🏠</view>
-  </view>
   <view class="app-name">房产经纪</view>
   <view class="slogan">专业的房源信息平台</view>
 
-  <view class="login-btn-wrap">
-    <button class="login-btn" bindtap="onLogin" loading="{{loading}}">
-      微信一键登录
-    </button>
-    <view class="login-tip">登录即表示同意《用户协议》和《隐私政策》</view>
+  <!-- 点击头像使用微信头像（2022+ 新 API） -->
+  <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+    <image class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill" />
+    <text class="avatar-hint">点击使用微信头像</text>
+  </button>
+
+  <!-- 昵称输入，type="nickname" 会自动填入微信昵称 -->
+  <view class="nickname-wrap">
+    <input
+      class="nickname-input"
+      type="nickname"
+      placeholder="请输入昵称（可自动填入微信昵称）"
+      value="{{nickname}}"
+      bindinput="onNicknameInput"
+      maxlength="20"
+    />
   </view>
+
+  <button class="login-btn" bindtap="onLogin" loading="{{loading}}">
+    微信一键登录
+  </button>
+  <view class="login-tip">登录即表示同意《用户协议》和《隐私政策》</view>
 </view>

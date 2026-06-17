@@ -6,6 +6,7 @@ Component({
     agentCode: { type: String, value: '' },
     showStatus: { type: Boolean, value: false },
     compact: { type: Boolean, value: false },
+    fourImages: { type: Boolean, value: false },
   },
 
   observers: {
@@ -21,7 +22,11 @@ Component({
           if (quickTags.indexOf(tag) < 0) quickTags.push(tag)
         })
       }
-      this.setData({ coverImage, quickTags: quickTags.slice(0, 3) })
+      const imgs = p.images && p.images.length ? p.images : []
+      const fourImgUrls = imgs.length >= 2
+        ? [0, 1, 2, 3].map(i => fullImageURL(imgs[Math.min(i, imgs.length - 1)].url))
+        : []
+      this.setData({ coverImage, quickTags: quickTags.slice(0, 3), fourImgUrls })
     },
   },
 
@@ -38,5 +43,6 @@ Component({
   data: {
     coverImage: '',
     quickTags: [],
+    fourImgUrls: [],
   },
 })

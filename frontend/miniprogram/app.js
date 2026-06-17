@@ -23,10 +23,11 @@ App({
 
   _fetchUserInfo() {
     var self = this
-    // 延迟 require，确保小程序完全初始化
     try {
       var requestModule = require('./utils/request')
       requestModule.request({ url: '/auth/me' }).then(function(user) {
+        // 后端返回 avatar_url，统一为 avatar 方便前端使用
+        user.avatar = user.avatar_url || user.avatar || ''
         self.globalData.userInfo = user
         self.globalData.isAgent = user.role === 'agent' || user.role === 'admin'
         self.globalData.isAdmin = user.role === 'admin'
@@ -41,6 +42,10 @@ App({
 
   // 登录后刷新全局状态
   onLoginSuccess(userInfo, token) {
+    // 统一 avatar 字段（兼容 avatar_url / avatarUrl 等来源）
+    // 过滤掉本地资源路径（/assets/...），只保留可被显示的 URL
+    var raw = userInfo.avatar_url || userInfo.avatar || userInfo.avatarUrl || ''
+    userInfo.avatar = (raw && !raw.startsWith('/assets/') && !raw.startsWith('./')) ? raw : ''
     this.globalData.token = token
     this.globalData.userInfo = userInfo
     this.globalData.isAgent = userInfo.role === 'agent' || userInfo.role === 'admin'
