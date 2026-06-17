@@ -55,13 +55,28 @@ Page({
 
       // 如果头像是本地路径（wxfile://），先上传到后端获取 HTTP URL
       if (this.data.avatarUrl.startsWith('wxfile://')) {
+        wx.showLoading({ title: '上传头像中...', mask: true })
         try {
           const uploadRes = await uploadAvatar(this.data.avatarUrl)
-          avatarToSend = uploadRes.url || ''
-          finalAvatarUrl = uploadRes.url || DEFAULT_AVATAR
+          wx.hideLoading()
+          
+          if (!uploadRes.url) {
+            throw new Error('上传成功但未返回 URL')
+          }
+          
+          avatarToSend = uploadRes.url
+          finalAvatarUrl = uploadRes.url
         } catch (uploadErr) {
+          wx.hideLoading()
           console.error('头像上传失败:', uploadErr)
-          // 上传失败则不传头像，使用默认值（不影响登录）
+          
+          // 给用户可见的提示（但不阻断登录）
+          wx.showToast({ 
+            title: '头像上传失败，使用默认头像', 
+            icon: 'none',
+            duration: 2000
+          })
+          
           avatarToSend = ''
           finalAvatarUrl = DEFAULT_AVATAR
         }
