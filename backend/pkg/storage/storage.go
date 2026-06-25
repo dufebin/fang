@@ -1,12 +1,14 @@
 package storage
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/jpeg"
-	"image/png"
+	_ "image/png"
 	"io"
 	"mime/multipart"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -43,15 +45,21 @@ func NewLocalStorage(basePath, baseURL string) (*LocalStorage, error) {
 }
 
 func (s *LocalStorage) Save(file multipart.File, header *multipart.FileHeader) (string, error) {
-	ext := strings.ToLower(filepath.Ext(header.Filename))
-	if !isAllowedImageExt(ext) {
-		return "", fmt.Errorf("不支持的文件类型：%s", ext)
-	}
-
 	// 读取文件内容
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		return "", fmt.Errorf("read file: %w", err)
+	}
+
+	// 优先用文件名扩展名，扩展名缺失或不认识时从内容检测
+	// 微信头像临时路径上传后 header.Filename 可能没有合法扩展名
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	if !isAllowedImageExt(ext) {
+		ct := http.DetectContentType(fileBytes)
+		ext = mimeToExt(ct)
+		if ext == "" {
+			return "", fmt.Errorf("不支持的文件类型：%s", ct)
+		}
 	}
 
 	// 如果文件超过 200KB，尝试压缩
@@ -162,6 +170,21 @@ func isAllowedImageExt(ext string) bool {
 	return allowed[ext]
 }
 
+func mimeToExt(ct string) string {
+	switch {
+	case strings.HasPrefix(ct, "image/jpeg"):
+		return ".jpg"
+	case strings.HasPrefix(ct, "image/png"):
+		return ".png"
+	case strings.HasPrefix(ct, "image/gif"):
+		return ".gif"
+	case strings.HasPrefix(ct, "image/webp"):
+		return ".webp"
+	default:
+		return ""
+	}
+}
+
 func isAllowedVideoExt(ext string) bool {
 	allowed := map[string]bool{
 		".mp4": true, ".mov": true, ".avi": true, ".webm": true, ".mkv": true,
@@ -172,50 +195,29 @@ func isAllowedVideoExt(ext string) bool {
 // compressImage 压缩图片到指定大小以内
 // 使用逐步降低质量的方式，直到文件大小满足要求
 func compressImage(data []byte, ext string, maxSize int) ([]byte, error) {
-	// 如果已经是小文件，直接返回
 	if len(data) <= maxSize {
 		return data, nil
 	}
 
-	// 解码图片
-	img, format, err := image.Decode(strings.NewReader(string(data)))
+	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
-		// 无法解码则返回原数据
 		return data, nil
 	}
 
-	// 尝试不同的质量级别（从 90% 开始递减）
+	var lastResult []byte
 	for quality := 90; quality >= 20; quality -= 10 {
-		var buf strings.Builder
-		writer := &buf
-		
-		var encodeErr error
-		switch format {
-		case "png":
-			// PNG 转 JPEG 压缩
-			encoder := jpeg.Encoder{Quality: quality}
-			encodeErr = encoder.Encode(writer, img)
-		default:
-			// JPEG/WebP 等使用 JPEG 压缩
-			encoder := jpeg.Encoder{Quality: quality}
-			encodeErr = encoder.Encode(writer, img)
-		}
-		
-		if encodeErr != nil {
+		var buf bytes.Buffer
+		if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: quality}); err != nil {
 			continue
 		}
-		
-		result := []byte(buf.String())
-		if len(result) <= maxSize {
-			return result, nil
+		lastResult = buf.Bytes()
+		if len(lastResult) <= maxSize {
+			return lastResult, nil
 		}
 	}
 
-	// 如果最低质量还是太大，返回最后一次压缩结果（虽然可能超过 maxSize）
-	var buf strings.Builder
-	encoder := jpeg.Encoder{Quality: 20}
-	if err := encoder.Encode(&buf, img); err != nil {
-		return data, nil
+	if lastResult != nil {
+		return lastResult, nil
 	}
-	return []byte(buf.String()), nil
+	return data, nil
 }

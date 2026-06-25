@@ -53,8 +53,9 @@ Page({
       let avatarToSend = ''
       let finalAvatarUrl = this.data.avatarUrl
 
-      // 如果头像是本地路径（wxfile://），先上传到后端获取 HTTP URL
-      if (this.data.avatarUrl.startsWith('wxfile://')) {
+      // 如果头像是本地临时路径（Android: wxfile:// / iOS: http://tmp/），先上传到后端
+      const isLocalTemp = this.data.avatarUrl.startsWith('wxfile://') || this.data.avatarUrl.startsWith('http://tmp/')
+      if (isLocalTemp) {
         wx.showLoading({ title: '上传头像中...', mask: true })
         try {
           const uploadRes = await uploadAvatar(this.data.avatarUrl)
