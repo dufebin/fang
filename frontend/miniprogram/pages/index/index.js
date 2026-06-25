@@ -8,6 +8,7 @@ Page({
   data: {
     userInfo: {},
     avatarUrl: '/assets/icons/default-avatar.png',
+    isAgent: false,
     list: [],
     page: 1,
     loading: false,
@@ -21,9 +22,7 @@ Page({
   },
 
   onShow() {
-    if (this.data._firstLoaded) {
-      this._loadUser()
-    }
+    this._loadUser()
   },
 
   _loadUser() {
@@ -39,7 +38,8 @@ Page({
             ? src
             : fullImageURL(src)
         }
-        this.setData({ userInfo: user, avatarUrl })
+        const isAgent = getApp().globalData.isAgent || !!user.agent_id
+        this.setData({ userInfo: user, avatarUrl, isAgent })
       }
     } catch (_) {}
   },
@@ -82,7 +82,13 @@ Page({
       })
       return
     }
-    wx.navigateTo({ url: '/pages/agent-apply/index' })
+    const app = getApp()
+    const isAgent = app.globalData.isAgent || !!(app.globalData.userInfo && app.globalData.userInfo.agent_id)
+    if (isAgent) {
+      wx.navigateTo({ url: '/pages/agent-workbench/index' })
+    } else {
+      wx.navigateTo({ url: '/pages/agent-apply/index' })
+    }
   },
 
   onReachBottom() {

@@ -36,16 +36,26 @@
   line-height: 1.4;
 }
 
-.user-cta {
-  font-size: 22rpx;
-  color: var(--color-primary);
-  margin-top: 6rpx;
+.agent-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24rpx 24rpx 0;
+  padding: 28rpx 32rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
 }
 
-.user-arrow {
+.agent-entry-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.agent-entry-arrow {
   font-size: 40rpx;
   color: #c0cad6;
-  margin-left: 12rpx;
   line-height: 1;
 }
 

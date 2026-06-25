@@ -2,11 +2,9 @@
   <!-- 用户信息头部 -->
   <view class="user-header">
     <image class="user-avatar" src="{{avatarUrl}}" mode="aspectFill" bindtap="onAvatarTap" />
-    <view class="user-info" bindtap="onAgentTap">
+    <view class="user-info">
       <text class="user-name">{{userInfo.nickname || userInfo.nickName || '用户'}}</text>
-      <text class="user-cta">变成我的房源</text>
     </view>
-    <text class="user-arrow" bindtap="onAgentTap">›</text>
   </view>
 
   <!-- 房源列表 -->
@@ -21,5 +19,11 @@
     <empty-state wx:elif="{{!loading && !list.length && _firstLoaded}}" text="暂无房源" />
     <view wx:if="{{noMore && list.length}}" class="no-more">没有更多了</view>
     <view wx:if="{{loading && list.length}}" class="load-more-tip">加载中...</view>
+  </view>
+
+  <!-- 经纪人入口 -->
+  <view class="agent-entry" bindtap="onAgentTap">
+    <text class="agent-entry-text">{{isAgent ? '经纪人工作台' : '变成我的房源'}}</text>
+    <text class="agent-entry-arrow">›</text>
   </view>
 </view>
