@@ -19,7 +19,8 @@
     "pages/agent-apply/index",
     "pages/property-edit/index",
     "pages/property-poster/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/agent-entry/index"
   ],
   "tabBar": {
     "color": "#999999",
@@ -50,6 +51,12 @@
         "text": "我的",
         "iconPath": "assets/icons/my.png",
         "selectedIconPath": "assets/icons/my-active.png"
+      },
+      {
+        "pagePath": "pages/agent-entry/index",
+        "text": "我的房源",
+        "iconPath": "assets/icons/house.png",
+        "selectedIconPath": "assets/icons/house-active.png"
       }
     ]
   },
