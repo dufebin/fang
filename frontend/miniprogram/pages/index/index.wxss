@@ -6,6 +6,11 @@
 
 /* 用户信息头部 */
 .user-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   padding: 32rpx 30rpx 28rpx;
@@ -36,32 +41,22 @@
   line-height: 1.4;
 }
 
-.agent-entry {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 24rpx 24rpx 0;
-  padding: 28rpx 32rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
-}
-
-.agent-entry-text {
-  font-size: 28rpx;
-  font-weight: 600;
+.user-cta {
+  font-size: 22rpx;
   color: var(--color-primary);
+  margin-top: 6rpx;
 }
 
-.agent-entry-arrow {
+.user-arrow {
   font-size: 40rpx;
   color: #c0cad6;
+  margin-left: 12rpx;
   line-height: 1;
 }
 
 /* 房源列表 */
 .list-wrap {
-  padding: 24rpx 24rpx 0;
+  padding: 174rpx 24rpx 0;
 }
 
 .loading-tip,
