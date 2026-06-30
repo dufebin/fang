@@ -1,16 +1,26 @@
 const { getMessages, sendMessage, markRead, deleteMessage } = require('../../api/chat')
 
+const DEFAULT_AVATAR = '/assets/icons/default-avatar.png'
+
 function formatTime(isoStr) {
   if (!isoStr) return ''
   var d = new Date(isoStr)
   return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0')
 }
 
+function pickAvatar(user) {
+  if (!user) return ''
+  var url = user.avatar_url || user.avatar || user.avatarUrl || ''
+  return url || ''
+}
+
 Page({
   data: {
     peerId: 0,
     peerName: '',
+    peerAvatar: '',
     myId: 0,
+    myAvatar: '',
     messages: [],
     inputText: '',
     scrollTo: '',
@@ -21,9 +31,18 @@ Page({
   onLoad(options) {
     const peerId = parseInt(options.peer_id) || 0
     const peerName = decodeURIComponent(options.peer_name || '用户')
+    const peerAvatar = decodeURIComponent(options.peer_avatar || '')
     const app = getApp()
-    const myId = app.globalData.userInfo ? app.globalData.userInfo.id : 0
-    this.setData({ peerId: peerId, peerName: peerName, myId: myId })
+    const me = app.globalData.userInfo || {}
+    const myId = me.id || 0
+    const myAvatar = me.avatar || me.avatar_url || ''
+    this.setData({
+      peerId: peerId,
+      peerName: peerName,
+      peerAvatar: peerAvatar,
+      myId: myId,
+      myAvatar: myAvatar,
+    })
     wx.setNavigationBarTitle({ title: peerName })
     this._loadMessages()
   },
@@ -45,12 +64,25 @@ Page({
     }
   },
 
+  _decorate(m) {
+    const isMine = m.from_user_id === this.data.myId
+    const fromUser = m.from_user || null
+    const avatar = isMine
+      ? (this.data.myAvatar || pickAvatar(fromUser) || DEFAULT_AVATAR)
+      : (pickAvatar(fromUser) || this.data.peerAvatar || DEFAULT_AVATAR)
+    const name = fromUser && fromUser.nickname ? fromUser.nickname : (isMine ? '我' : this.data.peerName)
+    return Object.assign({}, m, {
+      time_fmt: formatTime(m.created_at),
+      is_mine: isMine,
+      from_avatar: avatar,
+      from_name: name,
+    })
+  },
+
   async _loadMessages() {
     try {
       const data = await getMessages(this.data.peerId, 1)
-      const msgs = (Array.isArray(data) ? data : []).map(function(m) {
-        return Object.assign({}, m, { time_fmt: formatTime(m.created_at) })
-      })
+      const msgs = (Array.isArray(data) ? data : []).map(m => this._decorate(m))
       this.setData({ messages: msgs })
       this._scrollToBottom()
     } catch (_) {}
@@ -73,9 +105,7 @@ Page({
   async _pollMessages() {
     try {
       const data = await getMessages(this.data.peerId, 1)
-      const msgs = (Array.isArray(data) ? data : []).map(function(m) {
-        return Object.assign({}, m, { time_fmt: formatTime(m.created_at) })
-      })
+      const msgs = (Array.isArray(data) ? data : []).map(m => this._decorate(m))
       const current = this.data.messages
       if (msgs.length !== current.length || (msgs.length > 0 && msgs[msgs.length - 1].id !== current[current.length - 1].id)) {
         this.setData({ messages: msgs })
@@ -126,7 +156,7 @@ Page({
     this.setData({ inputText: '' })
     try {
       const msg = await sendMessage(this.data.peerId, text)
-      const newMsg = Object.assign({}, msg, { time_fmt: formatTime(msg.created_at) })
+      const newMsg = this._decorate(msg)
       const msgs = this.data.messages.concat([newMsg])
       this.setData({ messages: msgs })
       this._scrollToBottom()

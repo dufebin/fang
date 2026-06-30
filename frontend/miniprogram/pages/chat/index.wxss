@@ -11,38 +11,75 @@
 }
 
 .msg-list {
-  padding: 24rpx 24rpx 24rpx;
+  padding: 24rpx 20rpx 32rpx;
 }
 
 .msg-row {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 32rpx;
+  align-items: flex-start;
+  margin-bottom: 28rpx;
 }
 
 .row-left {
-  align-items: flex-start;
+  flex-direction: row;
 }
 
 .row-right {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #e2e8f0;
+}
+
+.msg-main {
+  display: flex;
+  flex-direction: column;
+  max-width: 76%;
+  margin: 0 20rpx;
+}
+
+.row-right .msg-main {
   align-items: flex-end;
 }
 
+.row-left .msg-main {
+  align-items: flex-start;
+}
+
+.msg-meta {
+  margin-bottom: 8rpx;
+}
+
+.from-name {
+  font-size: 22rpx;
+  color: #64748b;
+  line-height: 1;
+  max-width: 360rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .bubble {
-  max-width: 72%;
-  padding: 20rpx 28rpx;
+  padding: 18rpx 26rpx;
   border-radius: 24rpx;
   word-break: break-all;
+  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.04);
 }
 
 .bubble-peer {
   background: #fff;
-  border-top-left-radius: 4rpx;
+  border-top-left-radius: 6rpx;
 }
 
 .bubble-mine {
   background: #0F766E;
-  border-top-right-radius: 4rpx;
+  border-top-right-radius: 6rpx;
 }
 
 .bubble-text {

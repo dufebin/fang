@@ -44,8 +44,8 @@ Page({
       this._isLongPress = false
       return
     }
-    const { peerId, peerName } = e.currentTarget.dataset
-    wx.navigateTo({ url: '/pages/chat/index?peer_id=' + peerId + '&peer_name=' + encodeURIComponent(peerName || '用户') })
+    const { peerId, peerName, peerAvatar } = e.currentTarget.dataset
+    wx.navigateTo({ url: '/pages/chat/index?peer_id=' + peerId + '&peer_name=' + encodeURIComponent(peerName || '用户') + '&peer_avatar=' + encodeURIComponent(peerAvatar || '') })
   },
 
   async onNewChat() {
@@ -58,9 +58,9 @@ Page({
   },
 
   onSelectContact(e) {
-    const { id, name } = e.currentTarget.dataset
+    const { id, name, avatar } = e.currentTarget.dataset
     this.setData({ showContacts: false })
-    wx.navigateTo({ url: '/pages/chat/index?peer_id=' + id + '&peer_name=' + encodeURIComponent(name || '用户') })
+    wx.navigateTo({ url: '/pages/chat/index?peer_id=' + id + '&peer_name=' + encodeURIComponent(name || '用户') + '&peer_avatar=' + encodeURIComponent(avatar || '') })
   },
 
   onCloseContacts() {

@@ -1,16 +1,22 @@
 <view class="page">
   <!-- 消息列表 -->
-  <scroll-view class="msg-scroll" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
+  <scroll-view class="msg-scroll" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation enable-flex>
     <view class="msg-list">
       <view wx:for="{{messages}}" wx:key="id"
-            class="msg-row {{item.from_user_id === myId ? 'row-right' : 'row-left'}}"
+            class="msg-row {{item.is_mine ? 'row-right' : 'row-left'}}"
             id="msg-{{item.id}}">
-        <view class="bubble {{item.from_user_id === myId ? 'bubble-mine' : 'bubble-peer'}}"
-              bindtouchstart="onBubbleTouchStart" bindtouchend="onBubbleTouchEnd" bindtouchcancel="onBubbleTouchEnd"
-              data-id="{{item.id}}">
-          <text class="bubble-text">{{item.content}}</text>
+        <image class="avatar" src="{{item.from_avatar || '/assets/icons/default-avatar.png'}}" mode="aspectFill" />
+        <view class="msg-main">
+          <view class="msg-meta">
+            <text class="from-name">{{item.from_name}}</text>
+          </view>
+          <view class="bubble {{item.is_mine ? 'bubble-mine' : 'bubble-peer'}}"
+                bindtouchstart="onBubbleTouchStart" bindtouchend="onBubbleTouchEnd" bindtouchcancel="onBubbleTouchEnd"
+                data-id="{{item.id}}">
+            <text class="bubble-text">{{item.content}}</text>
+          </view>
+          <view class="msg-time">{{item.time_fmt}}</view>
         </view>
-        <view class="msg-time">{{item.time_fmt}}</view>
       </view>
     </view>
   </scroll-view>

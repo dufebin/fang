@@ -52,21 +52,22 @@ func (h *ChatHandler) GetConversations(c *gin.Context) {
 	h.db.Raw(`
 		SELECT peer_id,
 		       (SELECT content FROM chat_messages m2
-		        WHERE (m2.from_user_id = ? AND m2.to_user_id = peer_id)
-		           OR (m2.from_user_id = peer_id AND m2.to_user_id = ?)
+		        WHERE ((m2.from_user_id = ? AND m2.to_user_id = peer_id AND m2.deleted_for_from = false)
+		           OR (m2.from_user_id = peer_id AND m2.to_user_id = ? AND m2.deleted_for_to = false))
 		        ORDER BY m2.created_at DESC LIMIT 1) AS last_msg,
 		       MAX(created_at) AS last_at,
-		       SUM(CASE WHEN from_user_id = peer_id AND to_user_id = ? AND is_read = false THEN 1 ELSE 0 END) AS unread
+		       SUM(CASE WHEN from_user_id = peer_id AND to_user_id = ? AND is_read = false AND deleted_for_to = false THEN 1 ELSE 0 END) AS unread
 		FROM (
 		    SELECT CASE WHEN from_user_id = ? THEN to_user_id ELSE from_user_id END AS peer_id,
 		           created_at,
 		           from_user_id, to_user_id, is_read
 		    FROM chat_messages
-		    WHERE from_user_id = ? OR to_user_id = ?
+		    WHERE (from_user_id = ? AND deleted_for_from = false)
+		       OR (to_user_id = ? AND deleted_for_to = false)
 		) t
 		GROUP BY peer_id
 		ORDER BY last_at DESC
-	`, me, me, me, me, me, me).Scan(&rows)
+	`, me, me, me, me, me, me, me).Scan(&rows)
 
 	if len(rows) == 0 {
 		response.Success(c, []gin.H{})
@@ -115,11 +116,19 @@ func (h *ChatHandler) GetMessages(c *gin.Context) {
 
 	var msgs []model.ChatMessage
 	err = h.db.Where(
-		"(from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)",
-		me, peerID, peerID, me,
+		"((from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)) AND "+
+			"NOT (from_user_id = ? AND deleted_for_from = true) AND "+
+			"NOT (to_user_id = ? AND deleted_for_to = true)",
+		me, peerID, peerID, me, me, me,
 	).Order("created_at desc").
 		Offset((page - 1) * limit).
 		Limit(limit).
+		Preload("FromUser", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, nickname, avatar_url")
+		}).
+		Preload("ToUser", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, nickname, avatar_url")
+		}).
 		Find(&msgs).Error
 	if err != nil {
 		response.ServerError(c, err)
@@ -158,11 +167,14 @@ func (h *ChatHandler) SendMessage(c *gin.Context) {
 		response.ServerError(c, err)
 		return
 	}
+	var fromUser model.User
+	h.db.Select("id, nickname, avatar_url").First(&fromUser, me)
+	msg.FromUser = &fromUser
 	response.Success(c, msg)
 }
 
 // MarkRead PUT /chat/messages/read?peer_id=X
-// 将对方发给我的消息永久删除（已看即删）
+// 将对方发给我的消息标记为对我端逻辑删除（已看即删），数据库保留
 func (h *ChatHandler) MarkRead(c *gin.Context) {
 	me := middleware.GetCurrentUserID(c)
 	peerID, err := strconv.ParseUint(c.Query("peer_id"), 10, 64)
@@ -170,13 +182,14 @@ func (h *ChatHandler) MarkRead(c *gin.Context) {
 		response.BadRequest(c, "无效的 peer_id")
 		return
 	}
-	h.db.Where("from_user_id = ? AND to_user_id = ?", peerID, me).
-		Delete(&model.ChatMessage{})
+	h.db.Model(&model.ChatMessage{}).
+		Where("from_user_id = ? AND to_user_id = ? AND deleted_for_to = false", peerID, me).
+		Updates(map[string]interface{}{"is_read": true, "deleted_for_to": true})
 	response.Success(c, nil)
 }
 
 // DeleteConversation DELETE /chat/conversations?peer_id=X
-// 删除与某人的全部聊天记录
+// 逻辑删除我与某人的全部聊天记录（仅对当前用户隐藏，对方仍可见）
 func (h *ChatHandler) DeleteConversation(c *gin.Context) {
 	me := middleware.GetCurrentUserID(c)
 	peerID, err := strconv.ParseUint(c.Query("peer_id"), 10, 64)
@@ -184,13 +197,17 @@ func (h *ChatHandler) DeleteConversation(c *gin.Context) {
 		response.BadRequest(c, "无效的 peer_id")
 		return
 	}
-	h.db.Where("(from_user_id = ? AND to_user_id = ?) OR (from_user_id = ? AND to_user_id = ?)",
-		me, peerID, peerID, me).
-		Delete(&model.ChatMessage{})
+	h.db.Model(&model.ChatMessage{}).
+		Where("from_user_id = ? AND to_user_id = ? AND deleted_for_from = false", me, peerID).
+		Update("deleted_for_from", true)
+	h.db.Model(&model.ChatMessage{}).
+		Where("from_user_id = ? AND to_user_id = ? AND deleted_for_to = false", peerID, me).
+		Update("deleted_for_to", true)
 	response.Success(c, nil)
 }
 
 // DeleteMessage DELETE /chat/messages/:id
+// 逻辑删除单条消息：仅对当前用户隐藏，对方仍可见，数据库保留
 func (h *ChatHandler) DeleteMessage(c *gin.Context) {
 	me := middleware.GetCurrentUserID(c)
 	msgID, err := strconv.ParseUint(c.Param("id"), 10, 64)
@@ -198,11 +215,30 @@ func (h *ChatHandler) DeleteMessage(c *gin.Context) {
 		response.BadRequest(c, "无效的消息ID")
 		return
 	}
-	result := h.db.Where("id = ? AND (from_user_id = ? OR to_user_id = ?)", msgID, me, me).
-		Delete(&model.ChatMessage{})
-	if result.RowsAffected == 0 {
+	var msg model.ChatMessage
+	if err := h.db.Select("id, from_user_id, to_user_id, deleted_for_from, deleted_for_to").
+		First(&msg, msgID).Error; err != nil {
 		response.BadRequest(c, "消息不存在或无权删除")
 		return
+	}
+	if msg.FromUserID != me && msg.ToUserID != me {
+		response.BadRequest(c, "消息不存在或无权删除")
+		return
+	}
+	var alreadyDeleted bool
+	if msg.FromUserID == me && msg.DeletedForFrom {
+		alreadyDeleted = true
+	} else if msg.ToUserID == me && msg.DeletedForTo {
+		alreadyDeleted = true
+	}
+	if alreadyDeleted {
+		response.Success(c, nil)
+		return
+	}
+	if msg.FromUserID == me {
+		h.db.Model(&msg).Update("deleted_for_from", true)
+	} else {
+		h.db.Model(&msg).Update("deleted_for_to", true)
 	}
 	response.Success(c, nil)
 }

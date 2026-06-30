@@ -9,7 +9,7 @@
   <block wx:if="{{list.length}}">
     <view class="conv-item" wx:for="{{list}}" wx:key="peer_id" bindtap="onOpenChat"
           bindtouchstart="onConvTouchStart" bindtouchend="onConvTouchEnd" bindtouchcancel="onConvTouchEnd"
-          data-peer-id="{{item.peer_id}}" data-peer-name="{{item.peer_name}}">
+          data-peer-id="{{item.peer_id}}" data-peer-name="{{item.peer_name}}" data-peer-avatar="{{item.peer_avatar}}">
       <image class="conv-avatar" src="{{item.peer_avatar || '/assets/icons/default-avatar.png'}}" mode="aspectFill" />
       <view class="conv-info">
         <view class="conv-name-row">
@@ -30,7 +30,7 @@
     <view class="contacts-panel" catchtap="">
       <view class="contacts-title">选择联系人</view>
       <scroll-view class="contacts-list" scroll-y>
-        <view class="contact-item" wx:for="{{contacts}}" wx:key="id" bindtap="onSelectContact" data-id="{{item.id}}" data-name="{{item.nickname}}">
+        <view class="contact-item" wx:for="{{contacts}}" wx:key="id" bindtap="onSelectContact" data-id="{{item.id}}" data-name="{{item.nickname}}" data-avatar="{{item.avatar_url}}">
           <image class="contact-avatar" src="{{item.avatar_url || '/assets/icons/default-avatar.png'}}" mode="aspectFill" />
           <text class="contact-name">{{item.nickname || '用户'}}</text>
         </view>
