@@ -1,0 +1,105 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f0f2f5;
+}
+
+.msg-scroll {
+  flex: 1;
+  overflow: hidden;
+}
+
+.msg-list {
+  padding: 24rpx 24rpx 24rpx;
+}
+
+.msg-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32rpx;
+}
+
+.row-left {
+  align-items: flex-start;
+}
+
+.row-right {
+  align-items: flex-end;
+}
+
+.bubble {
+  max-width: 72%;
+  padding: 20rpx 28rpx;
+  border-radius: 24rpx;
+  word-break: break-all;
+}
+
+.bubble-peer {
+  background: #fff;
+  border-top-left-radius: 4rpx;
+}
+
+.bubble-mine {
+  background: #0F766E;
+  border-top-right-radius: 4rpx;
+}
+
+.bubble-text {
+  font-size: 30rpx;
+  line-height: 1.5;
+}
+
+.bubble-peer .bubble-text {
+  color: #1e293b;
+}
+
+.bubble-mine .bubble-text {
+  color: #fff;
+}
+
+.msg-time {
+  font-size: 20rpx;
+  color: #94a3b8;
+  margin-top: 8rpx;
+  padding: 0 4rpx;
+}
+
+/* 输入区 */
+.input-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1rpx solid #e2e8f0;
+  gap: 16rpx;
+}
+
+.input-box {
+  flex: 1;
+  height: 80rpx;
+  background: #f4f6f8;
+  border-radius: 40rpx;
+  padding: 0 28rpx;
+  font-size: 30rpx;
+  color: #1e293b;
+}
+
+.send-btn {
+  width: 120rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  background: #e2e8f0;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.send-active {
+  background: #0F766E;
+  color: #fff;
+}

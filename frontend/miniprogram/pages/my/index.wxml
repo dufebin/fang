@@ -56,7 +56,7 @@
 
   <!-- 菜单组 2: 经纪人服务 -->
   <view class="menu-section">
-    <view class="menu-title">专属服务</view>
+    <view class="menu-title" bindtap="onServiceTitleTap">专属服务</view>
     <view class="menu-group shadow-sm">
       <view class="menu-item hover-scale" wx:if="{{isAgent}}" bindtap="onAgentWorkbench">
         <view class="menu-icon-wrap icon-teal">💼</view>
@@ -82,4 +82,17 @@
   </view>
 
   <view wx:if="{{isLoggedIn}}" class="logout-btn hover-darken" bindtap="onLogout">退出登录</view>
+
+  <!-- 隐藏入口：密码弹窗 -->
+  <view wx:if="{{showPasswordModal}}" class="pwd-mask" catchtap="onMaskTap">
+    <view class="pwd-dialog" catchtap="onDialogTap">
+      <view class="pwd-title">请输入密码</view>
+      <input class="pwd-input" type="text" password placeholder="请输入密码" value="{{passwordInput}}" bindinput="onPasswordInput" maxlength="10" />
+      <view class="pwd-err" wx:if="{{passwordError}}">密码错误，请重试</view>
+      <view class="pwd-actions">
+        <view class="pwd-btn pwd-cancel" bindtap="onPasswordCancel">取消</view>
+        <view class="pwd-btn pwd-confirm" bindtap="onPasswordConfirm">确认</view>
+      </view>
+    </view>
+  </view>
 </view>

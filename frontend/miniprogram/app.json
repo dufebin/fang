@@ -19,7 +19,9 @@
     "pages/agent-apply/index",
     "pages/property-edit/index",
     "pages/property-poster/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/chat-list/index",
+    "pages/chat/index"
   ],
   "tabBar": {
     "color": "#999999",

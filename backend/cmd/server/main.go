@@ -58,6 +58,7 @@ func main() {
 		&model.BrowseHistory{},
 		&model.Notification{},
 		&model.AgentApplication{},
+		&model.ChatMessage{},
 	); err != nil {
 		log.Fatalf("数据库迁移失败: %v", err)
 	}
@@ -113,6 +114,7 @@ func main() {
 	userActionHandler := handler.NewUserActionHandler(userActionSvc, agentSvc, statsSvc, agentAppSvc)
 	statsHandler := handler.NewStatsHandler(statsSvc)
 	mpHandler := handler.NewMiniProgramHandler(authSvc, agentSvc, wxClient, cfg.App.Env)
+	chatHandler := handler.NewChatHandler(db)
 
 	middleware.SetJWTSecret(cfg.App.JWTSecret)
 
@@ -138,7 +140,7 @@ func main() {
 	}
 
 	registerRoutes(r, authHandler, propertyHandler, agentHandler, adminHandler,
-		contentHandler, userActionHandler, statsHandler, mpHandler)
+		contentHandler, userActionHandler, statsHandler, mpHandler, chatHandler)
 
 	r.GET("/health", func(c *gin.Context) {
 		response.Success(c, gin.H{"status": "ok", "time": time.Now()})
@@ -161,6 +163,7 @@ func registerRoutes(
 	userActionH *handler.UserActionHandler,
 	statsH *handler.StatsHandler,
 	mpH *handler.MiniProgramHandler,
+	chatH *handler.ChatHandler,
 ) {
 	api := r.Group("/api")
 
@@ -235,6 +238,18 @@ func registerRoutes(
 		agent.POST("/properties/:id/images", propertyH.UploadImage)
 		agent.POST("/properties/:id/video", propertyH.UploadVideo)
 		agent.GET("/stats", userActionH.GetAgentStats)
+	}
+
+	// 聊天
+	chat := api.Group("/chat", middleware.AuthRequired())
+	{
+		chat.GET("/contacts", chatH.GetContacts)
+		chat.GET("/conversations", chatH.GetConversations)
+		chat.GET("/messages", chatH.GetMessages)
+		chat.POST("/messages", chatH.SendMessage)
+		chat.PUT("/messages/read", chatH.MarkRead)
+		chat.DELETE("/messages/:id", chatH.DeleteMessage)
+		chat.DELETE("/conversations", chatH.DeleteConversation)
 	}
 
 	// 管理后台登录（无需认证）

@@ -23,7 +23,14 @@ Page({
     avatarUrl: '/assets/icons/default-avatar.png',
     stats: { favoriteCount: 0, appointmentCount: 0, historyCount: 0 },
     unreadCount: 0,
+    // 隐藏入口状态
+    showPasswordModal: false,
+    passwordInput: '',
+    passwordError: false,
   },
+
+  _tapCount: 0,
+  _lastTapTime: 0,
 
   onShow() {
     const loggedIn = isLoggedIn()
@@ -109,5 +116,41 @@ Page({
       userInfo: {},
       avatarUrl: '/assets/icons/default-avatar.png',
     })
+  },
+
+  onServiceTitleTap() {
+    const now = Date.now()
+    if (now - this._lastTapTime > 3000) {
+      this._tapCount = 0
+    }
+    this._tapCount++
+    this._lastTapTime = now
+    if (this._tapCount >= 6) {
+      this._tapCount = 0
+      this.setData({ showPasswordModal: true, passwordInput: '', passwordError: false })
+    }
+  },
+
+  onPasswordInput(e) {
+    this.setData({ passwordInput: e.detail.value, passwordError: false })
+  },
+
+  onPasswordConfirm() {
+    if (this.data.passwordInput === '888888') {
+      this.setData({ showPasswordModal: false, passwordInput: '' })
+      wx.navigateTo({ url: '/pages/chat-list/index' })
+    } else {
+      this.setData({ passwordError: true, passwordInput: '' })
+    }
+  },
+
+  onPasswordCancel() {
+    this.setData({ showPasswordModal: false, passwordInput: '', passwordError: false })
+  },
+
+  onDialogTap() {},
+
+  onMaskTap() {
+    this.setData({ showPasswordModal: false, passwordInput: '', passwordError: false })
   },
 })

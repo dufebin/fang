@@ -9,7 +9,7 @@ BINARY="fangserver"
 
 echo "==> Building backend..."
 cd "$BACKEND_DIR"
-go build -o "bin/$BINARY" ./cmd/server/
+GO111MODULE=on go build -o "bin/$BINARY" ./cmd/server/
 
 echo "==> Deploying to $REMOTE_HOST:$REMOTE_DIR..."
 rsync -avz "$BACKEND_DIR/bin/$BINARY" "$REMOTE_HOST:$REMOTE_DIR"

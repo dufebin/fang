@@ -1,0 +1,23 @@
+<view class="page">
+  <!-- 消息列表 -->
+  <scroll-view class="msg-scroll" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
+    <view class="msg-list">
+      <view wx:for="{{messages}}" wx:key="id"
+            class="msg-row {{item.from_user_id === myId ? 'row-right' : 'row-left'}}"
+            id="msg-{{item.id}}">
+        <view class="bubble {{item.from_user_id === myId ? 'bubble-mine' : 'bubble-peer'}}"
+              bindtouchstart="onBubbleTouchStart" bindtouchend="onBubbleTouchEnd" bindtouchcancel="onBubbleTouchEnd"
+              data-id="{{item.id}}">
+          <text class="bubble-text">{{item.content}}</text>
+        </view>
+        <view class="msg-time">{{item.time_fmt}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部输入区 -->
+  <view class="input-bar">
+    <input class="input-box" placeholder="输入消息…" value="{{inputText}}" bindinput="onInput" confirm-type="send" bindconfirm="onSend" adjust-position maxlength="500" />
+    <view class="send-btn {{inputText ? 'send-active' : ''}}" bindtap="onSend">发送</view>
+  </view>
+</view>

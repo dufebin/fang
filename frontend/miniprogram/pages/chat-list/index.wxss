@@ -1,0 +1,173 @@
+.page {
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 40rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.top-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.top-add {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 48rpx;
+  color: #0F766E;
+  font-weight: 300;
+  border-radius: 50%;
+  background: rgba(15, 118, 110, 0.08);
+}
+
+.conv-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.conv-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 24rpx;
+  background: #e2e8f0;
+}
+
+.conv-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.conv-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.conv-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.conv-time {
+  font-size: 22rpx;
+  color: #94a3b8;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.conv-last-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.conv-last {
+  font-size: 26rpx;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.conv-badge {
+  background: #ef4444;
+  color: #fff;
+  font-size: 20rpx;
+  min-width: 36rpx;
+  height: 36rpx;
+  line-height: 36rpx;
+  border-radius: 18rpx;
+  text-align: center;
+  padding: 0 8rpx;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+
+.empty-tip {
+  text-align: center;
+  font-size: 28rpx;
+  color: #94a3b8;
+  margin-top: 160rpx;
+  padding: 0 60rpx;
+  line-height: 1.6;
+}
+
+/* 联系人弹窗 */
+.contacts-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.contacts-panel {
+  width: 100%;
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 32rpx 0 env(safe-area-inset-bottom);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.contacts-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: center;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid #f1f5f9;
+  margin: 0 32rpx;
+}
+
+.contacts-list {
+  flex: 1;
+  overflow: hidden;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #f8fafc;
+}
+
+.contact-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #e2e8f0;
+  margin-right: 24rpx;
+}
+
+.contact-name {
+  font-size: 30rpx;
+  color: #1e293b;
+}
+
+.contacts-empty {
+  text-align: center;
+  font-size: 28rpx;
+  color: #94a3b8;
+  padding: 60rpx 0;
+}
