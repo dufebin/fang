@@ -49,7 +49,7 @@ func (h *ChatHandler) GetConversations(c *gin.Context) {
 	}
 
 	var rows []convRow
-	h.db.Raw(`
+	if err := h.db.Raw(`
 		SELECT peer_id,
 		       (SELECT content FROM chat_messages m2
 		        WHERE ((m2.from_user_id = ? AND m2.to_user_id = peer_id AND m2.deleted_for_from = false)
@@ -60,14 +60,17 @@ func (h *ChatHandler) GetConversations(c *gin.Context) {
 		FROM (
 		    SELECT CASE WHEN from_user_id = ? THEN to_user_id ELSE from_user_id END AS peer_id,
 		           created_at,
-		           from_user_id, to_user_id, is_read
+		           from_user_id, to_user_id, is_read, deleted_for_to
 		    FROM chat_messages
 		    WHERE (from_user_id = ? AND deleted_for_from = false)
 		       OR (to_user_id = ? AND deleted_for_to = false)
 		) t
 		GROUP BY peer_id
 		ORDER BY last_at DESC
-	`, me, me, me, me, me, me).Scan(&rows)
+	`, me, me, me, me, me, me).Scan(&rows).Error; err != nil {
+		response.ServerError(c, err)
+		return
+	}
 
 	if len(rows) == 0 {
 		response.Success(c, []gin.H{})
