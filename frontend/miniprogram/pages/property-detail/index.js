@@ -264,7 +264,7 @@ Page({
   },
 
   onShare() {
-    const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode || ''
+    const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode || (this.data.agent && this.data.agent.agent_code) || ''
     wx.navigateTo({
       url: `/pages/property-poster/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`,
     })
@@ -272,7 +272,7 @@ Page({
 
   onShareAppMessage() {
     const p = this.data.property
-    const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode
+    const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode || (this.data.agent && this.data.agent.agent_code) || ''
     return {
       title: p.title,
       path: `/pages/property-detail/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`,
