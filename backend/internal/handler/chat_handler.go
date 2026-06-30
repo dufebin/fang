@@ -67,7 +67,7 @@ func (h *ChatHandler) GetConversations(c *gin.Context) {
 		) t
 		GROUP BY peer_id
 		ORDER BY last_at DESC
-	`, me, me, me, me, me, me, me).Scan(&rows)
+	`, me, me, me, me, me, me).Scan(&rows)
 
 	if len(rows) == 0 {
 		response.Success(c, []gin.H{})
@@ -174,7 +174,7 @@ func (h *ChatHandler) SendMessage(c *gin.Context) {
 }
 
 // MarkRead PUT /chat/messages/read?peer_id=X
-// 将对方发给我的消息标记为对我端逻辑删除（已看即删），数据库保留
+// 将对方发给我的消息标记为已读（仅更新未读数），消息保留在会话列表中，需手动删除
 func (h *ChatHandler) MarkRead(c *gin.Context) {
 	me := middleware.GetCurrentUserID(c)
 	peerID, err := strconv.ParseUint(c.Query("peer_id"), 10, 64)
@@ -183,8 +183,8 @@ func (h *ChatHandler) MarkRead(c *gin.Context) {
 		return
 	}
 	h.db.Model(&model.ChatMessage{}).
-		Where("from_user_id = ? AND to_user_id = ? AND deleted_for_to = false", peerID, me).
-		Updates(map[string]interface{}{"is_read": true, "deleted_for_to": true})
+		Where("from_user_id = ? AND to_user_id = ? AND is_read = false", peerID, me).
+		Update("is_read", true)
 	response.Success(c, nil)
 }
 
