@@ -27,6 +27,11 @@ pnpm-debug.log*
 /frontend/admin/node_modules/
 /frontend/h5/dist/
 /frontend/h5/node_modules/
+/frontend/miniprogram/node_modules/
+
+# Admin dist (alternative path)
+admin/dist/
+admin/node_modules/
 
 # Mini program private keys
 frontend/miniprogram/private.*.key
