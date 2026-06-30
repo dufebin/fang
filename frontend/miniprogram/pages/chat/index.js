@@ -34,7 +34,7 @@ Page({
     const peerAvatar = decodeURIComponent(options.peer_avatar || '')
     const app = getApp()
     const me = app.globalData.userInfo || {}
-    const myId = me.id || 0
+    const myId = me.user_id || me.id || 0
     const myAvatar = me.avatar || me.avatar_url || ''
     this.setData({
       peerId: peerId,
