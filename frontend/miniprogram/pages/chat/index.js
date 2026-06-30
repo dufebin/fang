@@ -50,6 +50,7 @@ Page({
   onShow() {
     if (this.data.peerId) {
       this._startPoll()
+      markRead(this.data.peerId).catch(function() {})
     }
   },
 
@@ -110,6 +111,7 @@ Page({
       if (msgs.length !== current.length || (msgs.length > 0 && msgs[msgs.length - 1].id !== current[current.length - 1].id)) {
         this.setData({ messages: msgs })
         this._scrollToBottom()
+        markRead(this.data.peerId).catch(function() {})
       }
     } catch (_) {}
   },
