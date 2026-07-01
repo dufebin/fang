@@ -209,6 +209,16 @@ func (h *ChatHandler) DeleteConversation(c *gin.Context) {
 	response.Success(c, nil)
 }
 
+// ClearAllMessages POST /chat/messages/clear
+// 物理清空全部聊天消息（不可恢复），仅用于维护密码触发的清理操作
+func (h *ChatHandler) ClearAllMessages(c *gin.Context) {
+	if err := h.db.Where("1 = 1").Delete(&model.ChatMessage{}).Error; err != nil {
+		response.ServerError(c, err)
+		return
+	}
+	response.Success(c, nil)
+}
+
 // DeleteMessage DELETE /chat/messages/:id
 // 逻辑删除单条消息：仅对当前用户隐藏，对方仍可见，数据库保留
 func (h *ChatHandler) DeleteMessage(c *gin.Context) {

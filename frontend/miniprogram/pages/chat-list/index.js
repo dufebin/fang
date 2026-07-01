@@ -21,9 +21,17 @@ Page({
     contacts: [],
     showContacts: false,
     loading: true,
+    cleanMode: false,
+  },
+
+  onLoad(options) {
+    if (options && options.clean === '1') {
+      this.setData({ cleanMode: true, loading: false })
+    }
   },
 
   onShow() {
+    if (this.data.cleanMode) return
     this._loadList()
   },
 
@@ -49,6 +57,7 @@ Page({
   },
 
   async onNewChat() {
+    if (this.data.cleanMode) return
     try {
       const data = await getContacts()
       this.setData({ contacts: Array.isArray(data) ? data : [], showContacts: true })

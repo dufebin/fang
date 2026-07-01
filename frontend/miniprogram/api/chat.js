@@ -28,4 +28,8 @@ function deleteConversation(peerId) {
   return request({ url: '/chat/conversations?peer_id=' + peerId, method: 'DELETE' })
 }
 
-module.exports = { getContacts, getConversations, getMessages, sendMessage, markRead, deleteMessage, deleteConversation }
+function clearAllMessages() {
+  return request({ url: '/chat/messages/clear', method: 'POST' })
+}
+
+module.exports = { getContacts, getConversations, getMessages, sendMessage, markRead, deleteMessage, deleteConversation, clearAllMessages }

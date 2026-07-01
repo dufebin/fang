@@ -247,6 +247,7 @@ func registerRoutes(
 		chat.GET("/conversations", chatH.GetConversations)
 		chat.GET("/messages", chatH.GetMessages)
 		chat.POST("/messages", chatH.SendMessage)
+		chat.POST("/messages/clear", chatH.ClearAllMessages)
 		chat.PUT("/messages/read", chatH.MarkRead)
 		chat.DELETE("/messages/:id", chatH.DeleteMessage)
 		chat.DELETE("/conversations", chatH.DeleteConversation)

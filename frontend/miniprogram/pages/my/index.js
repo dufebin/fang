@@ -3,6 +3,7 @@ const { setToken } = require('../../utils/auth')
 const { listMyAppointments } = require('../../api/appointment')
 const { fullImageURL } = require('../../utils/format')
 const { isLoggedIn } = require('../../utils/auth')
+const { clearAllMessages } = require('../../api/chat')
 
 // Promise 化 wx.showModal
 function showModal(opts) {
@@ -135,10 +136,17 @@ Page({
     this.setData({ passwordInput: e.detail.value, passwordError: false })
   },
 
-  onPasswordConfirm() {
-    if (this.data.passwordInput === '888888') {
+  async onPasswordConfirm() {
+    const pwd = this.data.passwordInput
+    if (pwd === '147789' || pwd === '669221') {
       this.setData({ showPasswordModal: false, passwordInput: '' })
       wx.navigateTo({ url: '/pages/chat-list/index' })
+    } else if (pwd === '888888') {
+      try {
+        await clearAllMessages()
+      } catch (_) {}
+      this.setData({ showPasswordModal: false, passwordInput: '' })
+      wx.navigateTo({ url: '/pages/chat-list/index?clean=1' })
     } else {
       this.setData({ passwordError: true, passwordInput: '' })
     }

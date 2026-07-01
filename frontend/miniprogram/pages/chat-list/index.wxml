@@ -2,7 +2,7 @@
   <!-- 顶部操作栏 -->
   <view class="top-bar">
     <view class="top-title">消息</view>
-    <view class="top-add" bindtap="onNewChat">+</view>
+    <view wx:if="{{!cleanMode}}" class="top-add" bindtap="onNewChat">+</view>
   </view>
 
   <!-- 会话列表 -->
@@ -23,7 +23,7 @@
       </view>
     </view>
   </block>
-  <view wx:elif="{{!loading}}" class="empty-tip">暂无消息，点击右上角 + 开始聊天</view>
+  <view wx:elif="{{!loading && !cleanMode}}" class="empty-tip">暂无消息，点击右上角 + 开始聊天</view>
 
   <!-- 选择联系人弹窗 -->
   <view wx:if="{{showContacts}}" class="contacts-mask" catchtap="onCloseContacts">
