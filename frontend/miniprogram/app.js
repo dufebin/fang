@@ -21,6 +21,30 @@ App({
     console.error('[App] Global error:', err)
   },
 
+  // 隐私保护：进入后台时记录时间戳
+  onHide() {
+    this._backgroundedAt = Date.now()
+  },
+
+  // 隐私保护：回到前台时，若停留在聊天页/会话列表则直接跳回首页
+  onShow() {
+    if (this._backgroundedAt) {
+      this._backgroundedAt = 0
+      try {
+        const pages = getCurrentPages()
+        const current = pages[pages.length - 1]
+        if (current) {
+          const route = current.route
+          if (route === 'pages/chat/index' || route === 'pages/chat-list/index') {
+            wx.reLaunch({ url: '/pages/index/index' })
+          }
+        }
+      } catch (e) {
+        console.error('[App] onShow redirect error:', e)
+      }
+    }
+  },
+
   _fetchUserInfo() {
     var self = this
     try {

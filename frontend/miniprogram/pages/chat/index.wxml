@@ -1,4 +1,6 @@
 <view class="page">
+  <!-- 隐私遮罩：进入后台时盖住聊天内容，防止后台快照泄露 -->
+  <view wx:if="{{privacyMasked}}" class="privacy-mask"></view>
   <!-- 消息列表 -->
   <scroll-view class="msg-scroll" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation enable-flex>
     <view class="msg-list">

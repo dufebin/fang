@@ -1,4 +1,6 @@
 <view class="page">
+  <!-- 隐私遮罩：进入后台时盖住会话列表，防止后台快照泄露 -->
+  <view wx:if="{{privacyMasked}}" class="privacy-mask"></view>
   <!-- 顶部操作栏 -->
   <view class="top-bar">
     <view class="top-title">消息</view>

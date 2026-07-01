@@ -24,6 +24,7 @@ Page({
     messages: [],
     inputText: '',
     scrollTo: '',
+    privacyMasked: false,
   },
 
   _pollTimer: null,
@@ -48,6 +49,7 @@ Page({
   },
 
   onShow() {
+    this.setData({ privacyMasked: false })
     if (this.data.peerId) {
       this._startPoll()
       markRead(this.data.peerId).catch(function() {})
@@ -55,6 +57,7 @@ Page({
   },
 
   onHide() {
+    this.setData({ privacyMasked: true })
     this._stopPoll()
   },
 

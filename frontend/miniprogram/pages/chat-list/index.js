@@ -22,6 +22,7 @@ Page({
     showContacts: false,
     loading: true,
     cleanMode: false,
+    privacyMasked: false,
   },
 
   onLoad(options) {
@@ -31,8 +32,13 @@ Page({
   },
 
   onShow() {
+    this.setData({ privacyMasked: false })
     if (this.data.cleanMode) return
     this._loadList()
+  },
+
+  onHide() {
+    this.setData({ privacyMasked: true })
   },
 
   async _loadList() {
