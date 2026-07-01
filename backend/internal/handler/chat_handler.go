@@ -185,10 +185,22 @@ func (h *ChatHandler) MarkRead(c *gin.Context) {
 		response.BadRequest(c, "无效的 peer_id")
 		return
 	}
+	now := time.Now()
 	h.db.Model(&model.ChatMessage{}).
 		Where("from_user_id = ? AND to_user_id = ? AND is_read = false", peerID, me).
-		Update("is_read", true)
+		Updates(map[string]interface{}{"is_read": true, "read_at": now})
 	response.Success(c, nil)
+}
+
+// CleanupReadMessages 清理已读超过 1 小时的消息（逻辑删除，双方都不可见）
+// 供后台定时任务调用
+func CleanupReadMessages(db *gorm.DB) (int64, error) {
+	threshold := time.Now().Add(-time.Hour)
+	result := db.Model(&model.ChatMessage{}).
+		Where("is_read = ? AND read_at IS NOT NULL AND read_at < ?", true, threshold).
+		Where("deleted_for_from = ? OR deleted_for_to = ?", false, false).
+		Updates(map[string]interface{}{"deleted_for_from": true, "deleted_for_to": true})
+	return result.RowsAffected, result.Error
 }
 
 // DeleteConversation DELETE /chat/conversations?peer_id=X

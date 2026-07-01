@@ -146,6 +146,19 @@ func main() {
 		response.Success(c, gin.H{"status": "ok", "time": time.Now()})
 	})
 
+	// 后台定时清理：每 5 分钟清理已读超过 1 小时的聊天消息（逻辑删除）
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			if n, err := handler.CleanupReadMessages(db); err != nil {
+				log.Printf("[chat-cleanup] error: %v", err)
+			} else if n > 0 {
+				log.Printf("[chat-cleanup] logically deleted %d read messages", n)
+			}
+		}
+	}()
+
 	addr := fmt.Sprintf(":%d", cfg.App.Port)
 	log.Printf("服务启动在 %s", addr)
 	if err := r.Run(addr); err != nil && err != http.ErrServerClosed {
