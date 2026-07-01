@@ -120,7 +120,7 @@ Page({
 
   onServiceTitleTap() {
     const now = Date.now()
-    if (now - this._lastTapTime > 3000) {
+    if (now - this._lastTapTime > 5000) {
       this._tapCount = 0
     }
     this._tapCount++

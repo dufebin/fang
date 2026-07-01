@@ -132,10 +132,12 @@
 }
 
 .menu-title {
-  padding: 0 40rpx 16rpx;
+  padding: 24rpx 40rpx 16rpx;
   font-size: 26rpx;
   font-weight: 600;
   color: var(--color-text-muted);
+  min-height: 48rpx;
+  box-sizing: border-box;
 }
 
 .menu-group {
