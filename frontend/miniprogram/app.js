@@ -1,4 +1,5 @@
 const { getToken, clearToken } = require('./utils/auth')
+const coverConfig = require('./utils/cover-config')
 
 App({
   globalData: {
@@ -15,6 +16,10 @@ App({
     if (this.globalData.token) {
       this._fetchUserInfo()
     }
+    // 启动首页切换：coverAsHome=false 时跳到真实首页
+    if (!coverConfig.coverAsHome) {
+      wx.reLaunch({ url: coverConfig.homePath })
+    }
   },
 
   onError(err) {
@@ -26,18 +31,18 @@ App({
     this._backgroundedAt = Date.now()
   },
 
-  // 隐私保护：回到前台时，若停留在聊天页/会话列表则直接跳回首页
+  // 隐私保护：回到前台时，按配置跳回封面页
   onShow() {
     if (this._backgroundedAt) {
       this._backgroundedAt = 0
+      if (!coverConfig.redirectOnResume) return
       try {
         const pages = getCurrentPages()
         const current = pages[pages.length - 1]
-        if (current) {
-          const route = current.route
-          if (route === 'pages/chat/index' || route === 'pages/chat-list/index') {
-            wx.reLaunch({ url: '/pages/index/index' })
-          }
+        const route = current ? current.route : ''
+        const coverRoute = coverConfig.coverPath.replace(/^\//, '')
+        if (route && route !== coverRoute) {
+          wx.reLaunch({ url: coverConfig.coverPath })
         }
       } catch (e) {
         console.error('[App] onShow redirect error:', e)
