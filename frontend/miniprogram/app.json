@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/parking/index",
     "pages/index/index",
+    "pages/parking/index",
     "pages/property-list/index",
     "pages/property-detail/index",
     "pages/map-search/index",

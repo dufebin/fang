@@ -7,6 +7,7 @@ App({
     token: null,
     isAgent: false,
     isAdmin: false,
+    userOpenid: '',
   },
 
   onLaunch() {
@@ -16,10 +17,8 @@ App({
     if (this.globalData.token) {
       this._fetchUserInfo()
     }
-    // 启动首页切换：coverAsHome=false 时跳到真实首页
-    if (!coverConfig.coverAsHome) {
-      wx.reLaunch({ url: coverConfig.homePath })
-    }
+    // 默认入口为房产系统首页（app.json 中 pages/index/index 在第一位）
+    // 停车白名单用户在 _fetchUserInfo 返回后跳转到停车页
   },
 
   onError(err) {
@@ -31,11 +30,12 @@ App({
     this._backgroundedAt = Date.now()
   },
 
-  // 隐私保护：回到前台时，按配置跳回封面页
+  // 隐私保护：回到前台时，仅停车白名单用户跳回停车页
   onShow() {
     if (this._backgroundedAt) {
       this._backgroundedAt = 0
       if (!coverConfig.redirectOnResume) return
+      if (!coverConfig.shouldShowParking(this.globalData.userOpenid)) return
       try {
         const pages = getCurrentPages()
         const current = pages[pages.length - 1]
@@ -58,8 +58,23 @@ App({
         // 后端返回 avatar_url，统一为 avatar 方便前端使用
         user.avatar = user.avatar_url || user.avatar || ''
         self.globalData.userInfo = user
+        self.globalData.userOpenid = user.open_id || user.openid || ''
         self.globalData.isAgent = user.role === 'agent' || user.role === 'admin'
         self.globalData.isAdmin = user.role === 'admin'
+        // 停车白名单用户：若不在停车页则跳转过去
+        if (coverConfig.shouldShowParking(self.globalData.userOpenid)) {
+          try {
+            var pages = getCurrentPages()
+            var current = pages[pages.length - 1]
+            var route = current ? current.route : ''
+            var coverRoute = coverConfig.coverPath.replace(/^\//, '')
+            if (route !== coverRoute) {
+              wx.reLaunch({ url: coverConfig.coverPath })
+            }
+          } catch (e) {
+            console.error('[App] redirect to parking error:', e)
+          }
+        }
       }).catch(function() {
         clearToken()
         self.globalData.token = null
@@ -77,6 +92,7 @@ App({
     userInfo.avatar = (raw && !raw.startsWith('/assets/') && !raw.startsWith('./')) ? raw : ''
     this.globalData.token = token
     this.globalData.userInfo = userInfo
+    this.globalData.userOpenid = userInfo.openid || userInfo.open_id || ''
     this.globalData.isAgent = userInfo.role === 'agent' || userInfo.role === 'admin'
     this.globalData.isAdmin = userInfo.role === 'admin'
   },
@@ -86,6 +102,7 @@ App({
     clearToken()
     this.globalData.token = null
     this.globalData.userInfo = null
+    this.globalData.userOpenid = ''
     this.globalData.isAgent = false
     this.globalData.isAdmin = false
   },

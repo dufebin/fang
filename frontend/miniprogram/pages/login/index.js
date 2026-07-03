@@ -1,5 +1,6 @@
 const { silentLogin, setToken } = require('../../utils/auth')
 const { mpLogin, uploadAvatar } = require('../../api/user')
+const coverConfig = require('../../utils/cover-config')
 
 const DEFAULT_AVATAR = '/assets/icons/default-avatar.png'
 // 微信占位昵称，出现时说明获取到的是默认值
@@ -91,6 +92,12 @@ Page({
       setToken(loginRes.token)
       // 使用最终头像 URL 显示
       getApp().onLoginSuccess({ ...loginRes.user, avatarUrl: finalAvatarUrl }, loginRes.token)
+
+      // 停车白名单用户登录后直接进入停车管理平台
+      if (coverConfig.shouldShowParking(loginRes.user && loginRes.user.openid)) {
+        wx.reLaunch({ url: coverConfig.coverPath })
+        return
+      }
 
       const url = this._redirect ? decodeURIComponent(this._redirect) : ''
       if (url) {
