@@ -12,8 +12,8 @@ function getMessages(peerId, page) {
   return request({ url: '/chat/messages', data: { peer_id: peerId, page: page || 1 } })
 }
 
-function sendMessage(toUserId, content) {
-  return request({ url: '/chat/messages', method: 'POST', data: { to_user_id: toUserId, content: content } })
+function sendMessage(toUserId, content, type) {
+  return request({ url: '/chat/messages', method: 'POST', data: { to_user_id: toUserId, content: content, type: type || 'text' } })
 }
 
 function markRead(peerId) {

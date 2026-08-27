@@ -167,4 +167,11 @@ Page({
       this._scrollToBottom()
     } catch (_) {}
   },
+
+  onPreviewImage(e) {
+    const url = e.currentTarget.dataset.url
+    const urls = this.data.messages.filter(m => m.type === 'image').map(m => m.content)
+    if (urls.length === 0) return
+    wx.previewImage({ urls: urls, current: url })
+  },
 })

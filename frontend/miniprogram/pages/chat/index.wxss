@@ -150,3 +150,12 @@
   background: #0F766E;
   color: #fff;
 }
+
+/* 图片消息气泡 */
+.bubble-image {
+  width: 400rpx;
+  max-width: 60vw;
+  border-radius: 16rpx;
+  display: block;
+  background: #f4f6f8;
+}

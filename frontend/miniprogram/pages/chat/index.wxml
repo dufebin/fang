@@ -15,7 +15,10 @@
           <view class="bubble {{item.is_mine ? 'bubble-mine' : 'bubble-peer'}}"
                 bindtouchstart="onBubbleTouchStart" bindtouchend="onBubbleTouchEnd" bindtouchcancel="onBubbleTouchEnd"
                 data-id="{{item.id}}">
-            <text class="bubble-text">{{item.content}}</text>
+            <image wx:if="{{item.type==='image'}}" class="bubble-image"
+                   src="{{item.content}}" mode="widthFix"
+                   bindtap="onPreviewImage" data-url="{{item.content}}" />
+            <text wx:else class="bubble-text">{{item.content}}</text>
           </view>
           <view class="msg-time">{{item.time_fmt}}</view>
         </view>
