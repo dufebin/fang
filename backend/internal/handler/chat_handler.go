@@ -151,6 +151,7 @@ func (h *ChatHandler) SendMessage(c *gin.Context) {
 	var req struct {
 		ToUserID uint64 `json:"to_user_id" binding:"required"`
 		Content  string `json:"content" binding:"required,max=500"`
+		Type     string `json:"type"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.BadRequest(c, "参数错误: "+err.Error())
@@ -160,11 +161,20 @@ func (h *ChatHandler) SendMessage(c *gin.Context) {
 		response.BadRequest(c, "不能给自己发消息")
 		return
 	}
+	msgType := req.Type
+	if msgType == "" {
+		msgType = model.MsgTypeText
+	}
+	if msgType != model.MsgTypeText && msgType != model.MsgTypeImage {
+		response.BadRequest(c, "不支持的消息类型")
+		return
+	}
 
 	msg := model.ChatMessage{
 		FromUserID: me,
 		ToUserID:   req.ToUserID,
 		Content:    req.Content,
+		Type:       msgType,
 	}
 	if err := h.db.Create(&msg).Error; err != nil {
 		response.ServerError(c, err)
