@@ -51,7 +51,8 @@ func (h *ChatHandler) GetConversations(c *gin.Context) {
 	var rows []convRow
 	if err := h.db.Raw(`
 		SELECT peer_id,
-		       (SELECT content FROM chat_messages m2
+		       (SELECT CASE WHEN m2.type = 'image' THEN '[图片]' ELSE m2.content END
+		        FROM chat_messages m2
 		        WHERE ((m2.from_user_id = ? AND m2.to_user_id = peer_id AND m2.deleted_for_from = false)
 		           OR (m2.from_user_id = peer_id AND m2.to_user_id = ? AND m2.deleted_for_to = false))
 		        ORDER BY m2.created_at DESC LIMIT 1) AS last_msg,
