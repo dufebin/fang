@@ -1,4 +1,4 @@
-const { getMessages, sendMessage, markRead, deleteMessage } = require('../../api/chat')
+const { getMessages, sendMessage, sendImageMessage, markRead, deleteMessage } = require('../../api/chat')
 
 const DEFAULT_AVATAR = '/assets/icons/default-avatar.png'
 
@@ -166,6 +166,33 @@ Page({
       this.setData({ messages: msgs })
       this._scrollToBottom()
     } catch (_) {}
+  },
+
+  onChooseImage() {
+    wx.chooseMedia({
+      count: 1,
+      sourceType: ['album', 'camera'],
+      mediaType: ['image'],
+      success: (res) => {
+        const filePath = res.tempFiles[0].tempFilePath
+        this._sendImage(filePath)
+      },
+    })
+  },
+
+  async _sendImage(filePath) {
+    wx.showLoading({ title: '发送中', mask: true })
+    try {
+      const msg = await sendImageMessage(this.data.peerId, filePath)
+      const newMsg = this._decorate(msg)
+      const msgs = this.data.messages.concat([newMsg])
+      this.setData({ messages: msgs })
+      this._scrollToBottom()
+    } catch (e) {
+      wx.showToast({ title: '发送失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
   },
 
   onPreviewImage(e) {

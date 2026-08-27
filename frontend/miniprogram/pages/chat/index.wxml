@@ -28,6 +28,7 @@
 
   <!-- 底部输入区 -->
   <view class="input-bar">
+    <view class="plus-btn" bindtap="onChooseImage">＋</view>
     <input class="input-box" placeholder="输入消息…" value="{{inputText}}" bindinput="onInput" confirm-type="send" bindconfirm="onSend" adjust-position maxlength="500" />
     <view class="send-btn {{inputText ? 'send-active' : ''}}" bindtap="onSend">发送</view>
   </view>

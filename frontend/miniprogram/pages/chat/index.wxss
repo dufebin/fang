@@ -123,6 +123,18 @@
   gap: 16rpx;
 }
 
+.plus-btn {
+  width: 80rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 44rpx;
+  color: #475569;
+  background: #f4f6f8;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .input-box {
   flex: 1;
   height: 80rpx;

@@ -1,4 +1,4 @@
-const { request } = require('../utils/request')
+const { request, upload } = require('../utils/request')
 
 function getContacts() {
   return request({ url: '/chat/contacts' })
@@ -14,6 +14,11 @@ function getMessages(peerId, page) {
 
 function sendMessage(toUserId, content, type) {
   return request({ url: '/chat/messages', method: 'POST', data: { to_user_id: toUserId, content: content, type: type || 'text' } })
+}
+
+async function sendImageMessage(toUserId, filePath) {
+  const res = await upload({ url: '/user/upload/image', filePath: filePath, name: 'image' })
+  return sendMessage(toUserId, res.url, 'image')
 }
 
 function markRead(peerId) {
@@ -32,4 +37,4 @@ function clearAllMessages() {
   return request({ url: '/chat/messages/clear', method: 'POST' })
 }
 
-module.exports = { getContacts, getConversations, getMessages, sendMessage, markRead, deleteMessage, deleteConversation, clearAllMessages }
+module.exports = { getContacts, getConversations, getMessages, sendMessage, sendImageMessage, markRead, deleteMessage, deleteConversation, clearAllMessages }
