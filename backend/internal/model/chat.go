@@ -7,6 +7,7 @@ type ChatMessage struct {
 	FromUserID     uint64     `gorm:"not null;index:idx_chat_from;index:idx_chat_conv" json:"from_user_id"`
 	ToUserID       uint64     `gorm:"not null;index:idx_chat_to;index:idx_chat_conv" json:"to_user_id"`
 	Content        string     `gorm:"type:varchar(500);not null" json:"content"`
+	Type           string     `gorm:"type:varchar(20);not null;default:text" json:"type"`
 	IsRead         bool       `gorm:"not null;default:false" json:"is_read"`
 	ReadAt         *time.Time `gorm:"index" json:"-"`
 	DeletedForFrom bool       `gorm:"not null;default:false" json:"-"`
@@ -18,3 +19,8 @@ type ChatMessage struct {
 }
 
 func (ChatMessage) TableName() string { return "chat_messages" }
+
+const (
+	MsgTypeText  = "text"
+	MsgTypeImage = "image"
+)
