@@ -4,6 +4,7 @@ import (
 	"fangchan/internal/model"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type PropertyRepo struct {
@@ -195,4 +196,37 @@ func (r *PropertyRepo) GetIDsByOwnerAgent(agentID uint64) ([]uint64, error) {
 	var ids []uint64
 	err := r.db.Model(&model.Property{}).Where("owner_agent_id = ?", agentID).Pluck("id", &ids).Error
 	return ids, err
+}
+
+// ListRecommendations 详情页“看了又看”推荐：排除自身与下架房源，
+// 相关度排序（同区同型 > 同区 > 同型 > 其它），同级按最新优先。
+// district 为用户输入，排序必须参数化，禁止拼进 SQL 字符串。
+func (r *PropertyRepo) ListRecommendations(excludeID uint64, district, propertyType string, page, limit int) ([]model.Property, int64, error) {
+	var properties []model.Property
+	var total int64
+
+	query := r.db.Model(&model.Property{}).
+		Where("id != ? AND status != ?", excludeID, model.PropertyStatusOffline)
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := query.
+		Preload("Images", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sort_order ASC")
+		}).
+		Clauses(clause.OrderBy{
+			Expression: clause.Expr{
+				SQL:  "(district = ? AND property_type = ?) DESC, (district = ?) DESC, (property_type = ?) DESC, created_at DESC",
+				Vars: []interface{}{district, propertyType, district, propertyType},
+			},
+		}).
+		Offset((page - 1) * limit).
+		Limit(limit).
+		Find(&properties).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return properties, total, nil
 }

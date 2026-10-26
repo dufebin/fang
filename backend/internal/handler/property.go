@@ -164,6 +164,38 @@ func (h *PropertyHandler) List(c *gin.Context) {
 	response.SuccessPage(c, list, total, page, limit)
 }
 
+// Recommendations 详情页“看了又看”推荐列表
+func (h *PropertyHandler) Recommendations(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	// 兼容小程序发来的 page_size
+	if ps := c.Query("page_size"); ps != "" {
+		if v, err := strconv.Atoi(ps); err == nil && v > 0 {
+			limit = v
+		}
+	}
+	if page < 1 {
+		page = 1
+	}
+	if limit > 50 {
+		limit = 50
+	}
+
+	list, total, err := h.propertySvc.GetRecommendations(id, page, limit)
+	if err != nil {
+		response.ServerError(c, err)
+		return
+	}
+
+	response.SuccessPage(c, list, total, page, limit)
+}
+
 // HotDistricts 热门区域（用于前端快捷筛选）
 func (h *PropertyHandler) HotDistricts(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "8"))

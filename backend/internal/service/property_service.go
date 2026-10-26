@@ -254,6 +254,18 @@ func (s *PropertyService) HotDistricts(limit int, filter repository.PropertyFilt
 	return s.propertyRepo.HotDistricts(limit, filter)
 }
 
+// GetRecommendations 详情页“看了又看”推荐；房源不存在时返回空列表（此时详情页本身已是失败态）
+func (s *PropertyService) GetRecommendations(id uint64, page, limit int) ([]model.Property, int64, error) {
+	p, err := s.propertyRepo.FindByID(id)
+	if err != nil {
+		return nil, 0, err
+	}
+	if p == nil {
+		return []model.Property{}, 0, nil
+	}
+	return s.propertyRepo.ListRecommendations(id, p.District, string(p.PropertyType), page, limit)
+}
+
 // GetAgentProperties 获取销售员所有相关房源（自己录入+认领），用于公开主页
 func (s *PropertyService) GetAgentProperties(agentID uint64, page, limit int) ([]model.Property, int64, error) {
 	claimedIDs, err := s.agentRepo.GetClaimedPropertyIDs(agentID)
