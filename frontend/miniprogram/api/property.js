@@ -16,6 +16,11 @@ function getNearbyProperties(params) {
   return request({ url: '/h5/properties', data: params })
 }
 
+// 房源详情页“看了又看”推荐
+function getPropertyRecommendations(id, params) {
+  return request({ url: `/h5/property/${id}/recommendations`, data: params })
+}
+
 function getAgentPropertyDetail(id) {
   return request({ url: `/agent/properties/${id}` })
 }
@@ -64,6 +69,7 @@ module.exports = {
   getHotDistricts,
   getPropertyDetail,
   getNearbyProperties,
+  getPropertyRecommendations,
   getAgentPropertyDetail,
   createProperty,
   updateProperty,

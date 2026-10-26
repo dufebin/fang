@@ -634,3 +634,11 @@
   letter-spacing: 2rpx;
   box-shadow: 0 6rpx 20rpx rgba(3, 105, 161, 0.25);
 }
+
+/* ── 看了又看：推荐列表 ──────────────────── */
+.no-more {
+  text-align: center;
+  font-size: 24rpx;
+  color: #ccc;
+  padding: 32rpx 0;
+}

@@ -1,8 +1,10 @@
-const { getPropertyDetail, claimProperty, unclaimProperty } = require('../../api/property')
+const { getPropertyDetail, claimProperty, unclaimProperty, getPropertyRecommendations } = require('../../api/property')
 const { toggleFavorite, getMe } = require('../../api/user')
 const { fullImageURL, formatPrice, formatArea, formatLayout, formatFloor, formatDate, timeAgo, formatPropertyType, statusLabel } = require('../../utils/format')
 const { calcEqualInstallment } = require('../../utils/loan')
 const { requireLogin, isLoggedIn } = require('../../utils/auth')
+
+const REC_PAGE_SIZE = 10
 
 Page({
   data: {
@@ -36,18 +38,47 @@ Page({
     heatText: '--',
     dealInfoList: [],
     highlightCards: [],
+    recommendList: [],
+    recommendLoading: false,
+    recommendNoMore: false,
   },
 
   onLoad(options) {
     const { id, a } = options
     this._options = options
     this._propertyId = id
+    this._recPage = 1
     this.setData({ agentCode: a || '' })
     this._loadDetail(id, a)
   },
 
   onReload() {
     this._loadDetail(this._propertyId, this.data.agentCode)
+  },
+
+  onReachBottom() {
+    this._loadRecommendations()
+  },
+
+  async _loadRecommendations() {
+    if (this.data.recommendLoading || this.data.recommendNoMore) return
+    this.setData({ recommendLoading: true })
+    try {
+      const res = await getPropertyRecommendations(this._propertyId, {
+        page: this._recPage,
+        page_size: REC_PAGE_SIZE,
+      })
+      const list = res.list || []
+      this._recPage++
+      this.setData({
+        recommendList: [...this.data.recommendList, ...list],
+        recommendLoading: false,
+        recommendNoMore: list.length < REC_PAGE_SIZE,
+      })
+    } catch (_) {
+      // 静默失败；页码未增，滑到底 onReachBottom 自动重试
+      this.setData({ recommendLoading: false })
+    }
   },
 
   async _loadDetail(id, agentCode) {
@@ -171,6 +202,9 @@ Page({
       })
 
       wx.setNavigationBarTitle({ title: property.title || '房源详情' })
+
+      // 预加载“看了又看”推荐第一页，失败静默不影响详情
+      this._loadRecommendations()
     } catch (e) {
       this.setData({ loadingFailed: true })
     }

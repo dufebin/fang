@@ -214,6 +214,19 @@
     </view>
   </view>
 
+  <!-- 看了又看：房源推荐 -->
+  <view wx:if="{{recommendList.length}}" class="section recommend-section">
+    <view class="section-title-accent">看了又看</view>
+    <property-card
+      wx:for="{{recommendList}}"
+      wx:key="id"
+      property="{{item}}"
+      agent-code="{{agentCode}}"
+    />
+    <view wx:if="{{recommendLoading}}" class="no-more">加载中...</view>
+    <view wx:elif="{{recommendNoMore}}" class="no-more">没有更多了</view>
+  </view>
+
   <!-- Bottom Padding for Sticky Bar -->
   <view class="bottom-padding"></view>
 

@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "房源详情",
   "usingComponents": {
-    "agent-card": "/components/agent-card/index"
+    "agent-card": "/components/agent-card/index",
+    "property-card": "/components/property-card/index"
   }
 }
