@@ -67,6 +67,29 @@
   text-align: center;
 }
 
+/* 协议勾选行 */
+.agreement-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.agreement-row checkbox-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.agreement-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.agreement-link {
+  color: var(--color-primary);
+}
+
 /* 登录按钮 */
 .login-btn {
   width: 100%;
@@ -77,11 +100,4 @@
   font-size: 30rpx;
   font-weight: 500;
   border: none;
-}
-
-.login-tip {
-  text-align: center;
-  font-size: 22rpx;
-  color: #bbb;
-  margin-top: 20rpx;
 }

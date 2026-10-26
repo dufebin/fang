@@ -11,6 +11,7 @@ Page({
     loading: false,
     avatarUrl: DEFAULT_AVATAR,
     nickname: '',
+    agreed: false,
   },
 
   onLoad(options) {
@@ -46,7 +47,24 @@ Page({
     this.setData({ nickname: e.detail.value })
   },
 
+  // 勾选/取消勾选协议（默认不勾选，不记忆历史选择）
+  onToggleAgreed(e) {
+    this.setData({ agreed: e.detail.value.length > 0 })
+  },
+
+  onOpenUserAgreement() {
+    wx.navigateTo({ url: '/pages/agreement/user/index' })
+  },
+
+  onOpenPrivacy() {
+    wx.navigateTo({ url: '/pages/agreement/privacy/index' })
+  },
+
   async onLogin() {
+    if (!this.data.agreed) {
+      wx.showToast({ title: '请先阅读并同意用户服务协议和隐私政策', icon: 'none' })
+      return
+    }
     this.setData({ loading: true })
     try {
       const code = await silentLogin()

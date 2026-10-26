@@ -20,8 +20,16 @@
     />
   </view>
 
+  <view class="agreement-row">
+    <checkbox-group bindchange="onToggleAgreed">
+      <checkbox value="agreed" checked="{{agreed}}" color="#0F766E" />
+    </checkbox-group>
+    <view class="agreement-text">
+      我已阅读并同意<text class="agreement-link" catchtap="onOpenUserAgreement">《用户服务协议》</text>和<text class="agreement-link" catchtap="onOpenPrivacy">《隐私政策》</text>
+    </view>
+  </view>
+
   <button class="login-btn" bindtap="onLogin" loading="{{loading}}">
     微信一键登录
   </button>
-  <view class="login-tip">登录即表示同意《用户协议》和《隐私政策》</view>
 </view>
