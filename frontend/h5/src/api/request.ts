@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const request = axios.create({
-  baseURL: 'https://fapi.deephealth.net',
+  baseURL: 'https://fapi.sanjiufangchan.cn',
   timeout: 10000,
 })
 
@@ -23,7 +23,7 @@ request.interceptors.response.use(
     if (data.code === 401) {
       localStorage.removeItem('token')
       const redirectUrl = encodeURIComponent(window.location.href)
-      window.location.href = `https://fapi.deephealth.net/api/auth/wechat/redirect?redirect_to=${redirectUrl}`
+      window.location.href = `https://fapi.sanjiufangchan.cn/api/auth/wechat/redirect?redirect_to=${redirectUrl}`
       return Promise.reject(new Error('未授权'))
     }
     return data

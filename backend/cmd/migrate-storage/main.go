@@ -1,6 +1,6 @@
 // migrate-storage uploads all local file paths in the DB to COS and updates the records.
 // Run once after switching storage.type to "cos".
-// Usage: go run ./cmd/migrate-storage/ [-config configs/config.yaml] [-server https://fapi.deephealth.net] [-dry-run]
+// Usage: go run ./cmd/migrate-storage/ [-config configs/config.yaml] [-server https://fapi.sanjiufangchan.cn] [-dry-run]
 package main
 
 import (
@@ -41,7 +41,7 @@ type config struct {
 
 func main() {
 	cfgPath := flag.String("config", "configs/config.yaml", "config file")
-	serverBase := flag.String("server", "https://fapi.deephealth.net", "server base URL to download existing local files; also migrates full URLs on this host")
+	serverBase := flag.String("server", "https://fapi.sanjiufangchan.cn", "server base URL to download existing local files; also migrates full URLs on this host")
 	dryRun := flag.Bool("dry-run", false, "preview without making changes")
 	flag.Parse()
 

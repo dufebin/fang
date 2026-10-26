@@ -3,7 +3,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 H5_DIR="$SCRIPT_DIR/frontend/h5"
-REMOTE="root@111.229.9.22:/www/wwwroot/fang.deephealth.net/"
+REMOTE="root@111.229.9.22:/www/wwwroot/fang.sanjiufangchan.cn/"
 
 echo "==> Building H5..."
 cd "$H5_DIR"

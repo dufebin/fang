@@ -1,4 +1,4 @@
-const API_BASE = 'https://fapi.deephealth.net'
+const API_BASE = 'https://fapi.sanjiufangchan.cn'
 
 export function getImageUrl(path: string | undefined | null): string {
   if (!path) return ''

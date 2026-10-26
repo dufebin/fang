@@ -5,9 +5,9 @@ const ENV = {
     H5_BASE_URL: 'http://10.8.51.73:3001', // H5前端地址
   },
   production: {
-    BASE_URL: 'https://fapi.deephealth.net/api',
-    UPLOAD_BASE: 'https://fapi.deephealth.net',
-    H5_BASE_URL: 'https://fapi.deephealth.net', // H5前端地址
+    BASE_URL: 'https://fapi.sanjiufangchan.cn/api',
+    UPLOAD_BASE: 'https://fapi.sanjiufangchan.cn',
+    H5_BASE_URL: 'https://fapi.sanjiufangchan.cn', // H5前端地址
   },
 }
 

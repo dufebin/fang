@@ -2,7 +2,7 @@ import axios from 'axios'
 import { message } from 'antd'
 
 const request = axios.create({
-  baseURL: 'https://fapi.deephealth.net/api',
+  baseURL: 'https://fapi.sanjiufangchan.cn/api',
   timeout: 15000,
 })
 
