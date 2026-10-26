@@ -21,6 +21,7 @@
     "pages/property-edit/index",
     "pages/property-poster/index",
     "pages/login/index",
+    "pages/agreement/user/index",
     "pages/chat-list/index",
     "pages/chat/index"
   ],
