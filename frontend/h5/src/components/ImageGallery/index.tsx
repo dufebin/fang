@@ -46,9 +46,9 @@ export default function ImageGallery({ images, coverImage }: Props) {
         )}
       >
         {allImages.map((url, i) => (
-          <Swiper.Item key={i} onClick={() => handleClick(i)}>
+          <Swiper.Item key={`${url}-${i}`} onClick={() => handleClick(i)}>
             <div className={styles.slide}>
-              <img src={url} alt={`房源图片${i + 1}`} className={styles.slideImg} />
+              <GalleryImage url={url} index={i} />
             </div>
           </Swiper.Item>
         ))}
@@ -85,5 +85,22 @@ export default function ImageGallery({ images, coverImage }: Props) {
         onClose={() => setViewerVisible(false)}
       />
     </div>
+  )
+}
+
+function GalleryImage({ url, index }: { url: string; index: number }) {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) return <div className={styles.imageError}>图片加载失败</div>
+
+  return (
+    <img
+      src={url}
+      alt={`房源图片${index + 1}`}
+      className={styles.slideImg}
+      loading={index === 0 ? 'eager' : 'lazy'}
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
   )
 }

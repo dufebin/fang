@@ -1,9 +1,13 @@
 import request from './request'
 
+export type PropertyType = 'second_hand' | 'new_home' | 'rent' | 'decoration' | 'commercial'
+export type PropertyStatus = 'available' | 'sold' | 'rented' | 'offline'
+
 export interface Property {
   id: number
   title: string
-  property_type: string
+  property_type: PropertyType
+  province: string
   city: string
   district: string
   address: string
@@ -20,11 +24,28 @@ export interface Property {
   direction: string
   description: string
   cover_image: string
-  status: string
+  status: PropertyStatus
   view_count: number
   created_at: string
   updated_at: string
   images: PropertyImage[]
+  video_url: string
+  vr_url: string
+  tags: string
+  latitude: number | null
+  longitude: number | null
+  community_name: string
+  building_age: number | null
+  parking: number | null
+  has_elevator: boolean
+  is_verified: boolean
+  commission: number | null
+  created_by: number
+  owner_agent_id: number | null
+  owner_agent_code?: string
+  is_favorited: boolean
+  is_claimed: boolean
+  my_claim_commission: number | null
   agent?: AgentCard
 }
 
@@ -43,6 +64,7 @@ export interface AgentCard {
   avatar_url: string
   bio: string
   agent_code: string
+  claim_commission?: number | null
 }
 
 export interface PageResult<T> {
@@ -62,10 +84,11 @@ export interface ApiResult<T> {
   data: T
 }
 
-// H5公开接口（无需认证）
-export const getPropertyDetail = (id: number, agentCode?: string) =>
+// H5公开接口（支持可选登录）
+export const getPropertyDetail = (id: number, agentCode?: string, signal?: AbortSignal) =>
   request.get<unknown, ApiResult<Property>>(`/api/h5/property/${id}`, {
     params: agentCode ? { a: agentCode } : {},
+    signal,
   })
 
 export const getPropertyList = (params: {
@@ -83,10 +106,10 @@ export const getAgentProperties = (agentCode: string, params?: { page?: number; 
 
 // 经纪人/管理员接口（需要认证）
 export const claimProperty = (propertyId: number) =>
-  request.post(`/api/agent/properties/${propertyId}/claim`)
+  request.post<unknown, ApiResult<{ claimed: boolean }>>(`/api/agent/properties/${propertyId}/claim`, {})
 
 export const unclaimProperty = (propertyId: number) =>
-  request.delete(`/api/agent/properties/${propertyId}/claim`)
+  request.delete<unknown, ApiResult<unknown>>(`/api/agent/properties/${propertyId}/claim`)
 
 export const getMyProperties = (params?: { page?: number; limit?: number }) =>
   request.get<unknown, PageResult<Property>>('/api/agent/properties', { params })

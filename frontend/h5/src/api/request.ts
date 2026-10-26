@@ -6,10 +6,7 @@ const request = axios.create({
 })
 
 request.interceptors.request.use((config) => {
-  // 公开接口（/h5/* 或 /api/h5/*）不带上token
-  if (config.url?.startsWith('/h5/') || config.url?.startsWith('/api/h5/')) {
-    return config
-  }
+  // 公开接口允许匿名访问；已登录时携带 token 以返回收藏、认领等个人状态
   const token = localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

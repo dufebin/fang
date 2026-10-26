@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Property } from '../../api/property'
 import { getImageUrl } from '../../utils/image'
+import { formatPrice, formatPropertyType } from '../../utils/format'
 import styles from './index.module.css'
 
 interface Props {
@@ -12,10 +13,8 @@ interface Props {
 export default function PropertyCard({ property, agentCode }: Props) {
   const navigate = useNavigate()
 
-  const priceText = property.property_type === '租房'
-    ? property.monthly_rent ? `${property.monthly_rent}元/月` : '价格面议'
-    : property.total_price ? `${property.total_price}万` : '价格面议'
-
+  const price = property.property_type === 'rent' ? property.monthly_rent : property.total_price
+  const priceText = formatPrice(price, property.property_type)
   const roomInfo = `${property.bedrooms}室${property.living_rooms}厅`
 
   const handleClick = () => {
@@ -38,7 +37,7 @@ export default function PropertyCard({ property, agentCode }: Props) {
         ) : (
           <div className={styles.imagePlaceholder} />
         )}
-        <span className={styles.typeBadge}>{property.property_type}</span>
+        <span className={styles.typeBadge}>{formatPropertyType(property.property_type)}</span>
       </div>
       <div className={styles.content}>
         <div className={styles.title}>{property.title}</div>
