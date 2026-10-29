@@ -7,7 +7,7 @@ const ENV = {
   production: {
     BASE_URL: 'https://fapi.sanjiufangchan.cn/api',
     UPLOAD_BASE: 'https://fapi.sanjiufangchan.cn',
-    H5_BASE_URL: 'https://fapi.sanjiufangchan.cn', // H5前端地址
+    H5_BASE_URL: 'https://fang.sanjiufangchan.cn', // H5前端地址
   },
 }
 

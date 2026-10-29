@@ -20,7 +20,7 @@ import { getAgents, Agent } from '../../api/agent'
 import { CITY_DISTRICTS, MAJOR_CITIES, PROVINCE_CITIES, PROVINCES } from '../../data/cityDistricts'
 import { getImageUrl } from '../../utils/image'
 
-const API_ORIGIN = new URL('https://fapi.deephealth.net/api').origin
+const API_ORIGIN = new URL('https://fapi.sanjiufangchan.cn/api').origin
 function toRelativeUrl(url: string): string {
   if (!url) return ''
   try {
