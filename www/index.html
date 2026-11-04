@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="三九房产官网——39套精装房出售,优质房源、透明信息、专业经纪人服务。">
+<title>三九房产 | 39套精装房出售</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: #333;
+    line-height: 1.7;
+    background: #f7f9fb;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+
+  /* 顶部导航 */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e8edf2;
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-size: 20px; font-weight: 700; color: #0d3b66; }
+  .logo span { color: #e8a33d; }
+  .nav-links { display: flex; gap: 28px; font-size: 15px; }
+  .nav-links a:hover { color: #0d3b66; }
+  @media (max-width: 600px) { .nav-links { display: none; } }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0d3b66 0%, #145374 55%, #1a6b85 100%);
+    color: #fff;
+    padding: 96px 0 110px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(34px, 6vw, 60px);
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+  }
+  .hero p {
+    font-size: clamp(16px, 2.5vw, 20px);
+    opacity: .85;
+    margin-bottom: 36px;
+  }
+  .btn {
+    display: inline-block;
+    background: #e8a33d;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 13px 44px;
+    border-radius: 40px;
+    transition: background .2s;
+  }
+  .btn:hover { background: #d9922c; }
+
+  /* 通用小节 */
+  section { padding: 72px 0; }
+  .section-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #0d3b66;
+    margin-bottom: 12px;
+  }
+  .section-sub {
+    text-align: center;
+    color: #8a97a5;
+    font-size: 15px;
+    margin-bottom: 48px;
+  }
+
+  /* 业务卡片 */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: 0 4px 18px rgba(13,59,102,.06);
+    transition: transform .2s;
+  }
+  .card:hover { transform: translateY(-4px); }
+  .card .icon { font-size: 44px; margin-bottom: 16px; }
+  .card h3 { font-size: 19px; color: #0d3b66; margin-bottom: 10px; }
+  .card p { font-size: 14.5px; color: #66707d; }
+
+  /* 关于 */
+  .about { background: #fff; }
+  .about-text {
+    max-width: 760px;
+    margin: 0 auto;
+    font-size: 16px;
+    color: #4a5561;
+    text-align: center;
+  }
+
+  /* 联系 */
+  .contact-list {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(13,59,102,.06);
+    overflow: hidden;
+  }
+  .contact-item {
+    display: flex;
+    padding: 20px 28px;
+    border-bottom: 1px solid #eef2f6;
+    font-size: 15.5px;
+  }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-item .label {
+    flex: 0 0 90px;
+    color: #0d3b66;
+    font-weight: 600;
+  }
+
+  /* 页脚 */
+  footer {
+    background: #0d2b47;
+    color: #9db1c4;
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 13.5px;
+  }
+  footer a { color: #9db1c4; }
+  footer a:hover { color: #fff; }
+  footer .sep { margin: 0 10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="logo" href="#top">三九<span>房产</span></a>
+    <nav class="nav-links">
+      <a href="#services">核心业务</a>
+      <a href="#about">关于我们</a>
+      <a href="#contact">联系我们</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="container">
+    <h1>39套精装房出售</h1>
+    <p>精装品质 · 透明房价 · 一步到位拎包入住</p>
+    <a class="btn" href="#contact">联系我们</a>
+  </div>
+</div>
+
+<section id="services">
+  <div class="container">
+    <h2 class="section-title">核心业务</h2>
+    <p class="section-sub">专注做好每一套房的交易服务</p>
+    <div class="cards">
+      <div class="card">
+        <div class="icon">🏠</div>
+        <h3>精装房源出售</h3>
+        <p>39套精装房源,户型齐全、实景实价,拎包即可入住。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📋</div>
+        <h3>房源信息公开</h3>
+        <p>房源信息真实透明,价格、户型、配套一目了然。</p>
+      </div>
+      <div class="card">
+        <div class="icon">👔</div>
+        <h3>专业经纪人服务</h3>
+        <p>一对一经纪人全程陪同看房、谈价、签约,省心省力。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="container">
+    <h2 class="section-title">关于我们</h2>
+    <p class="section-sub">诚信 · 专业 · 用心</p>
+    <p class="about-text">
+      三九房产是一家立足本地、专注存量房交易的房产服务平台。我们以"39套精装房出售"为核心业务,
+      坚持真房源、真价格、真服务,为购房者和业主搭建安全、透明、高效的信息桥梁,
+      让每一次置业都安心、顺心。
+    </p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <h2 class="section-title">联系我们</h2>
+    <p class="section-sub">欢迎随时咨询看房</p>
+    <div class="contact-list">
+      <div class="contact-item">
+        <span class="label">电话</span>
+        <span>024-8888 8888</span>
+      </div>
+      <div class="contact-item">
+        <span class="label">微信</span>
+        <span>sanjiu39</span>
+      </div>
+      <div class="contact-item">
+        <span class="label">地址</span>
+        <span>沈阳市XX区XX路XX号</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 三九房产</div>
+  <div>
+    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">辽ICP备2026024720号-1X</a>
+  </div>
+</footer>
+
+</body>
+</html>
