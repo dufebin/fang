@@ -57,14 +57,9 @@ Page({
     spots: [],
     records: [],
     alerts: [],
-    showPasswordModal: false,
-    passwordInput: '',
-    passwordError: false,
     activeTab: 'home',
   },
 
-  _tapCount: 0,
-  _lastTapTime: 0,
   _timer: null,
   _lastHour: -1,
 
@@ -182,46 +177,6 @@ Page({
 
     const stats = { total, free, occupied, todayIncome, todayFlow, enter, exit, members, flowDelta }
     this.setData({ stats, zones, spots, records, alerts })
-  },
-
-  onTitleTap() {
-    const now = Date.now()
-    if (now - this._lastTapTime > 5000) {
-      this._tapCount = 0
-    }
-    this._tapCount++
-    this._lastTapTime = now
-    if (this._tapCount >= 6) {
-      this._tapCount = 0
-      this.setData({ showPasswordModal: true, passwordInput: '', passwordError: false })
-    }
-  },
-
-  onPasswordInput(e) {
-    this.setData({ passwordInput: e.detail.value, passwordError: false })
-  },
-
-  onPasswordConfirm() {
-    const pwd = this.data.passwordInput
-    if (pwd === '147789' || pwd === '669221') {
-      this.setData({ showPasswordModal: false, passwordInput: '' })
-      wx.navigateTo({ url: '/pages/chat-list/index' })
-    } else if (pwd === '888888') {
-      this.setData({ showPasswordModal: false, passwordInput: '' })
-      wx.navigateTo({ url: '/pages/chat-list/index?clean=1' })
-    } else {
-      this.setData({ passwordError: true, passwordInput: '' })
-    }
-  },
-
-  onPasswordCancel() {
-    this.setData({ showPasswordModal: false, passwordInput: '', passwordError: false })
-  },
-
-  onDialogTap() {},
-
-  onMaskTap() {
-    this.setData({ showPasswordModal: false, passwordInput: '', passwordError: false })
   },
 
   onActionTap() {},
