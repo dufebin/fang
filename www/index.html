@@ -3,224 +3,986 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="三九房产官网——39套精装房出售,优质房源、透明信息、专业经纪人服务。">
-<title>三九房产 | 39套精装房出售</title>
+<meta name="description" content="沈阳叁玖房产中介有限公司——扎根沈阳，专注房地产经纪、咨询与非居住租赁。真房源、透明信息，一站式置业服务。电话 13840482487">
+<meta name="keywords" content="叁玖房产,沈阳房产中介,沈阳二手房,学区房,房地产经纪,房地产咨询">
+<link rel="canonical" href="https://www.sanjiufangchan.cn/">
+<title>叁玖房产 | 沈阳叁玖房产中介有限公司</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.2.5/chinese-simplified-500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.2.5/chinese-simplified-700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.2.5/chinese-simplified-300.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.2.5/chinese-simplified-400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.2.5/chinese-simplified-500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.2.5/chinese-simplified-700.css">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --color-primary: #0F766E;
+    --color-on-primary: #FFFFFF;
+    --color-secondary: #14B8A6;
+    --color-accent: #0369A1;
+    --color-on-accent: #FFFFFF;
+    --color-background: #F0FDFA;
+    --color-foreground: #134E4A;
+    --color-muted: #E8F0F3;
+    --color-muted-foreground: #475569;
+    --color-border: #99F6E4;
+    --color-ink: #0B3B38;
+    --color-surface: #FFFFFF;
+    --color-deep: #062E2B;
+    --font-display: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+    --font-body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-3xl: 96px;
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --radius: 4px;
+    --max: 1120px;
+    --header-h: 72px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    color: #333;
+    font-family: var(--font-body);
+    color: var(--color-foreground);
+    background: var(--color-background);
     line-height: 1.7;
-    background: #f7f9fb;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
   }
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  img { max-width: 100%; display: block; }
   a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+  button { font: inherit; border: 0; background: none; cursor: pointer; }
 
-  /* 顶部导航 */
-  header {
-    position: sticky; top: 0; z-index: 10;
-    background: rgba(255,255,255,.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #e8edf2;
-  }
-  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-  .logo { font-size: 20px; font-weight: 700; color: #0d3b66; }
-  .logo span { color: #e8a33d; }
-  .nav-links { display: flex; gap: 28px; font-size: 15px; }
-  .nav-links a:hover { color: #0d3b66; }
-  @media (max-width: 600px) { .nav-links { display: none; } }
-
-  /* Hero */
-  .hero {
-    background: linear-gradient(135deg, #0d3b66 0%, #145374 55%, #1a6b85 100%);
-    color: #fff;
-    padding: 96px 0 110px;
-    text-align: center;
-  }
-  .hero h1 {
-    font-size: clamp(34px, 6vw, 60px);
-    font-weight: 800;
-    letter-spacing: 2px;
-    margin-bottom: 18px;
-  }
-  .hero p {
-    font-size: clamp(16px, 2.5vw, 20px);
-    opacity: .85;
-    margin-bottom: 36px;
-  }
-  .btn {
-    display: inline-block;
-    background: #e8a33d;
-    color: #fff;
-    font-size: 17px;
-    font-weight: 600;
-    padding: 13px 44px;
-    border-radius: 40px;
-    transition: background .2s;
-  }
-  .btn:hover { background: #d9922c; }
-
-  /* 通用小节 */
-  section { padding: 72px 0; }
-  .section-title {
-    text-align: center;
-    font-size: 30px;
-    font-weight: 700;
-    color: #0d3b66;
-    margin-bottom: 12px;
-  }
-  .section-sub {
-    text-align: center;
-    color: #8a97a5;
-    font-size: 15px;
-    margin-bottom: 48px;
+  .container {
+    width: min(100% - 40px, var(--max));
+    margin-inline: auto;
   }
 
-  /* 业务卡片 */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
-  .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 36px 28px;
-    text-align: center;
-    box-shadow: 0 4px 18px rgba(13,59,102,.06);
-    transition: transform .2s;
-  }
-  .card:hover { transform: translateY(-4px); }
-  .card .icon { font-size: 44px; margin-bottom: 16px; }
-  .card h3 { font-size: 19px; color: #0d3b66; margin-bottom: 10px; }
-  .card p { font-size: 14.5px; color: #66707d; }
-
-  /* 关于 */
-  .about { background: #fff; }
-  .about-text {
-    max-width: 760px;
-    margin: 0 auto;
-    font-size: 16px;
-    color: #4a5561;
-    text-align: center;
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
   }
 
-  /* 联系 */
-  .contact-list {
-    max-width: 640px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 18px rgba(13,59,102,.06);
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
     overflow: hidden;
   }
-  .contact-item {
-    display: flex;
-    padding: 20px 28px;
-    border-bottom: 1px solid #eef2f6;
-    font-size: 15.5px;
+  .skip-link:focus {
+    left: 16px;
+    top: 16px;
+    width: auto;
+    height: auto;
+    z-index: 100;
+    padding: 10px 14px;
+    background: #fff;
+    color: var(--color-ink);
   }
-  .contact-item:last-child { border-bottom: none; }
-  .contact-item .label {
-    flex: 0 0 90px;
-    color: #0d3b66;
+
+  /* —— Header —— */
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--header-h);
+    transition: background .25s ease, border-color .25s ease, backdrop-filter .25s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .site-header.is-scrolled,
+  .site-header.is-open {
+    background: rgba(240, 253, 250, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom-color: rgba(15, 118, 110, 0.12);
+  }
+  .site-header.is-hero-light .logo,
+  .site-header.is-hero-light .nav a,
+  .site-header.is-hero-light .menu-toggle {
+    color: #fff;
+  }
+  .site-header.is-scrolled .logo,
+  .site-header.is-open .logo,
+  .site-header.is-scrolled .nav a,
+  .site-header.is-open .nav a,
+  .site-header.is-scrolled .menu-toggle,
+  .site-header.is-open .menu-toggle {
+    color: var(--color-ink);
+  }
+  .site-header.is-scrolled .nav a:hover,
+  .site-header.is-open .nav a:hover { color: var(--color-primary); }
+  .site-header.is-hero-light:not(.is-scrolled):not(.is-open) .nav a:hover {
+    color: var(--color-secondary);
+  }
+
+  .header-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    line-height: 1.15;
+    transition: color .2s;
+  }
+  .logo-mark {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .logo-sub {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    opacity: 0.72;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .nav a {
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color .2s;
+    cursor: pointer;
+  }
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--color-accent);
+    color: var(--color-on-accent) !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background .2s, transform .2s;
+  }
+  .nav-cta:hover { background: #025a8a; }
+  .site-header.is-hero-light:not(.is-scrolled):not(.is-open) .nav-cta {
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px);
+  }
+  .site-header.is-hero-light:not(.is-scrolled):not(.is-open) .nav-cta:hover {
+    background: rgba(255,255,255,0.28);
+  }
+
+  .menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: inherit;
+  }
+  .menu-toggle svg { width: 24px; height: 24px; }
+
+  /* —— Hero —— */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: end;
+    color: #fff;
+    overflow: hidden;
+  }
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.04);
+    animation: hero-drift 28s ease-in-out alternate infinite;
+  }
+  @keyframes hero-drift {
+    from { transform: scale(1.04) translate3d(0, 0, 0); }
+    to { transform: scale(1.1) translate3d(-1.5%, -1%, 0); }
+  }
+  .hero-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(6,46,43,0.55) 0%, rgba(6,46,43,0.35) 38%, rgba(6,46,43,0.82) 100%),
+      linear-gradient(90deg, rgba(15,118,110,0.35), transparent 55%);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding: calc(var(--header-h) + 48px) 0 72px;
+    width: min(100% - 40px, var(--max));
+    margin-inline: auto;
+  }
+  .brand-hero {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 9vw, 6.5rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.25);
+  }
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    max-width: 18em;
+    margin-bottom: 14px;
+  }
+  .hero-lead {
+    font-size: clamp(0.98rem, 1.5vw, 1.1rem);
+    font-weight: 300;
+    opacity: 0.88;
+    max-width: 28em;
+    margin-bottom: 36px;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.98rem;
+    transition: background .2s, color .2s, border-color .2s, transform .2s;
+    cursor: pointer;
+  }
+  .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .btn-primary {
+    background: var(--color-secondary);
+    color: var(--color-ink);
+  }
+  .btn-primary:hover { background: #2dd4bf; }
+  .btn-ghost {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.45);
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: #fff;
+  }
+  .hero-reveal > * {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .hero-reveal > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-reveal > *:nth-child(2) { animation-delay: 0.18s; }
+  .hero-reveal > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-reveal > *:nth-child(4) { animation-delay: 0.42s; }
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* —— Sections —— */
+  section { padding: var(--space-3xl) 0; }
+  .section-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: 0.04em;
+    line-height: 1.25;
+    margin-bottom: 14px;
+  }
+  .section-desc {
+    color: var(--color-muted-foreground);
+    font-size: 1.02rem;
+    max-width: 36em;
+  }
+  .section-head {
+    margin-bottom: var(--space-xl);
+  }
+
+  /* —— Promise strip —— */
+  .promise {
+    background: var(--color-deep);
+    color: #d5f5f0;
+    padding: 28px 0;
+  }
+  .promise-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .promise-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 8px 0;
+  }
+  .promise-item svg {
+    width: 22px;
+    height: 22px;
+    color: var(--color-secondary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .promise-item strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .promise-item span {
+    font-size: 0.9rem;
+    opacity: 0.78;
+    line-height: 1.55;
+  }
+
+  /* —— Services —— */
+  .services {
+    background: var(--color-background);
+  }
+  .service-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid rgba(15,118,110,0.18);
+  }
+  .service-item {
+    padding: 36px 28px 36px 0;
+    border-bottom: 1px solid rgba(15,118,110,0.18);
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .service-item:nth-child(even) {
+    padding-left: 28px;
+    border-left: 1px solid rgba(15,118,110,0.18);
+  }
+  .service-icon {
+    width: 44px;
+    height: 44px;
+    color: var(--color-primary);
+  }
+  .service-icon svg { width: 100%; height: 100%; }
+  .service-item h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin-bottom: 8px;
+    letter-spacing: 0.03em;
+  }
+  .service-item p {
+    color: var(--color-muted-foreground);
+    font-size: 0.95rem;
+  }
+
+  /* —— About —— */
+  .about {
+    background: var(--color-surface);
+    position: relative;
+    overflow: hidden;
+  }
+  .about::before {
+    content: "";
+    position: absolute;
+    right: -8%;
+    top: -20%;
+    width: 48%;
+    height: 140%;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(20,184,166,0.18), transparent 55%),
+      radial-gradient(circle at 70% 70%, rgba(3,105,161,0.12), transparent 50%);
+    pointer-events: none;
+  }
+  .about-layout {
+    position: relative;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .about-visual {
+    min-height: 420px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+  }
+  .about-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 420px;
+  }
+  .about-visual figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px 22px;
+    background: linear-gradient(transparent, rgba(6,46,43,0.85));
+    color: #fff;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+  }
+  .about-copy p {
+    color: var(--color-muted-foreground);
+    margin-bottom: 18px;
+    font-size: 1.02rem;
+  }
+  .about-copy p:last-of-type { margin-bottom: 0; }
+  .about-highlights {
+    margin-top: 28px;
+    display: grid;
+    gap: 12px;
+  }
+  .about-highlights li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+  }
+  .about-highlights svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* —— Contact —— */
+  .contact {
+    background:
+      linear-gradient(135deg, rgba(15,118,110,0.08), rgba(3,105,161,0.06)),
+      var(--color-background);
+  }
+  .contact-panel {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: stretch;
+  }
+  .contact-main {
+    padding-right: 12px;
+  }
+  .contact-phone {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 20px 0 28px;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: 0.04em;
+    transition: color .2s;
+    cursor: pointer;
+  }
+  .contact-phone:hover { color: var(--color-primary); }
+  .contact-meta {
+    display: grid;
+    gap: 18px;
+  }
+  .contact-meta dt {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .contact-meta dd {
+    color: var(--color-muted-foreground);
+    font-size: 1rem;
+  }
+  .contact-aside {
+    background: var(--color-deep);
+    color: #c7ebe5;
+    padding: 36px 32px;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+  }
+  .contact-aside h3 {
+    font-family: var(--font-display);
+    color: #fff;
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .contact-aside p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+  .contact-aside .btn-primary {
+    align-self: flex-start;
+  }
+
+  /* —— Scope —— */
+  .scope {
+    padding-top: 0;
+    background: var(--color-background);
+  }
+  .scope-box {
+    border-top: 1px solid rgba(15,118,110,0.18);
+    padding-top: 36px;
+  }
+  .scope-box h2 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--color-ink);
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+  .scope-box p {
+    font-size: 0.88rem;
+    color: var(--color-muted-foreground);
+    line-height: 1.85;
+  }
+  .scope-box strong {
+    color: var(--color-ink);
     font-weight: 600;
   }
 
-  /* 页脚 */
+  /* —— Footer —— */
   footer {
-    background: #0d2b47;
-    color: #9db1c4;
-    text-align: center;
-    padding: 32px 24px;
-    font-size: 13.5px;
+    background: var(--color-deep);
+    color: #8fb8b2;
+    padding: 40px 0 32px;
+    font-size: 0.88rem;
   }
-  footer a { color: #9db1c4; }
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px 32px;
+    align-items: flex-end;
+  }
+  .footer-brand {
+    font-family: var(--font-display);
+    color: #fff;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  footer a {
+    color: #8fb8b2;
+    transition: color .2s;
+    cursor: pointer;
+  }
   footer a:hover { color: #fff; }
-  footer .sep { margin: 0 10px; }
+
+  /* —— Reveal on scroll —— */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.06s; }
+  .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.12s; }
+  .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.18s; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .hero-media img { animation: none; transform: scale(1.04); }
+    .hero-reveal > * { opacity: 1; transform: none; animation: none; }
+  }
+
+  /* —— Responsive —— */
+  @media (max-width: 900px) {
+    .promise-list { grid-template-columns: 1fr; }
+    .service-grid { grid-template-columns: 1fr; }
+    .service-item:nth-child(even) {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .about-layout,
+    .contact-panel { grid-template-columns: 1fr; gap: 32px; }
+    .about-visual { min-height: 280px; }
+    .about-visual img { min-height: 280px; }
+  }
+
+  @media (max-width: 760px) {
+    .menu-toggle { display: grid; }
+    .nav {
+      position: fixed;
+      inset: var(--header-h) 0 auto;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 12px 20px 20px;
+      background: rgba(240, 253, 250, 0.96);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(15,118,110,0.12);
+      transform: translateY(-120%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .28s ease, opacity .28s ease;
+    }
+    .site-header.is-open .nav {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav a {
+      color: var(--color-ink) !important;
+      padding: 14px 4px;
+      border-bottom: 1px solid rgba(15,118,110,0.1);
+    }
+    .nav-cta {
+      justify-content: center;
+      margin-top: 12px;
+      color: #fff !important;
+      background: var(--color-accent) !important;
+      border: 0 !important;
+    }
+    .hero-content { padding-bottom: 56px; }
+    .brand-hero { letter-spacing: 0.08em; }
+    section { padding: 72px 0; }
+  }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">跳到主要内容</a>
 
-<header>
-  <div class="container nav">
-    <a class="logo" href="#top">三九<span>房产</span></a>
-    <nav class="nav-links">
+<header class="site-header is-hero-light" id="site-header">
+  <div class="container header-inner">
+    <a class="logo" href="#top" aria-label="叁玖房产首页">
+      <span class="logo-mark">叁玖房产</span>
+      <span class="logo-sub">SANJIU · SHENYANG</span>
+    </a>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开菜单">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <nav class="nav" id="site-nav" aria-label="主导航">
       <a href="#services">核心业务</a>
       <a href="#about">关于我们</a>
       <a href="#contact">联系我们</a>
+      <a class="nav-cta" href="tel:13840482487">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16" aria-hidden="true">
+          <path d="M6.5 4.5h3l1.2 3.2-1.8 1.2a12.5 12.5 0 0 0 5.2 5.2l1.2-1.8 3.2 1.2v3a1.5 1.5 0 0 1-1.6 1.5A15.5 15.5 0 0 1 5 6.1a1.5 1.5 0 0 1 1.5-1.6Z" stroke-linejoin="round"/>
+        </svg>
+        立即咨询
+      </a>
     </nav>
   </div>
 </header>
 
-<div class="hero" id="top">
-  <div class="container">
-    <h1>39套精装房出售</h1>
-    <p>精装品质 · 透明房价 · 一步到位拎包入住</p>
-    <a class="btn" href="#contact">联系我们</a>
-  </div>
-</div>
-
-<section id="services">
-  <div class="container">
-    <h2 class="section-title">核心业务</h2>
-    <p class="section-sub">专注做好每一套房的交易服务</p>
-    <div class="cards">
-      <div class="card">
-        <div class="icon">🏠</div>
-        <h3>精装房源出售</h3>
-        <p>39套精装房源,户型齐全、实景实价,拎包即可入住。</p>
-      </div>
-      <div class="card">
-        <div class="icon">📋</div>
-        <h3>房源信息公开</h3>
-        <p>房源信息真实透明,价格、户型、配套一目了然。</p>
-      </div>
-      <div class="card">
-        <div class="icon">👔</div>
-        <h3>专业经纪人服务</h3>
-        <p>一对一经纪人全程陪同看房、谈价、签约,省心省力。</p>
+<main id="main">
+  <section class="hero" id="top" aria-label="首页首屏">
+    <div class="hero-media" aria-hidden="true">
+      <img src="assets/hero.jpg" alt="" width="2400" height="1600" fetchpriority="high">
+      <div class="hero-scrim"></div>
+      <div class="hero-grid"></div>
+    </div>
+    <div class="hero-content hero-reveal">
+      <h1 class="brand-hero">叁玖房产</h1>
+      <p class="hero-headline">扎根沈阳，专注本地房产服务</p>
+      <p class="hero-lead">真房源、透明信息、客观分析利弊，用心帮每一位客户找到合适的家。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="tel:13840482487">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M6.5 4.5h3l1.2 3.2-1.8 1.2a12.5 12.5 0 0 0 5.2 5.2l1.2-1.8 3.2 1.2v3a1.5 1.5 0 0 1-1.6 1.5A15.5 15.5 0 0 1 5 6.1a1.5 1.5 0 0 1 1.5-1.6Z" stroke-linejoin="round"/>
+          </svg>
+          电话咨询
+        </a>
+        <a class="btn btn-ghost" href="#services">了解业务</a>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="about" id="about">
-  <div class="container">
-    <h2 class="section-title">关于我们</h2>
-    <p class="section-sub">诚信 · 专业 · 用心</p>
-    <p class="about-text">
-      三九房产是一家立足本地、专注存量房交易的房产服务平台。我们以"39套精装房出售"为核心业务,
-      坚持真房源、真价格、真服务,为购房者和业主搭建安全、透明、高效的信息桥梁,
-      让每一次置业都安心、顺心。
-    </p>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="container">
-    <h2 class="section-title">联系我们</h2>
-    <p class="section-sub">欢迎随时咨询看房</p>
-    <div class="contact-list">
-      <div class="contact-item">
-        <span class="label">电话</span>
-        <span>024-8888 8888</span>
-      </div>
-      <div class="contact-item">
-        <span class="label">微信</span>
-        <span>sanjiu39</span>
-      </div>
-      <div class="contact-item">
-        <span class="label">地址</span>
-        <span>沈阳市XX区XX路XX号</span>
-      </div>
+  <div class="promise" aria-label="服务承诺">
+    <div class="container">
+      <ul class="promise-list reveal-stagger">
+        <li class="promise-item reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M12 3 4.5 6.5v5.2c0 4.6 3.1 8.7 7.5 9.8 4.4-1.1 7.5-5.2 7.5-9.8V6.5L12 3Z"/>
+            <path d="m8.5 12 2.3 2.3L15.8 9.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div>
+            <strong>房源真实</strong>
+            <span>坚持实地核验，减少虚假信息干扰</span>
+          </div>
+        </li>
+        <li class="promise-item reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 8v4l2.5 2.5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <strong>信息透明</strong>
+            <span>价格、税费、学区政策说明清楚</span>
+          </div>
+        </li>
+        <li class="promise-item reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M4 19V7.5A2.5 2.5 0 0 1 6.5 5H19v11.5A2.5 2.5 0 0 1 16.5 19H4Z"/>
+            <path d="M8 9h8M8 13h5" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <strong>客观分析</strong>
+            <span>讲清利弊，规避常见购房风险</span>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
-</section>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-label">Services</span>
+        <h2 class="section-title">核心业务</h2>
+        <p class="section-desc">主营房地产经纪、咨询与非居住租赁，熟悉沈阳新房、二手房、学区房与商铺信息，提供一站式置业服务。</p>
+      </div>
+      <div class="service-grid reveal-stagger">
+        <article class="service-item reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M3 10.5 12 3l9 7.5V21H3V10.5Z"/>
+              <path d="M9 21v-7h6v7"/>
+            </svg>
+          </div>
+          <div>
+            <h3>房地产经纪</h3>
+            <p>房源匹配、看房对接、议价签约陪同，覆盖新房、二手房、学区房与商铺交易全流程。</p>
+          </div>
+        </article>
+        <article class="service-item reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M7 4h10v16H7z"/>
+              <path d="M10 8h4M10 12h4M10 16h2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3>房地产咨询</h3>
+            <p>解答交易流程、税费测算、学区政策等疑问，帮助客户理性决策、规避风险。</p>
+          </div>
+        </article>
+        <article class="service-item reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M4 20V8l8-4 8 4v12"/>
+              <path d="M9 20v-6h6v6"/>
+              <path d="M4 10h16"/>
+            </svg>
+          </div>
+          <div>
+            <h3>非居住房地产租赁</h3>
+            <p>商铺、办公等非居住物业租赁撮合，梳理需求与条件，提升匹配效率。</p>
+          </div>
+        </article>
+        <article class="service-item reveal">
+          <div class="service-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M4 16.5 12 4l8 12.5H4Z"/>
+              <path d="M9.5 13.5h5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h3>广告设计与平面策划</h3>
+            <p>可提供广告设计、平面策划等配套服务，协助房源与品牌视觉呈现。</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="container about-layout">
+      <figure class="about-visual reveal">
+        <img src="assets/hero.jpg" alt="城市建筑景观，象征本地房产服务" loading="lazy" width="1200" height="800">
+        <figcaption>沈阳叁玖房产中介有限公司 · 深耕本地</figcaption>
+      </figure>
+      <div class="about-copy reveal">
+        <span class="section-label">About</span>
+        <h2 class="section-title">关于叁玖房产</h2>
+        <p>沈阳叁玖房产中介有限公司扎根沈阳，专注本地房产服务。我们熟悉沈阳新房、二手房、学区房、商铺房源信息，了解房产交易、税费、学区相关政策，为购房者提供房源匹配、看房对接、置业答疑等一站式咨询服务。</p>
+        <p>同时可提供广告设计、平面策划等配套服务。我们坚持房源真实、信息透明，客观分析房源利弊，规避购房风险，用心帮每一位客户找到合适的家。</p>
+        <ul class="about-highlights">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            熟悉沈阳本地房源与市场行情
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            交易、税费、学区政策答疑
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            看房对接到置业决策全程陪伴
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container contact-panel">
+      <div class="contact-main reveal">
+        <span class="section-label">Contact</span>
+        <h2 class="section-title">联系我们</h2>
+        <p class="section-desc">欢迎来电咨询看房与置业问题，我们将尽快为您对接。</p>
+        <a class="contact-phone" href="tel:13840482487">138 4048 2487</a>
+        <dl class="contact-meta">
+          <div>
+            <dt>公司名称</dt>
+            <dd>沈阳叁玖房产中介有限公司</dd>
+          </div>
+          <div>
+            <dt>地址</dt>
+            <dd>辽宁省沈阳市沈北新区沈北路35-5号（网点门）</dd>
+          </div>
+          <div>
+            <dt>官网</dt>
+            <dd>www.sanjiufangchan.cn</dd>
+          </div>
+        </dl>
+      </div>
+      <aside class="contact-aside reveal">
+        <div>
+          <h3>即刻咨询置业</h3>
+          <p>无论是新房、二手房、学区房还是商铺租赁，留下一次通话，我们帮您梳理需求与可选方案。</p>
+        </div>
+        <a class="btn btn-primary" href="tel:13840482487">拨打 13840482487</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="scope" aria-labelledby="scope-title">
+    <div class="container scope-box reveal">
+      <h2 id="scope-title">经营范围</h2>
+      <p><strong>一般项目：</strong>房地产经纪；非居住房地产租赁；房地产咨询；软件开发；信息咨询服务（不含许可类信息咨询服务）；广告制作；广告发布；广告设计、代理；平面设计；组织文化艺术交流活动（除许可业务外，可自主依法经营法律法规非禁止或限制的项目）。</p>
+      <p style="margin-top:12px"><strong>许可项目：</strong>住宅室内装饰装修（依法须经批准的项目，经相关部门批准后方可开展经营活动）。</p>
+    </div>
+  </section>
+</main>
 
 <footer>
-  <div>© 2026 三九房产</div>
-  <div>
-    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">辽ICP备2026024720号-1X</a>
+  <div class="container footer-inner">
+    <div>
+      <div class="footer-brand">叁玖房产</div>
+      <div>© 2026 沈阳叁玖房产中介有限公司</div>
+    </div>
+    <div>
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">辽ICP备2026024720号-1X</a>
+    </div>
   </div>
 </footer>
 
+<script>
+(function () {
+  var header = document.getElementById('site-header');
+  var toggle = document.getElementById('menu-toggle');
+  var nav = document.getElementById('site-nav');
+
+  function setScrolled() {
+    if (window.scrollY > 24) header.classList.add('is-scrolled');
+    else header.classList.remove('is-scrolled');
+  }
+
+  function closeMenu() {
+    header.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', '打开菜单');
+  }
+
+  toggle.addEventListener('click', function () {
+    var open = header.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+  });
+
+  nav.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', closeMenu);
+  });
+
+  window.addEventListener('scroll', setScrolled, { passive: true });
+  setScrolled();
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var nodes = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
+      nodes.forEach(function (el) { io.observe(el); });
+    } else {
+      nodes.forEach(function (el) { el.classList.add('is-in'); });
+    }
+  }
+})();
+</script>
 </body>
 </html>

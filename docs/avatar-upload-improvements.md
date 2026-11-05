@@ -117,7 +117,7 @@ if (this.data.avatarUrl.startsWith('wxfile://')) {
 storage:
   type: "local"  # 本地存储
   local_path: "./uploads"
-  base_url: "https://fapi.deephealth.net/uploads"
+  base_url: "https://fapi.sanjiufangchan.cn/uploads"
 ```
 
 ### 磁盘空间

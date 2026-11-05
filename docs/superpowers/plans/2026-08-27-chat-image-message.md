@@ -174,7 +174,7 @@ echo "TOKEN=$TOKEN PEER=$PEER"
 - [ ] **Step 4: 验证发图片消息（type=image）**
 
 ```bash
-URL="https://fapi.deephealth.net/uploads/2026/08/test-image.jpg"
+URL="https://fapi.sanjiufangchan.cn/uploads/2026/08/test-image.jpg"
 curl -s -XPOST $BASE_URL/chat/messages \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d "{\"to_user_id\":$PEER,\"content\":\"$URL\",\"type\":\"image\"}" | jq
@@ -276,7 +276,7 @@ export BASE_URL=http://localhost:9080/api
 export TOKEN=$(curl -s -XPOST $BASE_URL/dev/mock-agent-login | jq -r .data.token)
 export PEER=$(curl -s $BASE_URL/chat/contacts -H "Authorization: Bearer $TOKEN" | jq -r '.data[0].id')
 # 确保最后一条是图片消息
-URL="https://fapi.deephealth.net/uploads/2026/08/test-image.jpg"
+URL="https://fapi.sanjiufangchan.cn/uploads/2026/08/test-image.jpg"
 curl -s -XPOST $BASE_URL/chat/messages -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d "{\"to_user_id\":$PEER,\"content\":\"$URL\",\"type\":\"image\"}" >/dev/null
 ```
@@ -377,7 +377,7 @@ function sendMessage(toUserId, content, type) {
    export BASE_URL=http://localhost:9080/api
    export TOKEN=$(curl -s -XPOST $BASE_URL/dev/mock-agent-login | jq -r .data.token)
    export PEER=$(curl -s $BASE_URL/chat/contacts -H "Authorization: Bearer $TOKEN" | jq -r '.data[0].id')
-   URL="https://fapi.deephealth.net/uploads/2026/08/test-image.jpg"
+   URL="https://fapi.sanjiufangchan.cn/uploads/2026/08/test-image.jpg"
    curl -s -XPOST $BASE_URL/chat/messages -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "{\"to_user_id\":$PEER,\"content\":\"$URL\",\"type\":\"image\"}" >/dev/null
    ```
 4. 进聊天页（与 peer 的会话）：图片消息以图片气泡显示，文本消息仍为文本气泡。
