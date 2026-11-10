@@ -185,18 +185,6 @@ func (s *AgentService) CreateByAdmin(req *CreateAgentReq) (*model.Agent, error) 
 	return agent, s.agentRepo.Create(agent)
 }
 
-// CreateMockAgent 为开发测试创建经纪人档案（带占位手机号）
-func (s *AgentService) CreateMockAgent(userID uint64, nickname string) (*model.Agent, error) {
-	agent := &model.Agent{
-		UserID:    userID,
-		Name:      nickname,
-		Phone:     "00000000000",
-		AgentCode: generateAgentCode(),
-		Status:    model.AgentStatusActive,
-	}
-	return agent, s.agentRepo.Create(agent)
-}
-
 // FindByCode 通过agent_code查找销售员
 func (s *AgentService) FindByCode(code string) (*model.Agent, error) {
 	return s.agentRepo.FindByCode(code)

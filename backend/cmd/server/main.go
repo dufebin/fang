@@ -197,9 +197,6 @@ func registerRoutes(
 		mp.POST("/upload/avatar", authH.UploadAvatar)
 	}
 
-	// 开发辅助接口
-	api.POST("/dev/mock-agent-login", mpH.DevMockAgentLogin)
-
 	// H5 公开接口
 	h5 := api.Group("/h5")
 	{

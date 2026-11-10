@@ -155,7 +155,7 @@ func (r *PropertyRepo) HotDistricts(limit int, filter PropertyFilter) ([]Distric
 	return rows, nil
 }
 
-// ListByIDs 按ID列表查询（销售员认领的房源）
+// ListByIDs 按ID列表查询（销售员自己的房源，含全部状态）
 func (r *PropertyRepo) ListByIDs(ids []uint64, page, limit int) ([]model.Property, int64, error) {
 	if len(ids) == 0 {
 		return []model.Property{}, 0, nil
@@ -164,7 +164,7 @@ func (r *PropertyRepo) ListByIDs(ids []uint64, page, limit int) ([]model.Propert
 	var properties []model.Property
 	var total int64
 
-	query := r.db.Model(&model.Property{}).Where("id IN ? AND status != ?", ids, model.PropertyStatusOffline)
+	query := r.db.Model(&model.Property{}).Where("id IN ?", ids)
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
