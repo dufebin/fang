@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS properties (
     direction VARCHAR(20) DEFAULT '' COMMENT '朝向',
     description TEXT COMMENT '详细描述',
     cover_image VARCHAR(512) DEFAULT '' COMMENT '封面图',
-    status ENUM('available', 'sold', 'rented', 'offline') NOT NULL DEFAULT 'available' COMMENT '状态',
+    status ENUM('pending', 'available', 'sold', 'rented', 'offline', 'rejected') NOT NULL DEFAULT 'available' COMMENT '状态',
     view_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '浏览次数',
     created_by BIGINT UNSIGNED NOT NULL COMMENT '录入人user_id',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

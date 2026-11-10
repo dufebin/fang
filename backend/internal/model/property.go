@@ -13,10 +13,12 @@ const (
 	PropertyTypeDecoration PropertyType = "decoration"
 	PropertyTypeCommerce   PropertyType = "commercial"
 
+	PropertyStatusPending   PropertyStatus = "pending"
 	PropertyStatusAvailable PropertyStatus = "available"
 	PropertyStatusSold      PropertyStatus = "sold"
 	PropertyStatusRented    PropertyStatus = "rented"
 	PropertyStatusOffline   PropertyStatus = "offline"
+	PropertyStatusRejected  PropertyStatus = "rejected"
 
 	DecorationBare   Decoration = "毛坯"
 	DecorationSimple Decoration = "简装"
@@ -45,7 +47,10 @@ type Property struct {
 	Direction    string         `gorm:"size:20;default:''" json:"direction"`
 	Description  string         `gorm:"type:text" json:"description"`
 	CoverImage    string         `gorm:"size:512;default:''" json:"cover_image"`
-	Status        PropertyStatus `gorm:"type:enum('available','sold','rented','offline');not null;default:'available';index" json:"status"`
+	Status        PropertyStatus `gorm:"type:enum('pending','available','sold','rented','offline','rejected');not null;default:'available';index" json:"status"`
+	RejectReason  string         `gorm:"size:500;default:''" json:"reject_reason"`
+	ReviewedBy    *uint64        `json:"reviewed_by"`
+	ReviewedAt    *time.Time     `json:"reviewed_at"`
 	ViewCount     uint32         `gorm:"not null;default:0" json:"view_count"`
 	CreatedBy     uint64         `gorm:"not null;index" json:"created_by"`
 	OwnerAgentID  *uint64        `gorm:"index" json:"owner_agent_id"`
