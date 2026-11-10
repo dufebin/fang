@@ -3,11 +3,12 @@ package service
 import (
 	"fmt"
 	"math"
+	"mime/multipart"
+	"time"
 
 	"fangchan/internal/model"
 	"fangchan/internal/repository"
 	"fangchan/pkg/storage"
-	"mime/multipart"
 )
 
 type PropertyService struct {
@@ -80,6 +81,12 @@ func (s *PropertyService) GetDetailWithAgent(propertyID uint64, agentCode string
 		return nil, err
 	}
 	if property == nil {
+		return nil, nil
+	}
+	// 公开详情页：待审核/已驳回/已下架房源不对外展示
+	if property.Status == model.PropertyStatusPending ||
+		property.Status == model.PropertyStatusRejected ||
+		property.Status == model.PropertyStatusOffline {
 		return nil, nil
 	}
 
@@ -349,6 +356,19 @@ func (s *PropertyService) UpdateStatus(id uint64, status string) error {
 	return s.propertyRepo.Update(property)
 }
 
+// Review 管理员审核房源（通过/驳回）
+func (s *PropertyService) Review(id uint64, action, reason string, adminID uint64) error {
+	property, err := s.propertyRepo.FindByID(id)
+	if err != nil || property == nil {
+		return fmt.Errorf("房源不存在")
+	}
+	now := time.Now()
+	if err := reviewProperty(property, action, reason, adminID, now); err != nil {
+		return err
+	}
+	return s.propertyRepo.Update(property)
+}
+
 type UpdatePropertyReq struct {
 	Title         string   `json:"title"`
 	PropertyType  string   `json:"property_type"`
@@ -498,6 +518,10 @@ func (s *PropertyService) UpdateProperty(id, userID uint64, isAdmin bool, req *U
 		}
 	}
 
+	// 经纪人编辑（非管理员）后重新进入待审核；仅改状态走 UpdateStatus，不触发重审
+	if !isAdmin {
+		applyAgentSubmit(property)
+	}
 	return property, s.propertyRepo.Update(property)
 }
 
@@ -509,6 +533,7 @@ func (s *PropertyService) CreateWithOwner(req *CreatePropertyReq, createdBy uint
 	}
 	if agent != nil {
 		property.OwnerAgentID = &agent.ID
+		applyAgentSubmit(property)
 		_ = s.propertyRepo.Update(property)
 	}
 	return property, nil

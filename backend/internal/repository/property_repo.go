@@ -72,7 +72,9 @@ func (r *PropertyRepo) List(page, limit int, filter PropertyFilter) ([]model.Pro
 	if filter.Status != "" {
 		query = query.Where("status = ?", filter.Status)
 	} else if !filter.IncludeOffline {
-		query = query.Where("status != ?", model.PropertyStatusOffline)
+		query = query.Where("status IN ?", []model.PropertyStatus{
+			model.PropertyStatusAvailable, model.PropertyStatusSold, model.PropertyStatusRented,
+		})
 	}
 	if filter.MinPrice != nil {
 		query = query.Where("total_price >= ?", *filter.MinPrice)
@@ -143,7 +145,9 @@ func (r *PropertyRepo) HotDistricts(limit int, filter PropertyFilter) ([]Distric
 	if filter.Status != "" {
 		query = query.Where("status = ?", filter.Status)
 	} else if !filter.IncludeOffline {
-		query = query.Where("status != ?", model.PropertyStatusOffline)
+		query = query.Where("status IN ?", []model.PropertyStatus{
+			model.PropertyStatusAvailable, model.PropertyStatusSold, model.PropertyStatusRented,
+		})
 	}
 	if err := query.Group("district").Order("count DESC").Limit(limit).Scan(&rows).Error; err != nil {
 		return nil, err
@@ -206,7 +210,9 @@ func (r *PropertyRepo) ListRecommendations(excludeID uint64, district, propertyT
 	var total int64
 
 	query := r.db.Model(&model.Property{}).
-		Where("id != ? AND status != ?", excludeID, model.PropertyStatusOffline)
+		Where("id != ? AND status IN ?", excludeID, []model.PropertyStatus{
+			model.PropertyStatusAvailable, model.PropertyStatusSold, model.PropertyStatusRented,
+		})
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
