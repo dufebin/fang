@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { ProTable, ProColumns, ModalForm } from '@ant-design/pro-components'
 import {
-  Button, Space, Tag, Upload, Popconfirm, Drawer,
-  Form, Input, Select, InputNumber, Row, Col, Image, App, AutoComplete, Spin,
+  Button, Space, Tag, Upload, Popconfirm, Drawer, Modal,
+  Form, Input, Select, InputNumber, Row, Col, Image, App, AutoComplete, Spin, Tooltip,
 } from 'antd'
 import { PlusOutlined, UploadOutlined, EditOutlined, SearchOutlined, DeleteOutlined, VideoCameraOutlined, EnvironmentOutlined } from '@ant-design/icons'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
@@ -13,7 +13,7 @@ import '@wangeditor/editor/dist/css/style.css'
 import {
   getProperties, createProperty, updateProperty,
   updatePropertyStatus, uploadPropertyImage, getPropertyDetail, deletePropertyImage,
-  uploadPropertyVideo,
+  uploadPropertyVideo, reviewProperty,
   Property, PropertyImage,
 } from '../../api/property'
 import { getAgents, Agent } from '../../api/agent'
@@ -31,10 +31,12 @@ function toRelativeUrl(url: string): string {
 }
 
 const STATUS_MAP: Record<string, { text: string; color: string }> = {
+  pending: { text: '待审核', color: 'gold' },
   available: { text: '在售', color: 'success' },
   sold: { text: '已售', color: 'default' },
   rented: { text: '已租', color: 'blue' },
   offline: { text: '已下架', color: 'red' },
+  rejected: { text: '已驳回', color: 'volcano' },
 }
 
 const PROPERTY_TYPE_MAP: Record<string, string> = {
@@ -121,6 +123,8 @@ export default function PropertiesPage() {
   const [editDrawerOpen, setEditDrawerOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<Property | null>(null)
   const [tableKey, setTableKey] = useState(0)
+  const [rejectTarget, setRejectTarget] = useState<Property | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
   const [editForm] = Form.useForm()
   const [createForm] = Form.useForm()
 
@@ -314,6 +318,9 @@ export default function PropertiesPage() {
       dataIndex: 'status',
       render: (_, record) => {
         const info = STATUS_MAP[record.status] || { text: '未知', color: 'default' }
+        if (record.status === 'rejected') {
+          return <Tooltip title={record.reject_reason || '未填写原因'}><Tag color={info.color}>{info.text}</Tag></Tooltip>
+        }
         return <Tag color={info.color}>{info.text}</Tag>
       },
       valueType: 'select',
@@ -327,6 +334,23 @@ export default function PropertiesPage() {
         <Button key="edit" type="link" size="small" icon={<EditOutlined />} onClick={() => openEdit(record)}>
           编辑
         </Button>,
+        record.status === 'pending' && (
+          <Space key="review" size={0}>
+            <Button
+              type="link" size="small"
+              onClick={async () => {
+                await reviewProperty(record.id, 'approve')
+                message.success('已通过，房源上架')
+                refresh()
+              }}
+            >
+              通过
+            </Button>
+            <Button type="link" size="small" danger onClick={() => setRejectTarget(record)}>
+              驳回
+            </Button>
+          </Space>
+        ),
         record.status !== 'offline' ? (
           <Popconfirm
             key="offline"
@@ -376,6 +400,34 @@ export default function PropertiesPage() {
         ]}
         scroll={{ x: 1100 }}
       />
+
+      {/* 驳回房源弹窗 */}
+      <Modal
+        open={!!rejectTarget}
+        title="驳回房源"
+        okText="确认驳回"
+        okButtonProps={{ danger: true }}
+        onOk={async () => {
+          if (!rejectTarget) return
+          const reason = rejectReason.trim()
+          if (!reason) { message.warning('请填写驳回原因'); return }
+          await reviewProperty(rejectTarget.id, 'reject', reason)
+          message.success('已驳回')
+          setRejectTarget(null)
+          setRejectReason('')
+          refresh()
+        }}
+        onCancel={() => { setRejectTarget(null); setRejectReason('') }}
+      >
+        <Input.TextArea
+          rows={4}
+          maxLength={500}
+          showCount
+          placeholder="请填写驳回原因（经纪人可见）"
+          value={rejectReason}
+          onChange={e => setRejectReason(e.target.value)}
+        />
+      </Modal>
 
       {/* 新增房源弹窗 */}
       <ModalForm

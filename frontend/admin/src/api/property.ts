@@ -31,6 +31,7 @@ export interface Property {
   cover_image: string
   video_url: string
   status: string
+  reject_reason?: string
   view_count: number
   owner_agent_id: number | null
   owner_agent?: PropertyOwnerAgent
@@ -94,3 +95,6 @@ export const uploadPropertyVideo = (id: number, data: FormData) =>
   request.post(`/admin/properties/${id}/video`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   })
+
+export const reviewProperty = (id: number, action: 'approve' | 'reject', reason?: string) =>
+  request.put(`/admin/properties/${id}/review`, { action, reason })
