@@ -283,6 +283,7 @@ func registerRoutes(
 		admin.POST("/properties/:id/video", adminH.UploadPropertyVideo)
 		admin.PUT("/properties/:id", propertyH.UpdateProperty)
 		admin.PUT("/properties/:id/status", adminH.UpdatePropertyStatus)
+		admin.PUT("/properties/:id/review", adminH.ReviewProperty)
 		// 经纪人
 		admin.GET("/agents", adminH.ListAgents)
 		admin.POST("/agents", adminH.CreateAgent)

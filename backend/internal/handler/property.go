@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"fangchan/internal/middleware"
+	"fangchan/internal/model"
 	"fangchan/internal/repository"
 	"fangchan/internal/service"
 	"fangchan/pkg/response"
@@ -124,9 +125,14 @@ func (h *PropertyHandler) List(c *gin.Context) {
 	filter := repository.PropertyFilter{
 		PropertyType: c.Query("type"),
 		District:     c.Query("district"),
-		Status:       c.Query("status"),
 		Keyword:      c.Query("keyword"),
 		Sort:         c.Query("sort"),
+	}
+
+	// 公开接口只允许按已过审状态筛选，防止 status=pending/rejected/offline 泄漏未过审房源
+	switch c.Query("status") {
+	case "available", "sold", "rented":
+		filter.Status = c.Query("status")
 	}
 
 	if minPrice := c.Query("min_price"); minPrice != "" {
@@ -501,6 +507,22 @@ func (h *PropertyHandler) UpdateAgentPropertyStatus(c *gin.Context) {
 		response.Fail(c, 403, "仅房源负责人可操作")
 		return
 	}
+
+	// 审核状态机防绕过：pending/rejected 只能由审核流程改变；
+	// 重新上架（→available）也必须走审核（编辑后由管理员通过）
+	switch model.PropertyStatus(req.Status) {
+	case model.PropertyStatusSold, model.PropertyStatusRented, model.PropertyStatusOffline:
+		// 允许，直接生效，不触发重审
+	case model.PropertyStatusAvailable:
+		if property.Status != model.PropertyStatusAvailable {
+			response.Fail(c, 400, "重新上架需编辑房源后通过审核")
+			return
+		}
+	default:
+		response.Fail(c, 400, "该状态由审核流程控制")
+		return
+	}
+
 	if err := h.propertySvc.UpdateStatus(id, req.Status); err != nil {
 		response.Fail(c, 500, err.Error())
 		return

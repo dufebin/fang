@@ -281,6 +281,31 @@ func (h *AdminHandler) UpdatePropertyStatus(c *gin.Context) {
 	response.Success(c, gin.H{"updated": true})
 }
 
+// ReviewProperty 管理员审核房源（通过/驳回）
+func (h *AdminHandler) ReviewProperty(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		response.BadRequest(c, "无效的房源ID")
+		return
+	}
+
+	var req struct {
+		Action string `json:"action" binding:"required"`
+		Reason string `json:"reason"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.BadRequest(c, err.Error())
+		return
+	}
+
+	adminID := middleware.GetCurrentUserID(c) // 管理员 token 的 UserID 为 0，与经纪人申请审核现状一致
+	if err := h.propertySvc.Review(id, req.Action, req.Reason, adminID); err != nil {
+		response.Fail(c, 400, err.Error())
+		return
+	}
+	response.Success(c, gin.H{"reviewed": true})
+}
+
 // ListAgents 管理员获取销售员列表
 func (h *AdminHandler) ListAgents(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
