@@ -96,7 +96,7 @@ func main() {
 	agentSvc := service.NewAgentService(agentRepo, userRepo, propertyRepo)
 	propertySvc := service.NewPropertyService(propertyRepo, agentRepo, store)
 	contentSvc := service.NewContentService(contentRepo)
-	userActionSvc := service.NewUserActionService(userActionRepo, agentRepo)
+	userActionSvc := service.NewUserActionService(userActionRepo, agentRepo, propertyRepo)
 	agentAppSvc := service.NewAgentApplicationService(
 		agentAppRepo,
 		agentRepo,

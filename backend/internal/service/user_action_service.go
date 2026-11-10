@@ -1,19 +1,23 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 
 	"fangchan/internal/model"
 	"fangchan/internal/repository"
 )
 
+var ErrPropertyNotFavoriteable = errors.New("房源不可收藏")
+
 type UserActionService struct {
-	repo      *repository.UserActionRepo
-	agentRepo *repository.AgentRepo
+	repo         *repository.UserActionRepo
+	agentRepo    *repository.AgentRepo
+	propertyRepo *repository.PropertyRepo
 }
 
-func NewUserActionService(repo *repository.UserActionRepo, agentRepo *repository.AgentRepo) *UserActionService {
-	return &UserActionService{repo: repo, agentRepo: agentRepo}
+func NewUserActionService(repo *repository.UserActionRepo, agentRepo *repository.AgentRepo, propertyRepo *repository.PropertyRepo) *UserActionService {
+	return &UserActionService{repo: repo, agentRepo: agentRepo, propertyRepo: propertyRepo}
 }
 
 // ---- Favorite ----
@@ -25,6 +29,17 @@ func (s *UserActionService) ToggleFavorite(userID, propertyID uint64) (bool, err
 	}
 	if ok {
 		return false, s.repo.RemoveFavorite(userID, propertyID)
+	}
+	// 新增收藏：房源必须存在且处于公开状态（available/sold/rented）
+	property, err := s.propertyRepo.FindByID(propertyID)
+	if err != nil {
+		return false, err
+	}
+	if property == nil {
+		return false, ErrPropertyNotFound
+	}
+	if !isPublicPropertyStatus(property.Status) {
+		return false, ErrPropertyNotFavoriteable
 	}
 	return true, s.repo.AddFavorite(userID, propertyID)
 }

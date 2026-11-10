@@ -36,7 +36,12 @@ func (r *UserActionRepo) ListFavorites(userID uint64, page, limit int) ([]model.
 	var list []model.Favorite
 	var total int64
 
-	q := r.db.Model(&model.Favorite{}).Where("user_id = ?", userID)
+	// 仅返回公开状态房源的收藏（pending/rejected/offline 不对外泄漏）
+	q := r.db.Model(&model.Favorite{}).
+		Where("user_id = ?", userID).
+		Joins("JOIN properties p ON p.id = favorites.property_id AND p.status IN ?", []model.PropertyStatus{
+			model.PropertyStatusAvailable, model.PropertyStatusSold, model.PropertyStatusRented,
+		})
 	if err := q.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}

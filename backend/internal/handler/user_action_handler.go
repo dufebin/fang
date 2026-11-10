@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"strconv"
 
 	"fangchan/internal/middleware"
@@ -39,6 +40,10 @@ func (h *UserActionHandler) ToggleFavorite(c *gin.Context) {
 	userID := middleware.GetCurrentUserID(c)
 	favorited, err := h.svc.ToggleFavorite(userID, propertyID)
 	if err != nil {
+		if errors.Is(err, service.ErrPropertyNotFavoriteable) || errors.Is(err, service.ErrPropertyNotFound) {
+			response.BadRequest(c, err.Error())
+			return
+		}
 		response.Fail(c, 500, err.Error())
 		return
 	}

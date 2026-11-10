@@ -13,6 +13,11 @@ func applyAgentSubmit(p *model.Property) {
 	p.RejectReason = ""
 }
 
+// isPublicPropertyStatus 公开状态白名单：仅这些状态的房源可被收藏、认领等用户侧操作
+func isPublicPropertyStatus(s model.PropertyStatus) bool {
+	return s == model.PropertyStatusAvailable || s == model.PropertyStatusSold || s == model.PropertyStatusRented
+}
+
 // reviewProperty 管理员审核房源：approve 通过（上架）/ reject 驳回（必填原因）
 // 纯函数：只修改传入对象，不落库
 func reviewProperty(p *model.Property, action, reason string, adminID uint64, now time.Time) error {
