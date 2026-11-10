@@ -178,6 +178,32 @@ func (r *PropertyRepo) ListByIDs(ids []uint64, page, limit int) ([]model.Propert
 	return properties, total, err
 }
 
+// ListPublicByIDs 按ID列表查询（经纪人公开主页）：仅展示已过审状态
+func (r *PropertyRepo) ListPublicByIDs(ids []uint64, page, limit int) ([]model.Property, int64, error) {
+	if len(ids) == 0 {
+		return []model.Property{}, 0, nil
+	}
+
+	var properties []model.Property
+	var total int64
+
+	query := r.db.Model(&model.Property{}).
+		Where("id IN ? AND status IN ?", ids, []model.PropertyStatus{
+			model.PropertyStatusAvailable, model.PropertyStatusSold, model.PropertyStatusRented,
+		})
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * limit
+	err := query.Preload("Images", func(db *gorm.DB) *gorm.DB {
+		return db.Order("sort_order ASC")
+	}).Offset(offset).Limit(limit).Order("created_at DESC").Find(&properties).Error
+
+	return properties, total, err
+}
+
 func (r *PropertyRepo) IncrViewCount(id uint64) error {
 	return r.db.Model(&model.Property{}).Where("id = ?", id).
 		UpdateColumn("view_count", gorm.Expr("view_count + 1")).Error

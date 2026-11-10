@@ -293,7 +293,7 @@ func (s *PropertyService) GetAgentProperties(agentID uint64, page, limit int) ([
 			ownedIDs = append(ownedIDs, id)
 		}
 	}
-	return s.propertyRepo.ListByIDs(ownedIDs, page, limit)
+	return s.propertyRepo.ListPublicByIDs(ownedIDs, page, limit)
 }
 
 // GetOwnedProperties 获取销售员自己录入的房源
