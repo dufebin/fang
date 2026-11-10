@@ -534,7 +534,9 @@ func (s *PropertyService) CreateWithOwner(req *CreatePropertyReq, createdBy uint
 	if agent != nil {
 		property.OwnerAgentID = &agent.ID
 		applyAgentSubmit(property)
-		_ = s.propertyRepo.Update(property)
+		if err := s.propertyRepo.Update(property); err != nil {
+			return nil, fmt.Errorf("房源进入审核失败: %w", err)
+		}
 	}
 	return property, nil
 }
