@@ -211,9 +211,11 @@
       <view class="header-bar"></view>
       <text class="card-title">房源状态</text>
     </view>
-    <view class="status-row">
+    <view wx:if="{{rejectReason}}" class="reject-banner">驳回原因：{{rejectReason}}</view>
+    <view class="status-row" wx:if="{{!reviewLocked}}">
       <view wx:for="{{statuses}}" wx:key="value" class="status-pill s-{{item.value}} {{status === item.value ? 's-active' : ''}}" data-val="{{item.value}}" bindtap="onStatusSelect">{{item.label}}</view>
     </view>
+    <view wx:if="{{reviewLocked}}" class="review-hint">该房源{{status === 'pending' ? '正在审核中' : '审核未通过'}}，修改后提交将重新进入审核</view>
   </view>
 
   <view class="bottom-bar">

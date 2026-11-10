@@ -444,3 +444,20 @@
   font-weight: 600;
   letter-spacing: 2rpx;
 }
+
+.reject-banner {
+  margin: 16rpx 24rpx 0;
+  padding: 16rpx 20rpx;
+  background: #fef2f2;
+  border: 1rpx solid #fecaca;
+  border-radius: 10rpx;
+  color: #b91c1c;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.review-hint {
+  margin: 16rpx 24rpx 0;
+  color: #b45309;
+  font-size: 24rpx;
+}

@@ -166,3 +166,12 @@
   background: var(--color-bg);
   color: #888;
 }
+
+.reject-reason {
+  margin: 8rpx 24rpx 0;
+  padding: 12rpx 20rpx;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 24rpx;
+  border-radius: 8rpx;
+}

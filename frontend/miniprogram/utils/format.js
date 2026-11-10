@@ -89,6 +89,8 @@ function statusLabel(status) {
     sold: '已售',
     rented: '已租',
     offline: '已下架',
+    pending: '审核中',
+    rejected: '已驳回',
   }
   return map[status] || status
 }
@@ -100,6 +102,8 @@ function statusClass(status) {
     sold: 'tag-gray',
     rented: 'tag-blue',
     offline: 'tag-gray',
+    pending: 'tag-yellow',
+    rejected: 'tag-red',
   }
   return map[status] || 'tag-gray'
 }

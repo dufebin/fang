@@ -49,6 +49,7 @@
     <block wx:if="{{propertyList.length}}">
       <view class="property-wrap" wx:for="{{propertyList}}" wx:key="id">
         <property-card property="{{item}}" showStatus="{{true}}" />
+        <view wx:if="{{item.status === 'rejected' && item.reject_reason}}" class="reject-reason">驳回原因：{{item.reject_reason}}</view>
         <view wx:if="{{activeTab === 'my'}}" class="property-actions">
           <view class="action-edit" bindtap="onEditProperty" data-id="{{item.id}}">编辑</view>
           <view class="action-delete" bindtap="onDeleteProperty" data-id="{{item.id}}">删除</view>

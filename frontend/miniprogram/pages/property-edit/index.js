@@ -39,6 +39,8 @@ Page({
       description: '',
     },
     status: 'available',
+    rejectReason: '',
+    reviewLocked: false,
     regionValue: ['', '', ''],
     locating: false,
     images: [],
@@ -72,9 +74,12 @@ Page({
       const res = await getAgentPropertyDetail(id)
       const p = res.data || res
       const videoUrl = p.video_url ? fullImageURL(p.video_url) : ''
+      const st = p.status || 'available'
       this.setData({
-        _originalStatus: p.status || 'available',
-        status: p.status || 'available',
+        _originalStatus: st,
+        status: st,
+        rejectReason: p.reject_reason || '',
+        reviewLocked: st === 'pending' || st === 'rejected',
         form: {
           title: p.title || '',
           property_type: p.property_type || 'second_hand',
@@ -311,6 +316,19 @@ Page({
     if (form.monthly_rent && Number(form.monthly_rent) <= 0) { wx.showToast({ title: '月租金须大于 0', icon: 'none' }); return }
     if (form.commission !== '' && Number(form.commission) < 0) { wx.showToast({ title: '佣金不能为负数', icon: 'none' }); return }
 
+    // 已过审房源编辑保存后重新进入审核，先确认
+    if (isEdit && !this.data.reviewLocked) {
+      const confirmed = await new Promise((resolve) => {
+        wx.showModal({
+          title: '提示',
+          content: '保存后房源将重新进入审核，审核通过后对外展示',
+          success: (r) => resolve(r.confirm),
+          fail: () => resolve(false),
+        })
+      })
+      if (!confirmed) return
+    }
+
     wx.showLoading({ title: isEdit ? '保存中...' : '发布中...' })
     try {
       const payload = {
@@ -361,7 +379,7 @@ Page({
       }
 
       wx.hideLoading()
-      wx.showToast({ title: isEdit ? '保存成功' : '发布成功' })
+      wx.showToast({ title: '已提交审核' })
       setTimeout(() => wx.navigateBack(), 1500)
     } catch (err) {
       wx.hideLoading()

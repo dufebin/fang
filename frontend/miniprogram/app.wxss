@@ -104,6 +104,7 @@ page {
 .tag-secondary { background: rgba(20, 184, 166, 0.1); color: var(--color-secondary); }
 .tag-red { background: rgba(225, 29, 72, 0.1); color: var(--color-price); }
 .tag-gray { background: #f1f5f9; color: var(--color-text-muted); }
+.tag-yellow { background: rgba(217, 119, 6, 0.12); color: #b45309; }
 
 /* 分割线 */
 .divider {
