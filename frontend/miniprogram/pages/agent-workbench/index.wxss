@@ -142,13 +142,42 @@
 
 .property-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 16rpx;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12rpx;
   padding: 12rpx 16rpx;
   background: #fff;
   border-top: 1rpx solid #f5f5f5;
   border-radius: 0 0 16rpx 16rpx;
   margin-top: -16rpx;
+}
+
+.actions-line {
+  display: flex;
+  gap: 16rpx;
+}
+
+.status-pills {
+  display: flex;
+  gap: 12rpx;
+}
+
+.status-pill {
+  padding: 6rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  background: var(--color-bg);
+  color: #888;
+}
+
+.status-pill-current {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.status-hint {
+  font-size: 22rpx;
+  color: #999;
 }
 
 .action-edit {

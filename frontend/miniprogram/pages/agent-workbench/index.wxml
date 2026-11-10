@@ -51,8 +51,16 @@
         <property-card property="{{item}}" showStatus="{{true}}" />
         <view wx:if="{{item.status === 'rejected' && item.reject_reason}}" class="reject-reason">驳回原因：{{item.reject_reason}}</view>
         <view wx:if="{{activeTab === 'my'}}" class="property-actions">
-          <view class="action-edit" bindtap="onEditProperty" data-id="{{item.id}}">编辑</view>
-          <view class="action-delete" bindtap="onDeleteProperty" data-id="{{item.id}}">删除</view>
+          <view class="actions-line">
+            <view class="action-edit" bindtap="onEditProperty" data-id="{{item.id}}">编辑</view>
+            <view class="action-delete" bindtap="onDeleteProperty" data-id="{{item.id}}">删除</view>
+          </view>
+          <view wx:if="{{item.status === 'available' || item.status === 'sold' || item.status === 'rented'}}" class="status-pills">
+            <view class="status-pill {{item.status === 'sold' ? 'status-pill-current' : ''}}" bindtap="onStatusTap" data-id="{{item.id}}" data-val="sold">已售</view>
+            <view class="status-pill {{item.status === 'rented' ? 'status-pill-current' : ''}}" bindtap="onStatusTap" data-id="{{item.id}}" data-val="rented">已租</view>
+            <view class="status-pill {{item.status === 'offline' ? 'status-pill-current' : ''}}" bindtap="onStatusTap" data-id="{{item.id}}" data-val="offline">下架</view>
+          </view>
+          <view wx:elif="{{item.status === 'offline'}}" class="status-hint">重新上架需编辑房源后通过审核</view>
         </view>
       </view>
     </block>

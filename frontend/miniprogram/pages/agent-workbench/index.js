@@ -1,5 +1,5 @@
 const { getStats } = require('../../api/agent')
-const { getMyProperties, deleteProperty } = require('../../api/property')
+const { getMyProperties, deleteProperty, updatePropertyStatus } = require('../../api/property')
 const { listAgentAppointments, updateAppointmentStatus } = require('../../api/appointment')
 const { formatDate } = require('../../utils/format')
 
@@ -100,6 +100,22 @@ Page({
       },
     })
   },
+  async onStatusTap(e) {
+    const id = e.currentTarget.dataset.id
+    const val = e.currentTarget.dataset.val
+    if (!id || !val) return
+    try {
+      await updatePropertyStatus(id, val)
+      wx.showToast({ title: '状态已更新' })
+      const tab = this.data.activeTab
+      this._tabLoaded[tab] = false
+      this._loadTabData(tab)
+    } catch (err) {
+      const msg = (err && (err.message || err.errMsg)) || '操作失败'
+      wx.showToast({ title: typeof msg === 'string' && msg.length <= 14 ? msg : '操作失败', icon: 'none' })
+    }
+  },
+
   onViewAppointments() { this.onTabTap({ currentTarget: { dataset: { tab: 'appt' } } }) },
   onEditProfile() { wx.navigateTo({ url: '/pages/agent-profile/index' }) },
   onSharePoster() { wx.navigateTo({ url: '/pages/agent-poster/index' }) },

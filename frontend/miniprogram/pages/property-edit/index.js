@@ -1,4 +1,4 @@
-const { createProperty, updateProperty, getAgentPropertyDetail, deletePropertyImage, updatePropertyStatus } = require('../../api/property')
+const { createProperty, updateProperty, getAgentPropertyDetail, deletePropertyImage } = require('../../api/property')
 const { uploadPropertyImage, uploadPropertyVideo } = require('../../api/agent')
 const { fullImageURL, relativeImageURL } = require('../../utils/format')
 const { upload } = require('../../utils/request')
@@ -305,7 +305,7 @@ Page({
   },
 
   async onSubmit() {
-    const { form, isEdit, propertyId, _newImagePaths, status, _originalStatus,
+    const { form, isEdit, propertyId, _newImagePaths,
             _newVideoPath, _originalVideoUrl, videoUrl } = this.data
     if (!form.title.trim()) { wx.showToast({ title: '请填写房源标题', icon: 'none' }); return }
     if (!form.city) { wx.showToast({ title: '请填写城市', icon: 'none' }); return }
@@ -358,9 +358,6 @@ Page({
       let pid = propertyId
       if (isEdit) {
         await updateProperty(pid, payload)
-        if (status !== _originalStatus) {
-          await updatePropertyStatus(pid, status)
-        }
       } else {
         const res = await createProperty(payload)
         pid = (res.data || res).id
