@@ -17,8 +17,9 @@ type AgentService struct {
 }
 
 var (
-	ErrClaimOwnProperty = errors.New("不能认领自己录入的房源")
-	ErrPropertyNotFound = errors.New("房源不存在")
+	ErrClaimOwnProperty     = errors.New("不能认领自己录入的房源")
+	ErrPropertyNotFound     = errors.New("房源不存在")
+	ErrPropertyNotClaimable = errors.New("房源不可认领")
 )
 
 func NewAgentService(agentRepo *repository.AgentRepo, userRepo *repository.UserRepo, propertyRepo *repository.PropertyRepo) *AgentService {
@@ -117,6 +118,9 @@ func (s *AgentService) ClaimProperty(userID, propertyID uint64, commission *floa
 	}
 	if property == nil {
 		return ErrPropertyNotFound
+	}
+	if !isPublicPropertyStatus(property.Status) {
+		return ErrPropertyNotClaimable
 	}
 	if property.CreatedBy == userID {
 		return ErrClaimOwnProperty

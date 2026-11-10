@@ -354,6 +354,10 @@ func (h *PropertyHandler) Claim(c *gin.Context) {
 			response.Fail(c, 400, err.Error())
 			return
 		}
+		if errors.Is(err, service.ErrPropertyNotClaimable) {
+			response.Fail(c, 403, err.Error())
+			return
+		}
 		if errors.Is(err, service.ErrPropertyNotFound) {
 			response.NotFound(c)
 			return

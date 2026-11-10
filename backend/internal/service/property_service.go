@@ -325,7 +325,7 @@ func (s *PropertyService) GetClaimedProperties(agentID uint64, page, limit int) 
 			filtered = append(filtered, id)
 		}
 	}
-	return s.propertyRepo.ListByIDs(filtered, page, limit)
+	return s.propertyRepo.ListPublicByIDs(filtered, page, limit)
 }
 
 // DeleteProperty 删除房源（仅 owner_agent 或 admin）
