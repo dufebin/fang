@@ -512,7 +512,11 @@ func (h *PropertyHandler) UpdateAgentPropertyStatus(c *gin.Context) {
 	// 重新上架（→available）也必须走审核（编辑后由管理员通过）
 	switch model.PropertyStatus(req.Status) {
 	case model.PropertyStatusSold, model.PropertyStatusRented, model.PropertyStatusOffline:
-		// 允许，直接生效，不触发重审
+		// 仅已过审状态（available/sold/rented）可修改，防止未过审内容借"已售/已租"公开可见
+		if property.Status == model.PropertyStatusPending || property.Status == model.PropertyStatusRejected {
+			response.Fail(c, 400, "待审核或已驳回的房源需先通过审核")
+			return
+		}
 	case model.PropertyStatusAvailable:
 		if property.Status != model.PropertyStatusAvailable {
 			response.Fail(c, 400, "重新上架需编辑房源后通过审核")
