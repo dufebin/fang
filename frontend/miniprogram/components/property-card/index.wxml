@@ -11,6 +11,8 @@
         src="{{item}}"
         mode="aspectFill"
         lazy-load
+        binderror="onGridImgError"
+        data-idx="{{index}}"
       />
     </view>
     <!-- 单图模式（默认） -->
@@ -20,6 +22,7 @@
       src="{{coverImage}}"
       mode="aspectFill"
       lazy-load
+      binderror="onCoverImgError"
     />
     <view class="card-type-tag">{{fmt.typeLabel(property.property_type)}}</view>
     <view wx:if="{{showStatus}}" class="card-status-tag {{fmt.statusClass(property.status)}}">{{fmt.statusLabel(property.status)}}</view>

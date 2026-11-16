@@ -1,4 +1,4 @@
-const { fullImageURL } = require('../../utils/format')
+const { fullImageURL, thumbURL } = require('../../utils/format')
 
 Component({
   properties: {
@@ -11,9 +11,9 @@ Component({
 
   observers: {
     property(p) {
-      const coverImage = (p.images && p.images.length > 0)
-        ? fullImageURL(p.images[0].url)
-        : fullImageURL(p.cover_image)
+      const coverSrc = (p.images && p.images.length > 0)
+        ? p.images[0].url
+        : p.cover_image
       const quickTags = []
       if (p.video_url) quickTags.push('视频讲房')
       if (p.is_verified) quickTags.push('已核验')
@@ -23,14 +23,31 @@ Component({
         })
       }
       const imgs = p.images && p.images.length ? p.images : []
-      const fourImgUrls = imgs.length >= 2
-        ? [0, 1, 2, 3].map(i => fullImageURL(imgs[Math.min(i, imgs.length - 1)].url))
+      const srcs = imgs.length >= 2
+        ? [0, 1, 2, 3].map(i => imgs[Math.min(i, imgs.length - 1)].url)
         : []
-      this.setData({ coverImage, quickTags: quickTags.slice(0, 3), fourImgUrls })
+      const fourImgUrls = srcs.map(thumbURL)
+      // 缩略图加载失败时回退原图；两者相同（如遗留绝对 URL）则不设回退
+      const fourOriginals = srcs.map(u => (thumbURL(u) === fullImageURL(u) ? '' : fullImageURL(u)))
+      const coverImage = thumbURL(coverSrc)
+      const coverFallback = coverImage === fullImageURL(coverSrc) ? '' : fullImageURL(coverSrc)
+      this.setData({ coverImage, coverFallback, quickTags: quickTags.slice(0, 3), fourImgUrls, fourOriginals })
     },
   },
 
   methods: {
+    onCoverImgError() {
+      if (this.data.coverFallback) {
+        this.setData({ coverImage: this.data.coverFallback, coverFallback: '' })
+      }
+    },
+    onGridImgError(e) {
+      const i = e.currentTarget.dataset.idx
+      const fb = (this.data.fourOriginals || [])[i]
+      if (fb) {
+        this.setData({ [`fourImgUrls[${i}]`]: fb, [`fourOriginals[${i}]`]: '' })
+      }
+    },
     onTap() {
       const { id } = this.properties.property
       const agentCode = this.properties.agentCode
@@ -42,7 +59,9 @@ Component({
 
   data: {
     coverImage: '',
+    coverFallback: '',
     quickTags: [],
     fourImgUrls: [],
+    fourOriginals: [],
   },
 })
