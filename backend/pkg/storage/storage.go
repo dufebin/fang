@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/color"
 	"image/jpeg"
 	_ "image/png"
 	"io"
@@ -220,4 +221,104 @@ func compressImage(data []byte, ext string, maxSize int) ([]byte, error) {
 		return lastResult, nil
 	}
 	return data, nil
+}
+
+// ---------- 缩略图 ----------
+
+const (
+	thumbMaxWidth = 500
+	thumbQuality  = 75
+)
+
+// thumbFilename 返回缩略图文件名：123.jpg → 123_thumb.jpg（源是 png/gif 也输出 jpg）
+func thumbFilename(name string) string {
+	ext := filepath.Ext(name)
+	return strings.TrimSuffix(name, ext) + "_thumb.jpg"
+}
+
+// ThumbPath 返回 path 对应的缩略图路径（同目录 <stem>_thumb.jpg）。
+func ThumbPath(path string) string {
+	return filepath.Join(filepath.Dir(path), thumbFilename(filepath.Base(path)))
+}
+
+// EnsureThumbnail 为 path 生成缺失的缩略图（仅当原图为受支持的图片且宽 > thumbMaxWidth）。
+// 返回是否写入了缩略图。已存在/小图/无法解码（如 webp）返回 (false, nil)，不视为错误。
+func EnsureThumbnail(path string) (bool, error) {
+	if !isAllowedImageExt(strings.ToLower(filepath.Ext(path))) {
+		return false, nil
+	}
+	thumb := ThumbPath(path)
+	if _, err := os.Stat(thumb); err == nil {
+		return false, nil // 已存在
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return false, err
+	}
+	out, ok := thumbnailBytes(data)
+	if !ok {
+		return false, nil
+	}
+	return true, os.WriteFile(thumb, out, 0644)
+}
+
+// thumbnailBytes 生成缩略图 JPEG；宽 ≤ thumbMaxWidth 或无法解码时 ok=false
+func thumbnailBytes(data []byte) ([]byte, bool) {
+	img, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		return nil, false
+	}
+	b := img.Bounds()
+	if b.Dx() <= thumbMaxWidth {
+		return nil, false
+	}
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, downscale(img, thumbMaxWidth), &jpeg.Options{Quality: thumbQuality}); err != nil {
+		return nil, false
+	}
+	return buf.Bytes(), true
+}
+
+// downscale 将图片等比缩小到目标宽（box-filter 下采样平均，白底合成 alpha）
+func downscale(img image.Image, targetW int) *image.RGBA {
+	b := img.Bounds()
+	srcW, srcH := b.Dx(), b.Dy()
+	targetH := srcH * targetW / srcW
+	if targetH < 1 {
+		targetH = 1
+	}
+	dst := image.NewRGBA(image.Rect(0, 0, targetW, targetH))
+	for dy := 0; dy < targetH; dy++ {
+		sy0 := dy * srcH / targetH
+		sy1 := (dy + 1) * srcH / targetH
+		if sy1 <= sy0 {
+			sy1 = sy0 + 1
+		}
+		for dx := 0; dx < targetW; dx++ {
+			sx0 := dx * srcW / targetW
+			sx1 := (dx + 1) * srcW / targetW
+			if sx1 <= sx0 {
+				sx1 = sx0 + 1
+			}
+			var rSum, gSum, bSum, aSum, n uint64
+			for y := sy0; y < sy1; y++ {
+				for x := sx0; x < sx1; x++ {
+					pr, pg, pb, pa := img.At(b.Min.X+x, b.Min.Y+y).RGBA()
+					rSum += uint64(pr)
+					gSum += uint64(pg)
+					bSum += uint64(pb)
+					aSum += uint64(pa)
+					n++
+				}
+			}
+			// 平均后在白底上合成（JPEG 无 alpha 通道）
+			dst.SetRGBA(dx, dy, color.RGBA{
+				R: uint8((rSum/n + 65535 - aSum/n) * 255 / 65535),
+				G: uint8((gSum/n + 65535 - aSum/n) * 255 / 65535),
+				B: uint8((bSum/n + 65535 - aSum/n) * 255 / 65535),
+				A: 255,
+			})
+		}
+	}
+	return dst
 }
