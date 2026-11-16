@@ -43,6 +43,13 @@ function fullImageURL(url) {
   return UPLOAD_BASE + url
 }
 
+// 列表缩略图 URL（同目录 <stem>_thumb.jpg；遗留绝对 URL 无缩略图，回退原图）
+function thumbURL(url) {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return fullImageURL(url.replace(/(\.[^.]+)$/, '_thumb.jpg'))
+}
+
 // 图片 URL 转相对路径（发送给服务端前使用）
 function relativeImageURL(url) {
   if (!url) return ''
@@ -115,6 +122,7 @@ module.exports = {
   formatLayout,
   formatFloor,
   fullImageURL,
+  thumbURL,
   relativeImageURL,
   formatDate,
   timeAgo,
