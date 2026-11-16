@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	_ "image/gif" // 注册 gif 解码器，缩略图支持 gif 源
 	"image/jpeg"
 	_ "image/png"
 	"io"

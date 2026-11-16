@@ -2,6 +2,7 @@ package storage
 
 import (
 	"bytes"
+	"encoding/base64"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -97,6 +98,40 @@ func TestEnsureThumbnailSkipsUndecodable(t *testing.T) {
 	ok, err := EnsureThumbnail(p)
 	if ok || err != nil {
 		t.Fatalf("webp = (%v, %v), want (false, nil)", ok, err)
+	}
+}
+
+// gifFixtureB64 是一张 501x10 纯色 gif 的 base64（宽 > thumbMaxWidth 才会生成缩略图）。
+// 预生成字节而非在测试里 import image/gif：那会在测试二进制注册 gif 解码器，
+// 让本回归测试发现不了 storage.go 漏掉 _ "image/gif" 的情况。
+const gifFixtureB64 = "R0lGODlh9QEKAIEAAMhkMgAAAP///x48WiwAAAAA9QEKAAACTYSPqcvtD6OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofEovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5LL5DCwAADs="
+
+func TestEnsureThumbnailGeneratesForGif(t *testing.T) {
+	// 源是 gif 也输出 jpg：需注册 gif 解码器才能解码生成
+	dir := t.TempDir()
+	p := filepath.Join(dir, "789.gif")
+	gifData, err := base64.StdEncoding.DecodeString(gifFixtureB64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(p, gifData, 0644); err != nil {
+		t.Fatal(err)
+	}
+	ok, err := EnsureThumbnail(p)
+	if err != nil || !ok {
+		t.Fatalf("gif = (%v, %v), want (true, nil)", ok, err)
+	}
+	f, err := os.Open(ThumbPath(p))
+	if err != nil {
+		t.Fatalf("缩略图未生成: %v", err)
+	}
+	defer f.Close()
+	cfg, _, err := image.DecodeConfig(f)
+	if err != nil {
+		t.Fatalf("缩略图解码失败: %v", err)
+	}
+	if cfg.Width != 500 {
+		t.Errorf("缩略图宽度 = %d, want 500", cfg.Width)
 	}
 }
 
