@@ -9,6 +9,7 @@ import (
 	"image/jpeg"
 	_ "image/png"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -92,6 +93,11 @@ func (s *LocalStorage) Save(file multipart.File, header *multipart.FileHeader) (
 		return "", fmt.Errorf("write file: %w", err)
 	}
 
+	// 生成缩略图（纯优化，失败不影响原图保存）
+	if _, err := EnsureThumbnail(dst); err != nil {
+		log.Printf("生成缩略图失败 %s: %v", dst, err)
+	}
+
 	// 返回可访问的 URL
 	absDst, err := filepath.Abs(dst)
 	if err != nil {
@@ -124,7 +130,12 @@ func (s *LocalStorage) Delete(key string) error {
 	if key == "" {
 		return nil
 	}
-	return os.Remove(filepath.Join(s.BasePath, filepath.FromSlash(key)))
+	if err := os.Remove(filepath.Join(s.BasePath, filepath.FromSlash(key))); err != nil {
+		return err
+	}
+	// 连带删除缩略图（视频或缩略图不存在时忽略）
+	_ = os.Remove(filepath.Join(s.BasePath, filepath.FromSlash(filepath.Dir(key)), thumbFilename(filepath.Base(key))))
+	return nil
 }
 
 func (s *LocalStorage) SaveVideo(file multipart.File, header *multipart.FileHeader) (string, error) {

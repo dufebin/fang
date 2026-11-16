@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
@@ -139,4 +140,63 @@ func TestEnsureThumbnailGeneratesForGif(t *testing.T) {
 func keyToLocal(t *testing.T, s *LocalStorage, key string) string {
 	t.Helper()
 	return filepath.Join(s.BasePath, filepath.FromSlash(strings.TrimPrefix(key, s.urlPath)))
+}
+
+// nopCloser 包装 bytes.Reader 以满足 multipart.File 接口（bytes.Reader 无 Close）
+type nopCloser struct{ *bytes.Reader }
+
+func (nopCloser) Close() error { return nil }
+
+func saveFile(t *testing.T, s *LocalStorage, name string, data []byte) string {
+	t.Helper()
+	key, err := s.Save(nopCloser{bytes.NewReader(data)}, &multipart.FileHeader{Filename: name})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return key
+}
+
+func TestSaveGeneratesThumbnail(t *testing.T) {
+	s, err := NewLocalStorage(t.TempDir(), "http://example.com")
+	if err != nil {
+		t.Fatal(err)
+	}
+	key := saveFile(t, s, "test.jpg", jpegBytes(t, 900, 700))
+	local := keyToLocal(t, s, key)
+	if _, err := os.Stat(ThumbPath(local)); err != nil {
+		t.Fatalf("Save 未生成缩略图: %v", err)
+	}
+}
+
+func TestSaveSmallImageNoThumbnail(t *testing.T) {
+	s, err := NewLocalStorage(t.TempDir(), "http://example.com")
+	if err != nil {
+		t.Fatal(err)
+	}
+	key := saveFile(t, s, "test.jpg", jpegBytes(t, 400, 300))
+	local := keyToLocal(t, s, key)
+	if _, err := os.Stat(ThumbPath(local)); !os.IsNotExist(err) {
+		t.Error("小图上传不应生成缩略图")
+	}
+}
+
+func TestDeleteRemovesThumbnail(t *testing.T) {
+	s, err := NewLocalStorage(t.TempDir(), "http://example.com")
+	if err != nil {
+		t.Fatal(err)
+	}
+	key := saveFile(t, s, "test.jpg", jpegBytes(t, 900, 700))
+	local := keyToLocal(t, s, key)
+	if _, err := os.Stat(ThumbPath(local)); err != nil {
+		t.Fatal("前置条件：缩略图应已生成")
+	}
+	if err := s.Delete(key); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if _, err := os.Stat(local); !os.IsNotExist(err) {
+		t.Error("原图未被删除")
+	}
+	if _, err := os.Stat(ThumbPath(local)); !os.IsNotExist(err) {
+		t.Error("缩略图未被连带删除")
+	}
 }
