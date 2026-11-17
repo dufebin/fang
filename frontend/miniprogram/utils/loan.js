@@ -25,29 +25,39 @@ function calcEqualInstallment(totalLoan, years, rate) {
   const totalPayment = monthly * months
   const totalInterest = totalPayment - principal
 
+  const monthlySchedule = _buildEqualMonthly(principal, monthly, monthlyRate, months)
+
   return {
     monthly,
     totalPayment,
     totalInterest,
-    schedule: _buildEqualSchedule(principal, monthly, monthlyRate, months),
+    schedule: _yearlyFromMonthly(monthlySchedule),
+    monthlySchedule,
   }
 }
 
-function _buildEqualSchedule(principal, monthly, monthlyRate, months) {
-  const schedule = []
+// 等额本息逐月明细
+function _buildEqualMonthly(principal, monthly, monthlyRate, months) {
+  const rows = []
   let remaining = principal
   for (let i = 1; i <= months; i++) {
     const interest = remaining * monthlyRate
     const principalPart = monthly - interest
-    remaining -= principalPart
-    // 只返回年度汇总
-    if (i % 12 === 0 || i === months) {
-      schedule.push({
-        period: Math.ceil(i / 12),
-        monthly: monthly,
-        remaining: Math.max(0, remaining),
-      })
-    }
+    remaining = Math.max(0, remaining - principalPart)
+    rows.push({ month: i, monthly, principal: principalPart, interest, remaining })
+  }
+  return rows
+}
+
+// 由逐月明细推导年度汇总（与原 schedule 结构一致）
+function _yearlyFromMonthly(monthlySchedule) {
+  const schedule = []
+  for (let i = 12; i <= monthlySchedule.length; i += 12) {
+    schedule.push({
+      period: i / 12,
+      monthly: monthlySchedule[i - 1].monthly,
+      remaining: monthlySchedule[i - 1].remaining,
+    })
   }
   return schedule
 }
@@ -63,20 +73,19 @@ function calcEqualPrincipal(totalLoan, years, rate) {
   const monthlyPrincipal = principal / months
 
   let totalInterest = 0
-  const schedule = []
+  const monthlySchedule = []
 
   for (let i = 1; i <= months; i++) {
-    const remaining = principal - monthlyPrincipal * (i - 1)
-    const interest = remaining * monthlyRate
+    const remainingBefore = principal - monthlyPrincipal * (i - 1)
+    const interest = remainingBefore * monthlyRate
     totalInterest += interest
-    const monthly = monthlyPrincipal + interest
-    if (i % 12 === 0 || i === months) {
-      schedule.push({
-        period: Math.ceil(i / 12),
-        monthly,
-        remaining: Math.max(0, remaining - monthlyPrincipal),
-      })
-    }
+    monthlySchedule.push({
+      month: i,
+      monthly: monthlyPrincipal + interest,
+      principal: monthlyPrincipal,
+      interest,
+      remaining: Math.max(0, remainingBefore - monthlyPrincipal),
+    })
   }
 
   // 首月月供
@@ -86,7 +95,8 @@ function calcEqualPrincipal(totalLoan, years, rate) {
     monthly: firstMonthly,
     totalPayment: principal + totalInterest,
     totalInterest,
-    schedule,
+    schedule: _yearlyFromMonthly(monthlySchedule),
+    monthlySchedule,
   }
 }
 

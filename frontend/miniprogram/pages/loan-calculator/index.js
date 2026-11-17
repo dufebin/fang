@@ -4,6 +4,13 @@ function wan(v) {
   return v >= 10000 ? (v / 10000).toFixed(2) + '万' : Math.round(v) + '元'
 }
 
+// 大数字拆分：数值部分 + 单位（结果卡主数字用）
+function splitMoney(v) {
+  return v >= 10000
+    ? { num: (v / 10000).toFixed(2), unit: '万' }
+    : { num: String(Math.round(v)), unit: '元' }
+}
+
 Page({
   data: {
     totalPrice: '',
@@ -20,6 +27,8 @@ Page({
     loanKind: 'commercial',
     downRatios: [0.2, 0.3, 0.4, 0.5],
     yearOptions: [10, 15, 20, 25, 30, 35, 40],
+    // 底部选择器弹层
+    sheet: { visible: false, field: '', title: '', options: [], index: 0 },
   },
 
   onLoad(options) {
@@ -36,13 +45,62 @@ Page({
     this._updateLoan()
   },
 
-  onRatioTap(e) {
-    this.setData({ downRatio: e.currentTarget.dataset.val })
-    this._updateLoan()
+  // ---------- 底部选择器弹层 ----------
+  onRatioRowTap() {
+    this._openSheet('ratio')
   },
 
-  onYearsTap(e) {
-    this.setData({ years: e.currentTarget.dataset.val })
+  onYearsRowTap() {
+    this._openSheet('years')
+  },
+
+  _openSheet(field) {
+    const options = field === 'ratio'
+      ? this.data.downRatios.map(r => ({ value: r, label: Math.round(r * 100) + '%' }))
+      : this.data.yearOptions.map(y => ({ value: y, label: y + '年' }))
+    const current = field === 'ratio' ? this.data.downRatio : this.data.years
+    const index = Math.max(0, options.findIndex(o => o.value === current))
+    this.setData({
+      sheet: {
+        visible: true,
+        field,
+        title: field === 'ratio' ? '首付比例' : '贷款年限',
+        options,
+        index,
+      },
+    })
+  },
+
+  onSheetChange(e) {
+    this.setData({ 'sheet.index': e.detail.value[0] })
+  },
+
+  onSheetCancel() {
+    this.setData({ 'sheet.visible': false })
+  },
+
+  onSheetConfirm() {
+    const { field, options, index } = this.data.sheet
+    const picked = options[index]
+    if (picked) {
+      if (field === 'ratio') {
+        this.setData({ downRatio: picked.value })
+        this._updateLoan()
+      } else {
+        this.setData({ years: picked.value })
+      }
+    }
+    this.setData({ 'sheet.visible': false })
+  },
+
+  noop() {},
+
+  // 明细按年折叠展开
+  onToggleYear(e) {
+    const period = e.currentTarget.dataset.period
+    const row = this.data.result.schedule[period - 1]
+    if (!row) return
+    this.setData({ [`result.schedule[${period - 1}].expanded`]: !row.expanded })
   },
 
   onTypeTap(e) {
@@ -82,11 +140,25 @@ Page({
       ? calcEqualInstallment(loanYuan, years, rateVal)
       : calcEqualPrincipal(loanYuan, years, rateVal)
 
-    const schedule = raw.schedule.map(row => ({
-      ...row,
-      monthlyText: wan(row.monthly),
-      remainingText: wan(row.remaining),
-    }))
+    // 按年分组：每年一行，展开后显示该年逐月明细
+    const schedule = []
+    raw.monthlySchedule.forEach(m => {
+      const y = Math.floor((m.month - 1) / 12)
+      if (!schedule[y]) {
+        schedule[y] = { period: y + 1, monthly: m.monthly, remaining: m.remaining, expanded: false, months: [] }
+      }
+      schedule[y].months.push({
+        idx: m.month,
+        monthlyText: wan(m.monthly),
+        principalText: wan(m.principal),
+        interestText: wan(m.interest),
+        remainingText: wan(m.remaining),
+      })
+    })
+    schedule.forEach(row => {
+      row.monthlyText = wan(row.monthly)
+      row.remainingText = wan(row.remaining)
+    })
 
     // 本息占比（本金 / 还款总额）
     const principalPct = raw.totalPayment > 0
@@ -95,12 +167,13 @@ Page({
     // 两种还款方式对比（贝壳式并排展示）
     const ei = calcEqualInstallment(loanYuan, years, rateVal)
     const ep = calcEqualPrincipal(loanYuan, years, rateVal)
+    const big = splitMoney(raw.monthly)
+    const lastRow = raw.monthlySchedule[raw.monthlySchedule.length - 1]
     this.setData({
       result: {
-        monthlyText: wan(raw.monthly),
-        lastMonthlyText: repayType === 'equal_principal' && schedule.length
-          ? schedule[schedule.length - 1].monthlyText
-          : '',
+        monthlyNum: big.num,
+        monthlyUnit: big.unit,
+        lastMonthlyText: repayType === 'equal_principal' && lastRow ? wan(lastRow.monthly) : '',
         loanText: wan(loanYuan),
         totalText: wan(raw.totalPayment),
         interestText: wan(raw.totalInterest),
@@ -111,7 +184,7 @@ Page({
           ei: { monthlyText: wan(ei.monthly), interestText: wan(ei.totalInterest) },
           ep: {
             firstText: wan(ep.monthly),
-            lastText: wan(ep.schedule.length ? ep.schedule[ep.schedule.length - 1].monthly : ep.monthly),
+            lastText: wan(ep.monthlySchedule.length ? ep.monthlySchedule[ep.monthlySchedule.length - 1].monthly : ep.monthly),
             interestText: wan(ep.totalInterest),
           },
         },
