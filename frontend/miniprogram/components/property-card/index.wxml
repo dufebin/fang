@@ -17,13 +17,15 @@
     </view>
     <!-- 单图模式（默认） -->
     <image
-      wx:else
+      wx:elif="{{coverImage}}"
       class="card-image"
       src="{{coverImage}}"
       mode="aspectFill"
       lazy-load
       binderror="onCoverImgError"
     />
+    <!-- 无图占位 -->
+    <view wx:else class="card-image-empty">暂无图片</view>
     <view class="card-type-tag">{{fmt.typeLabel(property.property_type)}}</view>
     <view wx:if="{{showStatus}}" class="card-status-tag {{fmt.statusClass(property.status)}}">{{fmt.statusLabel(property.status)}}</view>
     <view wx:if="{{property.video_url && !compact}}" class="card-video-badge">▶ 视频</view>
