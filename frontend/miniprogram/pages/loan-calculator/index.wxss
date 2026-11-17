@@ -78,6 +78,16 @@
   background: #f8fafc;
 }
 
+/* 只读自动计算行（组合贷商贷金额） */
+.row-static {
+  background: #f8fafc;
+}
+
+.row-val-muted {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
 /* 右箭头（CSS 绘制） */
 .chevron {
   width: 14rpx;

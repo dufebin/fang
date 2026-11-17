@@ -8,6 +8,7 @@
       <view class="seg seg-row">
         <view class="seg-item {{loanKind === 'commercial' ? 'seg-active' : ''}}" data-val="commercial" bindtap="onKindTap">商业贷款</view>
         <view class="seg-item {{loanKind === 'fund' ? 'seg-active' : ''}}" data-val="fund" bindtap="onKindTap">公积金</view>
+        <view class="seg-item {{loanKind === 'combo' ? 'seg-active' : ''}}" data-val="combo" bindtap="onKindTap">组合贷</view>
       </view>
     </view>
 
@@ -32,6 +33,23 @@
       <view class="loan-amount-val">{{loanAmount}}<text class="unit">万元</text></view>
     </view>
 
+    <!-- 组合贷：公积金金额可改，商贷金额自动 = 贷款总额 - 公积金金额 -->
+    <block wx:if="{{loanKind === 'combo'}}">
+      <view class="form-row">
+        <text class="row-label">公积金金额</text>
+        <view class="row-value-box">
+          <input class="row-input" type="digit" placeholder="请输入" placeholder-class="input-ph" value="{{fundAmount}}" bindinput="onInput" data-field="fundAmount" />
+          <text class="row-unit">万元</text>
+        </view>
+      </view>
+      <view class="form-row row-static">
+        <text class="row-label">商贷金额</text>
+        <view class="row-value-box">
+          <text class="row-val-text row-val-muted">{{commercialAmount}} 万元</text>
+        </view>
+      </view>
+    </block>
+
     <view class="form-row row-tap" hover-class="row-hover" bindtap="onYearsRowTap">
       <text class="row-label">贷款年限</text>
       <view class="row-value-box">
@@ -40,13 +58,30 @@
       </view>
     </view>
 
-    <view class="form-row">
+    <view class="form-row" wx:if="{{loanKind !== 'combo'}}">
       <text class="row-label">年利率</text>
       <view class="row-value-box">
         <input class="row-input" type="digit" placeholder="{{loanKind === 'fund' ? '2.85' : '3.95'}}" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
         <text class="row-unit">%</text>
       </view>
     </view>
+
+    <block wx:if="{{loanKind === 'combo'}}">
+      <view class="form-row">
+        <text class="row-label">商贷利率</text>
+        <view class="row-value-box">
+          <input class="row-input" type="digit" placeholder="3.95" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
+          <text class="row-unit">%</text>
+        </view>
+      </view>
+      <view class="form-row">
+        <text class="row-label">公积金利率</text>
+        <view class="row-value-box">
+          <input class="row-input" type="digit" placeholder="2.85" placeholder-class="input-ph" value="{{rateFund}}" bindinput="onInput" data-field="rateFund" />
+          <text class="row-unit">%</text>
+        </view>
+      </view>
+    </block>
 
     <view class="form-row">
       <text class="row-label">还款方式</text>

@@ -11,6 +11,24 @@ function splitMoney(v) {
     : { num: String(Math.round(v)), unit: '元' }
 }
 
+// 组合贷：商贷 + 公积金两笔贷款逐月合并
+function mergeCalc(commYuan, fundYuan, years, commRate, fundRate, calc) {
+  const a = calc(commYuan, years, commRate)
+  const b = calc(fundYuan, years, fundRate)
+  return {
+    monthly: a.monthly + b.monthly,
+    totalPayment: a.totalPayment + b.totalPayment,
+    totalInterest: a.totalInterest + b.totalInterest,
+    monthlySchedule: a.monthlySchedule.map((row, i) => ({
+      month: row.month,
+      monthly: row.monthly + b.monthlySchedule[i].monthly,
+      principal: row.principal + b.monthlySchedule[i].principal,
+      interest: row.interest + b.monthlySchedule[i].interest,
+      remaining: row.remaining + b.monthlySchedule[i].remaining,
+    })),
+  }
+}
+
 Page({
   data: {
     totalPrice: '',
@@ -23,8 +41,12 @@ Page({
     loanKinds: [
       { value: 'commercial', label: '商业贷款', rate: '3.95' },
       { value: 'fund', label: '公积金', rate: '2.85' },
+      { value: 'combo', label: '组合贷', rate: '3.95', rateFund: '2.85' },
     ],
     loanKind: 'commercial',
+    fundAmount: '',
+    rateFund: '2.85',
+    commercialAmount: 0,
     downRatios: [0.2, 0.3, 0.4, 0.5],
     yearOptions: [10, 15, 20, 25, 30, 35, 40],
     // 底部选择器弹层
@@ -114,14 +136,28 @@ Page({
     const preset = this.data.loanKinds.find(k => k.value === kind)
     if (!preset) return
     // 切换贷款种类时带入该种类的常见利率，仍可手动修改
-    this.setData({ loanKind: kind, rate: preset.rate })
+    const patch = { loanKind: kind, rate: preset.rate }
+    if (kind === 'combo') {
+      patch.rateFund = preset.rateFund
+      // 首次进入组合贷默认商贷/公积金各半，仍可修改
+      const loan = Number(this.data.loanAmount) || 0
+      if (!Number(this.data.fundAmount) && loan > 0) {
+        patch.fundAmount = (loan / 2).toFixed(2)
+        patch.commercialAmount = +(loan / 2).toFixed(2)
+      }
+    }
+    this.setData(patch)
   },
 
   _updateLoan() {
     const totalPrice = Number(this.data.totalPrice)
-    if (!totalPrice) { this.setData({ loanAmount: 0 }); return }
-    const loanAmount = +(totalPrice * (1 - this.data.downRatio)).toFixed(2)
-    this.setData({ loanAmount })
+    const loanAmount = totalPrice ? +(totalPrice * (1 - this.data.downRatio)).toFixed(2) : 0
+    const patch = { loanAmount }
+    // 组合贷：商贷金额 = 贷款总额 - 公积金金额
+    if (this.data.loanKind === 'combo') {
+      patch.commercialAmount = +Math.max(0, loanAmount - (Number(this.data.fundAmount) || 0)).toFixed(2)
+    }
+    this.setData(patch)
   },
 
   onCalc() {
@@ -129,16 +165,37 @@ Page({
       wx.showToast({ title: '请输入房屋总价', icon: 'none' })
       return
     }
+    if (this.data.loanKind === 'combo') {
+      const fund = Number(this.data.fundAmount) || 0
+      if (fund < 0 || fund > this.data.loanAmount) {
+        wx.showToast({ title: '公积金金额需在 0 至贷款总额之间', icon: 'none' })
+        return
+      }
+    }
     this._recalc()
   },
 
   _recalc() {
-    const { loanAmount, years, rate, repayType } = this.data
-    const rateVal = Number(rate) || (this.data.loanKind === 'fund' ? 2.85 : 3.95)
+    const { loanAmount, years, rate, rateFund, repayType, loanKind } = this.data
     const loanYuan = loanAmount * 10000
-    const raw = repayType === 'equal_installment'
-      ? calcEqualInstallment(loanYuan, years, rateVal)
-      : calcEqualPrincipal(loanYuan, years, rateVal)
+    let raw, ei, ep
+    if (loanKind === 'combo') {
+      // 组合贷：商贷与公积金分摊贷款总额，各自利率，逐月合并
+      const fundYuan = Math.min(Math.max((Number(this.data.fundAmount) || 0) * 10000, 0), loanYuan)
+      const commYuan = loanYuan - fundYuan
+      const commRate = Number(rate) || 3.95
+      const fRate = Number(rateFund) || 2.85
+      raw = mergeCalc(commYuan, fundYuan, years, commRate, fRate, repayType === 'equal_installment' ? calcEqualInstallment : calcEqualPrincipal)
+      ei = mergeCalc(commYuan, fundYuan, years, commRate, fRate, calcEqualInstallment)
+      ep = mergeCalc(commYuan, fundYuan, years, commRate, fRate, calcEqualPrincipal)
+    } else {
+      const rateVal = Number(rate) || (loanKind === 'fund' ? 2.85 : 3.95)
+      raw = repayType === 'equal_installment'
+        ? calcEqualInstallment(loanYuan, years, rateVal)
+        : calcEqualPrincipal(loanYuan, years, rateVal)
+      ei = calcEqualInstallment(loanYuan, years, rateVal)
+      ep = calcEqualPrincipal(loanYuan, years, rateVal)
+    }
 
     // 按年分组：每年一行，展开后显示该年逐月明细
     const schedule = []
@@ -165,8 +222,6 @@ Page({
       ? Math.round((loanYuan / raw.totalPayment) * 100)
       : 100
     // 两种还款方式对比（贝壳式并排展示）
-    const ei = calcEqualInstallment(loanYuan, years, rateVal)
-    const ep = calcEqualPrincipal(loanYuan, years, rateVal)
     const big = splitMoney(raw.monthly)
     const lastRow = raw.monthlySchedule[raw.monthlySchedule.length - 1]
     this.setData({
