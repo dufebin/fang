@@ -1,6 +1,6 @@
 <view class="page pb-safe">
   <!-- 渐变质感头部 -->
-  <view class="hero-header" bindtap="{{isLoggedIn ? '' : 'onLogin'}}">
+  <view class="hero-header" bindtap="onHeaderTap">
     <view class="hero-bg-glow"></view>
     <view class="user-profile-flex">
       <image class="avatar-glass" src="{{avatarUrl}}" mode="aspectFill" />

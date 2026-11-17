@@ -91,6 +91,15 @@ Page({
 
   onLogin() { wx.navigateTo({ url: '/pages/login/index' }) },
 
+  // 头部点击：已登录进编辑资料，未登录去登录
+  onHeaderTap() {
+    if (this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/profile-edit/index' })
+    } else {
+      this.onLogin()
+    }
+  },
+
   onFavorites() { wx.navigateTo({ url: '/pages/my-favorites/index' }) },
   onAppointments() { wx.navigateTo({ url: '/pages/appointment/index' }) },
   onHistory() { wx.navigateTo({ url: '/pages/my-history/index' }) },

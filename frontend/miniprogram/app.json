@@ -11,6 +11,7 @@
     "pages/article-list/index",
     "pages/article-detail/index",
     "pages/my/index",
+    "pages/profile-edit/index",
     "pages/my-favorites/index",
     "pages/my-history/index",
     "pages/my-notifications/index",
