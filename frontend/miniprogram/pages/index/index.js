@@ -25,6 +25,20 @@ Page({
     this._loadUser()
   },
 
+  // 主页转发（不设 imageUrl，微信自动截取页面顶部为卡片图）
+  onShareAppMessage() {
+    return {
+      title: '真实房源，安心看房',
+      path: '/pages/index/index',
+    }
+  },
+
+  onShareTimeline() {
+    return {
+      title: '真实房源，安心看房',
+    }
+  },
+
   _loadUser() {
     try {
       const user = getApp().globalData.userInfo
