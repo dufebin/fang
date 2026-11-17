@@ -1,11 +1,11 @@
 /**
  * 等额本息：每月还款额固定
- * totalLoan: 贷款总额（万元）
+ * totalLoan: 贷款总额（元）
  * years: 贷款年限
  * rate: 年利率（如 4.2 代表 4.2%）
  */
 function calcEqualInstallment(totalLoan, years, rate) {
-  const principal = totalLoan * 10000
+  const principal = totalLoan
   const monthlyRate = rate / 100 / 12
   const months = years * 12
 
@@ -54,9 +54,10 @@ function _buildEqualSchedule(principal, monthly, monthlyRate, months) {
 
 /**
  * 等额本金：每月还款额递减
+ * totalLoan: 贷款总额（元）
  */
 function calcEqualPrincipal(totalLoan, years, rate) {
-  const principal = totalLoan * 10000
+  const principal = totalLoan
   const monthlyRate = rate / 100 / 12
   const months = years * 12
   const monthlyPrincipal = principal / months
