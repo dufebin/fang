@@ -13,6 +13,11 @@ Page({
     repayType: 'equal_installment',
     loanAmount: 0,
     result: null,
+    loanKinds: [
+      { value: 'commercial', label: '商业贷款', rate: '3.95' },
+      { value: 'fund', label: '公积金', rate: '2.85' },
+    ],
+    loanKind: 'commercial',
     downRatios: [0.2, 0.3, 0.4, 0.5],
     yearOptions: [10, 15, 20, 25, 30, 35, 40],
   },
@@ -42,6 +47,16 @@ Page({
 
   onTypeTap(e) {
     this.setData({ repayType: e.currentTarget.dataset.val })
+    // 切换还款方式后立即重算，结果卡与明细同步更新
+    if (this.data.result) this._recalc()
+  },
+
+  onKindTap(e) {
+    const kind = e.currentTarget.dataset.val
+    const preset = this.data.loanKinds.find(k => k.value === kind)
+    if (!preset) return
+    // 切换贷款种类时带入该种类的常见利率，仍可手动修改
+    this.setData({ loanKind: kind, rate: preset.rate })
   },
 
   _updateLoan() {
@@ -52,12 +67,16 @@ Page({
   },
 
   onCalc() {
-    const { loanAmount, years, rate, repayType } = this.data
-    if (!loanAmount || loanAmount <= 0) {
+    if (!this.data.loanAmount || this.data.loanAmount <= 0) {
       wx.showToast({ title: '请输入房屋总价', icon: 'none' })
       return
     }
-    const rateVal = Number(rate) || 3.95
+    this._recalc()
+  },
+
+  _recalc() {
+    const { loanAmount, years, rate, repayType } = this.data
+    const rateVal = Number(rate) || (this.data.loanKind === 'fund' ? 2.85 : 3.95)
     const loanYuan = loanAmount * 10000
     const raw = repayType === 'equal_installment'
       ? calcEqualInstallment(loanYuan, years, rateVal)
@@ -73,6 +92,9 @@ Page({
     const principalPct = raw.totalPayment > 0
       ? Math.round((loanYuan / raw.totalPayment) * 100)
       : 100
+    // 两种还款方式对比（贝壳式并排展示）
+    const ei = calcEqualInstallment(loanYuan, years, rateVal)
+    const ep = calcEqualPrincipal(loanYuan, years, rateVal)
     this.setData({
       result: {
         monthlyText: wan(raw.monthly),
@@ -85,6 +107,14 @@ Page({
         monthsText: `${years * 12}期 · ${years}年`,
         principalPct,
         interestPct: 100 - principalPct,
+        compare: {
+          ei: { monthlyText: wan(ei.monthly), interestText: wan(ei.totalInterest) },
+          ep: {
+            firstText: wan(ep.monthly),
+            lastText: wan(ep.schedule.length ? ep.schedule[ep.schedule.length - 1].monthly : ep.monthly),
+            interestText: wan(ep.totalInterest),
+          },
+        },
         schedule,
       },
     })

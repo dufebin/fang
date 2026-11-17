@@ -4,6 +4,14 @@
     <view class="card-title">贷款计算</view>
 
     <view class="form-item">
+      <text class="form-label">贷款种类</text>
+      <view class="seg">
+        <view class="seg-item {{loanKind === 'commercial' ? 'seg-active' : ''}}" data-val="commercial" bindtap="onKindTap">商业贷款</view>
+        <view class="seg-item {{loanKind === 'fund' ? 'seg-active' : ''}}" data-val="fund" bindtap="onKindTap">公积金</view>
+      </view>
+    </view>
+
+    <view class="form-item">
       <text class="form-label">房屋总价（万元）</text>
       <input class="form-input" type="digit" placeholder="请输入房屋总价" placeholder-class="input-ph" value="{{totalPrice}}" bindinput="onInput" data-field="totalPrice" />
     </view>
@@ -43,7 +51,7 @@
 
     <view class="form-item">
       <text class="form-label">年利率（%）</text>
-      <input class="form-input" type="digit" placeholder="3.95" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
+      <input class="form-input" type="digit" placeholder="{{loanKind === 'fund' ? '2.85' : '3.95'}}" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
     </view>
 
     <view class="form-item">
@@ -59,26 +67,37 @@
 
   <!-- 结果区 -->
   <block wx:if="{{result}}">
-    <view class="hero">
-      <view class="hero-deco hero-deco1"></view>
-      <view class="hero-deco hero-deco2"></view>
+    <view class="result-card">
+      <view class="rc-label">{{repayType === 'equal_installment' ? '等额本息 · 每月还款' : '等额本金 · 首月还款'}}</view>
+      <view class="rc-amount">{{result.monthlyText}}</view>
+      <view wx:if="{{result.lastMonthlyText}}" class="rc-sub">末月还款 {{result.lastMonthlyText}} · 逐月递减</view>
 
-      <view class="hero-label">{{repayType === 'equal_installment' ? '每月还款' : '首月还款'}}</view>
-      <view class="hero-amount">{{result.monthlyText}}</view>
-      <view wx:if="{{result.lastMonthlyText}}" class="hero-sub">末月还款 {{result.lastMonthlyText}} · 逐月递减</view>
+      <view class="rc-grid">
+        <view class="rc-cell">
+          <text class="rc-cell-val">{{result.loanText}}</text>
+          <text class="rc-cell-label">贷款总额</text>
+        </view>
+        <view class="rc-cell">
+          <text class="rc-cell-val">{{result.totalText}}</text>
+          <text class="rc-cell-label">还款总额</text>
+        </view>
+        <view class="rc-cell">
+          <text class="rc-cell-val">{{result.interestText}}</text>
+          <text class="rc-cell-label">支付利息</text>
+        </view>
+      </view>
 
-      <view class="hero-grid">
-        <view class="hero-cell">
-          <text class="hero-cell-val">{{result.loanText}}</text>
-          <text class="hero-cell-label">贷款总额</text>
+      <!-- 两种还款方式对比（点击切换） -->
+      <view class="cmp">
+        <view class="cmp-side {{repayType === 'equal_installment' ? 'cmp-on' : ''}}" hover-class="chip-hover" data-val="equal_installment" bindtap="onTypeTap">
+          <view class="cmp-name">等额本息</view>
+          <view class="cmp-val">{{result.compare.ei.monthlyText}}/月</view>
+          <view class="cmp-sub">利息 {{result.compare.ei.interestText}}</view>
         </view>
-        <view class="hero-cell">
-          <text class="hero-cell-val">{{result.totalText}}</text>
-          <text class="hero-cell-label">还款总额</text>
-        </view>
-        <view class="hero-cell">
-          <text class="hero-cell-val">{{result.interestText}}</text>
-          <text class="hero-cell-label">支付利息</text>
+        <view class="cmp-side {{repayType === 'equal_principal' ? 'cmp-on' : ''}}" hover-class="chip-hover" data-val="equal_principal" bindtap="onTypeTap">
+          <view class="cmp-name">等额本金</view>
+          <view class="cmp-val">{{result.compare.ep.firstText}}~{{result.compare.ep.lastText}}/月</view>
+          <view class="cmp-sub">利息 {{result.compare.ep.interestText}}</view>
         </view>
       </view>
 
