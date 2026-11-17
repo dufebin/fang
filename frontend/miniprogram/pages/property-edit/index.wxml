@@ -64,7 +64,7 @@
       <view class="location-row">
         <picker mode="region" value="{{regionValue}}" bindchange="onRegionChange" class="region-picker">
           <view class="region-display {{form.city ? '' : 'placeholder'}}">
-            {{form.city ? (form.province + ' ' + form.city + ' ' + form.district) : '请选择省市区'}}
+            {{form.city ? (form.province + ' ' + form.city + (form.district ? ' ' + form.district : '')) : '请选择省市区'}}
           </view>
         </picker>
         <view class="locate-btn {{locating ? 'locating' : ''}}" bindtap="onAutoLocation">
@@ -94,10 +94,10 @@
       </view>
     </view>
 
-    <view class="field-row">
+    <view class="field-row" wx:if="{{form.property_type === 'rent'}}">
       <text class="field-label">月租</text>
       <view class="unit-wrap">
-        <input class="field-input field-right" type="digit" placeholder="租赁房源填写" value="{{form.monthly_rent}}" bindinput="onInput" data-field="monthly_rent" />
+        <input class="field-input field-right" type="digit" placeholder="请输入月租金" value="{{form.monthly_rent}}" bindinput="onInput" data-field="monthly_rent" />
         <text class="unit">元/月</text>
       </view>
     </view>

@@ -21,8 +21,8 @@ Page({
     form: {
       title: '',
       property_type: 'second_hand',
-      province: '',
-      city: '',
+      province: '辽宁省',
+      city: '沈阳市',
       district: '',
       address: '',
       total_price: '',
@@ -41,7 +41,7 @@ Page({
     status: 'available',
     rejectReason: '',
     reviewLocked: false,
-    regionValue: ['', '', ''],
+    regionValue: ['辽宁省', '沈阳市', ''],
     locating: false,
     images: [],
     _newImagePaths: [],
@@ -170,7 +170,11 @@ Page({
   },
 
   onTypeSelect(e) {
-    this.setData({ 'form.property_type': e.currentTarget.dataset.val })
+    const val = e.currentTarget.dataset.val
+    const patch = { 'form.property_type': val }
+    // 月租仅租房显示；切到其它类型时清掉残留值，避免隐藏字段随表单提交
+    if (val !== 'rent') patch['form.monthly_rent'] = ''
+    this.setData(patch)
   },
 
   onDecorationSelect(e) {
