@@ -23,8 +23,9 @@ Component({
         })
       }
       const imgs = p.images && p.images.length ? p.images : []
+      // 拼图取实际前 4 张（2 图上下、3 图左大右二、≥4 图四宫格），不再重复补位
       const srcs = imgs.length >= 2
-        ? [0, 1, 2, 3].map(i => imgs[Math.min(i, imgs.length - 1)].url)
+        ? imgs.slice(0, 4).map(img => img.url)
         : []
       const fourImgUrls = srcs.map(thumbURL)
       // 缩略图加载失败时回退原图；两者相同（如遗留绝对 URL）则不设回退

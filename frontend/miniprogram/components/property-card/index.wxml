@@ -2,8 +2,8 @@
 
 <view class="property-card {{compact ? 'property-card-compact' : ''}}" bindtap="onTap">
   <view class="card-image-wrap {{compact ? 'card-image-compact' : ''}}">
-    <!-- 四图拼接模式 -->
-    <view wx:if="{{fourImages && fourImgUrls.length}}" class="card-four-grid">
+    <!-- 四图拼接（≥4 张：2×2） -->
+    <view wx:if="{{fourImages && fourImgUrls.length >= 4}}" class="card-four-grid">
       <image
         wx:for="{{fourImgUrls}}"
         wx:key="index"
@@ -14,6 +14,19 @@
         binderror="onGridImgError"
         data-idx="{{index}}"
       />
+    </view>
+    <!-- 三图：左大右二 -->
+    <view wx:elif="{{fourImages && fourImgUrls.length === 3}}" class="grid-3">
+      <image class="card-grid-img g-main" src="{{fourImgUrls[0]}}" mode="aspectFill" lazy-load binderror="onGridImgError" data-idx="0" />
+      <view class="g-side">
+        <image class="card-grid-img" src="{{fourImgUrls[1]}}" mode="aspectFill" lazy-load binderror="onGridImgError" data-idx="1" />
+        <image class="card-grid-img" src="{{fourImgUrls[2]}}" mode="aspectFill" lazy-load binderror="onGridImgError" data-idx="2" />
+      </view>
+    </view>
+    <!-- 两图：上下两张大图 -->
+    <view wx:elif="{{fourImages && fourImgUrls.length === 2}}" class="grid-2">
+      <image class="card-grid-img" src="{{fourImgUrls[0]}}" mode="aspectFill" lazy-load binderror="onGridImgError" data-idx="0" />
+      <image class="card-grid-img" src="{{fourImgUrls[1]}}" mode="aspectFill" lazy-load binderror="onGridImgError" data-idx="1" />
     </view>
     <!-- 单图模式（默认） -->
     <image
