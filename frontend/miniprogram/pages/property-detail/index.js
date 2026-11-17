@@ -307,10 +307,12 @@ Page({
   onShareAppMessage() {
     const p = this.data.property
     const agentCode = wx.getStorageSync('agentCode') || this.data.agentCode || (this.data.agent && this.data.agent.agent_code) || ''
-    return {
-      title: p.title,
+    const share = {
+      title: p.title || '房源详情',
       path: `/pages/property-detail/index?id=${this._propertyId}${agentCode ? '&a=' + agentCode : ''}`,
-      imageUrl: this.data.images[0] || '',
     }
+    // 仅在有图时设置 imageUrl；传空字符串微信不回退截图，卡片会没图
+    if (this.data.images[0]) share.imageUrl = this.data.images[0]
+    return share
   },
 })
