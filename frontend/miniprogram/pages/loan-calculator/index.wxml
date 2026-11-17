@@ -5,36 +5,36 @@
 
     <view class="form-item">
       <text class="form-label">房屋总价（万元）</text>
-      <input class="form-input" type="digit" placeholder="请输入" value="{{totalPrice}}" bindinput="onInput" data-field="totalPrice" />
+      <input class="form-input" type="digit" placeholder="请输入房屋总价" placeholder-class="input-ph" value="{{totalPrice}}" bindinput="onInput" data-field="totalPrice" />
     </view>
 
     <view class="form-item">
       <text class="form-label">首付比例</text>
-      <view class="ratio-row">
+      <view class="chip-row">
         <view
           wx:for="{{downRatios}}"
           wx:key="*this"
-          class="ratio-tag {{downRatio === item ? 'ratio-active' : ''}}"
+          class="chip {{downRatio === item ? 'chip-active' : ''}}"
+          hover-class="chip-hover"
           data-val="{{item}}"
           bindtap="onRatioTap"
         >{{item*100}}%</view>
       </view>
     </view>
 
-    <view class="form-item">
-      <view class="label-row">
-        <text class="form-label">贷款金额</text>
-        <text class="loan-amount-val">{{loanAmount}}万元</text>
-      </view>
+    <view class="loan-line">
+      <text class="form-label">贷款金额</text>
+      <view class="loan-amount-val">{{loanAmount}}<text class="unit">万元</text></view>
     </view>
 
     <view class="form-item">
-      <text class="form-label">贷款年限（年）</text>
-      <view class="ratio-row">
+      <text class="form-label">贷款年限</text>
+      <view class="chip-row">
         <view
           wx:for="{{yearOptions}}"
           wx:key="*this"
-          class="ratio-tag {{years === item ? 'ratio-active' : ''}}"
+          class="chip {{years === item ? 'chip-active' : ''}}"
+          hover-class="chip-hover"
           data-val="{{item}}"
           bindtap="onYearsTap"
         >{{item}}年</view>
@@ -43,48 +43,67 @@
 
     <view class="form-item">
       <text class="form-label">年利率（%）</text>
-      <input class="form-input" type="digit" placeholder="3.95" value="{{rate}}" bindinput="onInput" data-field="rate" />
+      <input class="form-input" type="digit" placeholder="3.95" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
     </view>
 
     <view class="form-item">
       <text class="form-label">还款方式</text>
-      <view class="ratio-row">
-        <view class="ratio-tag {{repayType === 'equal_installment' ? 'ratio-active' : ''}}" data-val="equal_installment" bindtap="onTypeTap">等额本息</view>
-        <view class="ratio-tag {{repayType === 'equal_principal' ? 'ratio-active' : ''}}" data-val="equal_principal" bindtap="onTypeTap">等额本金</view>
+      <view class="seg">
+        <view class="seg-item {{repayType === 'equal_installment' ? 'seg-active' : ''}}" hover-class="none" data-val="equal_installment" bindtap="onTypeTap">等额本息</view>
+        <view class="seg-item {{repayType === 'equal_principal' ? 'seg-active' : ''}}" hover-class="none" data-val="equal_principal" bindtap="onTypeTap">等额本金</view>
       </view>
     </view>
 
-    <view class="calc-btn" bindtap="onCalc">开始计算</view>
+    <view class="calc-btn" hover-class="calc-btn-hover" bindtap="onCalc">开始计算</view>
   </view>
 
   <!-- 结果区 -->
-  <view wx:if="{{result}}" class="card result-card">
-    <view class="result-row">
-      <view class="result-item">
-        <text class="result-label">{{repayType === 'equal_installment' ? '每月还款' : '首月还款'}}</text>
-        <text class="result-val">{{result.monthlyText}}</text>
+  <block wx:if="{{result}}">
+    <view class="hero">
+      <view class="hero-deco hero-deco1"></view>
+      <view class="hero-deco hero-deco2"></view>
+
+      <view class="hero-label">{{repayType === 'equal_installment' ? '每月还款' : '首月还款'}}</view>
+      <view class="hero-amount">{{result.monthlyText}}</view>
+      <view wx:if="{{result.lastMonthlyText}}" class="hero-sub">末月还款 {{result.lastMonthlyText}} · 逐月递减</view>
+
+      <view class="hero-grid">
+        <view class="hero-cell">
+          <text class="hero-cell-val">{{result.loanText}}</text>
+          <text class="hero-cell-label">贷款总额</text>
+        </view>
+        <view class="hero-cell">
+          <text class="hero-cell-val">{{result.totalText}}</text>
+          <text class="hero-cell-label">还款总额</text>
+        </view>
+        <view class="hero-cell">
+          <text class="hero-cell-val">{{result.interestText}}</text>
+          <text class="hero-cell-label">支付利息</text>
+        </view>
       </view>
-      <view class="result-item">
-        <text class="result-label">还款总额</text>
-        <text class="result-val">{{result.totalText}}</text>
+
+      <view class="bar">
+        <view class="bar-fill" style="width: {{result.principalPct}}%;"></view>
       </view>
-      <view class="result-item">
-        <text class="result-label">支付利息</text>
-        <text class="result-val red">{{result.interestText}}</text>
+      <view class="bar-legend">
+        <view class="legend-dot dot-principal"></view><text>本金 {{result.principalPct}}%</text>
+        <view class="legend-dot dot-interest"></view><text>利息 {{result.interestPct}}%</text>
+        <text class="bar-months">{{result.monthsText}}</text>
       </view>
     </view>
 
-    <!-- 年度明细 -->
-    <view class="schedule-title">还款明细（年度）</view>
-    <view class="schedule-header">
-      <text>年份</text>
-      <text>月还款额</text>
-      <text>剩余本金</text>
+    <view class="card">
+      <view class="schedule-title">还款明细（年度）</view>
+      <view class="schedule-header">
+        <text class="col-year">年份</text>
+        <text class="col-num">月还款额</text>
+        <text class="col-num">剩余本金</text>
+      </view>
+      <view class="schedule-row" wx:for="{{result.schedule}}" wx:key="period">
+        <text class="col-year">第{{item.period}}年</text>
+        <text class="col-num">{{item.monthlyText}}</text>
+        <text class="col-num">{{item.remainingText}}</text>
+      </view>
     </view>
-    <view class="schedule-row" wx:for="{{result.schedule}}" wx:key="period">
-      <text>第{{item.period}}年</text>
-      <text>{{item.monthlyText}}</text>
-      <text>{{item.remainingText}}</text>
-    </view>
-  </view>
+  </block>
 </view>

@@ -14,7 +14,7 @@ Page({
     loanAmount: 0,
     result: null,
     downRatios: [0.2, 0.3, 0.4, 0.5],
-    yearOptions: [10, 15, 20, 25, 30],
+    yearOptions: [10, 15, 20, 25, 30, 35, 40],
   },
 
   onLoad(options) {
@@ -69,11 +69,22 @@ Page({
       remainingText: wan(row.remaining),
     }))
 
+    // 本息占比（本金 / 还款总额）
+    const principalPct = raw.totalPayment > 0
+      ? Math.round((loanYuan / raw.totalPayment) * 100)
+      : 100
     this.setData({
       result: {
         monthlyText: wan(raw.monthly),
+        lastMonthlyText: repayType === 'equal_principal' && schedule.length
+          ? schedule[schedule.length - 1].monthlyText
+          : '',
+        loanText: wan(loanYuan),
         totalText: wan(raw.totalPayment),
         interestText: wan(raw.totalInterest),
+        monthsText: `${years * 12}期 · ${years}年`,
+        principalPct,
+        interestPct: 100 - principalPct,
         schedule,
       },
     })
