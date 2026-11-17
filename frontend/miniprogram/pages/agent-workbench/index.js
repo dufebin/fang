@@ -43,16 +43,21 @@ Page({
 
   async _loadTabData(tab) {
     if (this._tabLoaded[tab]) return
+    // 请求序号：快速切换 tab 时丢弃过期响应，避免 A tab 显示 B tab 的数据
+    const seq = (this._loadSeq = (this._loadSeq || 0) + 1)
     this.setData({ loading: true })
     try {
       if (tab === 'my') {
         const res = await getMyProperties({ page: 1, page_size: 20, role: 'owner' })
+        if (seq !== this._loadSeq) return
         this.setData({ propertyList: res.list || [] })
       } else if (tab === 'claimed') {
         const res = await getMyProperties({ page: 1, page_size: 20, role: 'claimed' })
+        if (seq !== this._loadSeq) return
         this.setData({ propertyList: res.list || [] })
       } else if (tab === 'appt') {
         const res = await listAgentAppointments({ status: 'pending' })
+        if (seq !== this._loadSeq) return
         const list = (res || []).map(a => ({
           ...a,
           user_name: a.user ? (a.user.nickname || '用户') : '未知',
@@ -63,14 +68,18 @@ Page({
       }
       this._tabLoaded[tab] = true
     } catch (_) {
+      if (seq !== this._loadSeq) return
       wx.showToast({ title: '加载失败，请重试', icon: 'none' })
     }
-    this.setData({ loading: false })
+    if (seq === this._loadSeq) this.setData({ loading: false })
   },
 
   onTabTap(e) {
     const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab })
+    if (tab === this.data.activeTab) return
+    // 切 tab 先清空旧列表并失效目标缓存，避免残留/串显上一个 tab 的数据
+    this.setData({ activeTab: tab, propertyList: [] })
+    this._tabLoaded[tab] = false
     this._loadTabData(tab)
   },
 
