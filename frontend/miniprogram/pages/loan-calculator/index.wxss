@@ -1,182 +1,240 @@
 .page {
-  background: var(--color-bg);
+  background: #fff;
   min-height: 100vh;
-  padding: 24rpx;
 }
 
-/* ---------- 输入卡片 ---------- */
-.card {
+/* ---------- 参考图输入区 ---------- */
+.loan-tabs {
+  display: flex;
+  height: 124rpx;
+  border-bottom: 2rpx solid #F0F0F0;
+}
+
+.loan-tab {
+  flex: 1;
+  line-height: 124rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: #222;
+}
+
+.loan-tab-active {
+  color: #3072F6;
+}
+
+.loan-form {
+  padding-left: 48rpx;
+  padding-right: 48rpx;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  min-height: 122rpx;
+  border-bottom: 2rpx solid #EEE;
+  box-sizing: border-box;
+}
+
+.row-no-border {
+  border-bottom: none;
+}
+
+.combo-group-start {
+  margin-top: 20rpx;
+}
+
+.row-label {
+  width: 200rpx;
+  flex: none;
+  font-size: 30rpx;
+  color: #222;
+}
+
+.row-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.row-input {
+  flex: 1;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: left;
+  font-size: 30rpx;
+  color: #000;
+}
+
+.row-text {
+  flex: 1;
+  font-size: 30rpx;
+  color: #000;
+  white-space: nowrap;
+}
+
+.row-unit {
+  flex: none;
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.chevron {
+  width: 14rpx;
+  height: 14rpx;
+  flex: none;
+  margin-right: 6rpx;
+  border-right: 2rpx solid #999;
+  border-bottom: 2rpx solid #999;
+  transform: rotate(-45deg);
+  transition: transform .2s ease;
+}
+
+.mode-options {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.mode-option {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  color: #222;
+  white-space: nowrap;
+}
+
+.mode-option + .mode-option {
+  margin-left: 50rpx;
+}
+
+.radio {
+  position: relative;
+  width: 32rpx;
+  height: 32rpx;
+  flex: none;
+  box-sizing: border-box;
+  margin-right: 20rpx;
+  border: 2rpx solid #CCC;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.radio-on {
+  border-color: #3072F6;
+  background: #3072F6;
+}
+
+.radio-check {
+  position: absolute;
+  left: 8rpx;
+  top: 8rpx;
+  width: 12rpx;
+  height: 7rpx;
+  border-left: 3rpx solid #fff;
+  border-bottom: 3rpx solid #fff;
+  transform: rotate(-45deg);
+}
+
+.lpr-wrap {
+  padding-bottom: 32rpx;
+  border-bottom: 2rpx solid #EEE;
+}
+
+.lpr-panel {
+  display: flex;
+  align-items: center;
+  height: 88rpx;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  box-sizing: border-box;
+  border-radius: 8rpx;
+  background: #F4F7FE;
+}
+
+.new-badge {
+  width: 62rpx;
+  height: 26rpx;
+  flex: none;
+  border-radius: 4rpx;
+  background: #3072F6;
+  color: #fff;
+  font-size: 16rpx;
+  font-weight: 600;
+  line-height: 26rpx;
+  text-align: center;
+  letter-spacing: 1rpx;
+}
+
+.lpr-text {
+  margin-left: 20rpx;
+  font-size: 20rpx;
+  color: #333;
+  white-space: nowrap;
+}
+
+.lpr-history {
+  margin-left: auto;
+  font-size: 20rpx;
+  color: #3072F6;
+  white-space: nowrap;
+}
+
+.combo-rate-input {
+  flex: none;
+  width: 72rpx;
+}
+
+.rate-suffix {
+  font-size: 30rpx;
+  color: #000;
+  white-space: nowrap;
+}
+
+.calc-btn {
+  height: 100rpx;
+  margin-top: 80rpx;
+  border-radius: 8rpx;
+  background: #3072F6;
+  color: #fff;
+  font-size: 30rpx;
+  line-height: 100rpx;
+  text-align: center;
+}
+
+.calc-btn-hover {
+  opacity: .85;
+}
+
+.page-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 80rpx;
+  padding-bottom: 60rpx;
+  color: #3072F6;
+  font-size: 24rpx;
+  line-height: 40rpx;
+}
+
+.footer-divider {
+  margin-left: 24rpx;
+  margin-right: 24rpx;
+}
+
+/* ---------- 结果区容器（参考图未覆盖，保留原展示） ---------- */
+.results {
+  margin-top: 24rpx;
+  padding: 24rpx;
+  background: var(--color-bg);
+}
+
+.results .card {
   background: #fff;
   border-radius: 24rpx;
   padding: 36rpx 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 2rpx 20rpx rgba(2, 132, 199, 0.06);
-}
-
-.card-title {
-  font-size: 34rpx;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 12rpx;
-}
-
-/* 行式表单：左标签 + 右值，行间细分割线 */
-.form-row {
-  display: flex;
-  align-items: center;
-  min-height: 96rpx;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #f1f5f9;
-}
-
-.row-label {
-  font-size: 28rpx;
-  color: #475569;
-  flex-shrink: 0;
-}
-
-.row-value-box {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8rpx;
-  min-width: 0;
-}
-
-.row-input {
-  text-align: right;
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #0f172a;
-  flex: 1;
-  min-width: 0;
-}
-
-.row-val-text {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.row-unit {
-  font-size: 24rpx;
-  color: #94a3b8;
-  flex-shrink: 0;
-}
-
-.input-ph {
-  color: #94a3b8;
-  font-weight: 400;
-}
-
-.row-tap {
-  cursor: pointer;
-}
-
-.row-hover {
-  background: #f8fafc;
-}
-
-/* 只读自动计算行（组合贷商贷金额） */
-.row-static {
-  background: #f8fafc;
-}
-
-.row-val-muted {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-/* 右箭头（CSS 绘制） */
-.chevron {
-  width: 14rpx;
-  height: 14rpx;
-  border-right: 3rpx solid #cbd5e1;
-  border-bottom: 3rpx solid #cbd5e1;
-  transform: rotate(-45deg);
-  margin-left: 12rpx;
-  flex-shrink: 0;
-  transition: transform 0.2s ease;
-}
-
-/* 贷款金额行（浅蓝底强调） */
-.loan-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #f0f9ff;
-  border-radius: 16rpx;
-  padding: 24rpx;
-  margin: 16rpx 0;
-}
-
-.loan-line .row-label {
-  color: #0369a1;
-  font-weight: 600;
-}
-
-.loan-amount-val {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.loan-amount-val .unit {
-  font-size: 24rpx;
-  font-weight: 400;
-  color: #0369a1;
-  margin-left: 4rpx;
-}
-
-/* 分段控件（贷款种类 / 还款方式，行内紧凑版） */
-.seg {
-  display: flex;
-  background: #f1f5f9;
-  border-radius: 999rpx;
-  padding: 6rpx;
-}
-
-.seg-row {
-  margin-left: 24rpx;
-  flex: 1;
-}
-
-.seg-item {
-  flex: 1;
-  height: 64rpx;
-  line-height: 64rpx;
-  text-align: center;
-  font-size: 26rpx;
-  color: #475569;
-  border-radius: 999rpx;
-}
-
-.seg-active {
-  background: #fff;
-  color: var(--color-primary);
-  font-weight: 600;
-  box-shadow: 0 2rpx 8rpx rgba(15, 23, 42, 0.12);
-}
-
-/* 计算按钮 */
-.calc-btn {
-  height: 92rpx;
-  line-height: 92rpx;
-  text-align: center;
-  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
-  color: #fff;
-  border-radius: 999rpx;
-  font-size: 32rpx;
-  font-weight: 600;
-  margin-top: 32rpx;
-  box-shadow: 0 8rpx 24rpx rgba(2, 132, 199, 0.3);
-  transition: transform 0.15s ease, opacity 0.15s ease;
-}
-
-.calc-btn-hover {
-  transform: scale(0.98);
-  opacity: 0.92;
+  box-shadow: 0 2rpx 20rpx rgba(2, 132, 199, .06);
 }
 
 /* ---------- 结果卡（白底蓝数字，贝壳式） ---------- */
@@ -457,79 +515,68 @@
   color: #94a3b8;
 }
 
-/* ---------- 底部选择器弹层 ---------- */
+/* ---------- 参考图底部选择器 ---------- */
 .sheet-mask {
+  display: none;
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(15, 23, 42, 0.45);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.28s ease, visibility 0.28s ease;
+  left: 0rpx;
+  top: 0rpx;
+  right: 0rpx;
+  bottom: 0rpx;
   z-index: 100;
-}
-
-.sheet-mask-show {
-  opacity: 1;
-  visibility: visible;
+  background: #00000066;
 }
 
 .sheet {
+  display: none;
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #fff;
-  border-radius: 32rpx 32rpx 0 0;
-  padding: 24rpx 32rpx;
-  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
-  transform: translateY(100%);
-  transition: transform 0.28s ease;
+  left: 0rpx;
+  right: 0rpx;
+  bottom: 0rpx;
   z-index: 101;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff;
 }
 
+.sheet-mask-show,
 .sheet-show {
-  transform: translateY(0);
+  display: block;
 }
 
 .sheet-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8rpx;
+  height: 82rpx;
+  padding-left: 32rpx;
+  padding-right: 32rpx;
 }
 
 .sheet-title {
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 600;
-  color: #0f172a;
+  color: #000;
 }
 
 .sheet-btn {
-  font-size: 28rpx;
-  color: #64748b;
-  padding: 12rpx 8rpx;
-}
-
-.sheet-btn-hover {
-  opacity: 0.6;
-}
-
-.sheet-confirm {
-  color: var(--color-primary);
-  font-weight: 600;
+  font-size: 32rpx;
+  color: #408CE2;
 }
 
 .sheet-picker {
-  height: 400rpx;
+  height: 480rpx;
 }
 
 .sheet-opt {
-  height: 88rpx;
-  line-height: 88rpx;
+  height: 70rpx;
+  line-height: 70rpx;
   text-align: center;
   font-size: 30rpx;
-  color: #0f172a;
+  color: #141414;
+}
+
+.sheet-opt-active {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #000;
 }

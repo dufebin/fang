@@ -1,204 +1,236 @@
 <view class="page">
-  <!-- 输入区（行式表单） -->
-  <view class="card">
-    <view class="card-title">贷款计算</view>
+  <view class="loan-tabs">
+    <view class="loan-tab {{loanKind === 'commercial' ? 'loan-tab-active' : ''}}" data-val="commercial" bindtap="onKindTap">商业贷款</view>
+    <view class="loan-tab {{loanKind === 'combo' ? 'loan-tab-active' : ''}}" data-val="combo" bindtap="onKindTap">组合贷款</view>
+    <view class="loan-tab {{loanKind === 'fund' ? 'loan-tab-active' : ''}}" data-val="fund" bindtap="onKindTap">公积金贷款</view>
+  </view>
 
+  <view class="loan-form">
     <view class="form-row">
-      <text class="row-label">贷款种类</text>
-      <view class="seg seg-row">
-        <view class="seg-item {{loanKind === 'commercial' ? 'seg-active' : ''}}" data-val="commercial" bindtap="onKindTap">商业贷款</view>
-        <view class="seg-item {{loanKind === 'fund' ? 'seg-active' : ''}}" data-val="fund" bindtap="onKindTap">公积金</view>
-        <view class="seg-item {{loanKind === 'combo' ? 'seg-active' : ''}}" data-val="combo" bindtap="onKindTap">组合贷</view>
-      </view>
-    </view>
-
-    <view class="form-row">
-      <text class="row-label">房屋总价</text>
-      <view class="row-value-box">
-        <input class="row-input" type="digit" placeholder="请输入" placeholder-class="input-ph" value="{{totalPrice}}" bindinput="onInput" data-field="totalPrice" />
-        <text class="row-unit">万元</text>
-      </view>
-    </view>
-
-    <view class="form-row row-tap" hover-class="row-hover" bindtap="onRatioRowTap">
-      <text class="row-label">首付比例</text>
-      <view class="row-value-box">
-        <text class="row-val-text">{{downRatio * 100}}%</text>
-        <view class="chevron"></view>
-      </view>
-    </view>
-
-    <view class="loan-line">
-      <text class="row-label">贷款金额</text>
-      <view class="loan-amount-val">{{loanAmount}}<text class="unit">万元</text></view>
-    </view>
-
-    <!-- 组合贷：公积金金额可改，商贷金额自动 = 贷款总额 - 公积金金额 -->
-    <block wx:if="{{loanKind === 'combo'}}">
-      <view class="form-row">
-        <text class="row-label">公积金金额</text>
-        <view class="row-value-box">
-          <input class="row-input" type="digit" placeholder="请输入" placeholder-class="input-ph" value="{{fundAmount}}" bindinput="onInput" data-field="fundAmount" />
-          <text class="row-unit">万元</text>
+      <text class="row-label">计算方式</text>
+      <view class="mode-options">
+        <view class="mode-option" data-val="loan" bindtap="onModeTap">
+          <view class="radio {{calcMode === 'loan' ? 'radio-on' : ''}}">
+            <view wx:if="{{calcMode === 'loan'}}" class="radio-check"></view>
+          </view>
+          <text>按贷款总额</text>
+        </view>
+        <view class="mode-option" data-val="house" bindtap="onModeTap">
+          <view class="radio {{calcMode === 'house' ? 'radio-on' : ''}}">
+            <view wx:if="{{calcMode === 'house'}}" class="radio-check"></view>
+          </view>
+          <text>按房屋总价</text>
         </view>
       </view>
-      <view class="form-row row-static">
-        <text class="row-label">商贷金额</text>
-        <view class="row-value-box">
-          <text class="row-val-text row-val-muted">{{commercialAmount}} 万元</text>
+    </view>
+
+    <block wx:if="{{calcMode === 'house'}}">
+      <view class="form-row">
+        <text class="row-label">房屋总价</text>
+        <view class="row-value">
+          <input class="row-input" type="digit" value="{{totalPrice}}" data-field="totalPrice" bindinput="onInput" />
+          <text class="row-unit">万</text>
+        </view>
+      </view>
+      <view class="form-row">
+        <text class="row-label">贷款比例</text>
+        <view class="row-value">
+          <input class="row-input" type="digit" value="{{loanRatio}}" data-field="loanRatio" bindinput="onInput" />
+          <text class="row-unit">成</text>
         </view>
       </view>
     </block>
 
-    <view class="form-row row-tap" hover-class="row-hover" bindtap="onYearsRowTap">
-      <text class="row-label">贷款年限</text>
-      <view class="row-value-box">
-        <text class="row-val-text">{{years}}年</text>
-        <view class="chevron"></view>
+    <view wx:if="{{loanKind === 'combo'}}" class="form-row row-no-border">
+      <text class="row-label">贷款总额</text>
+      <view class="row-value">
+        <input wx:if="{{calcMode === 'loan'}}" class="row-input" type="digit" value="{{loanTotal}}" data-field="loanTotal" bindinput="onInput" />
+        <text wx:else class="row-text">{{derivedTotal}}</text>
+        <text class="row-unit">万</text>
       </view>
     </view>
 
-    <view class="form-row" wx:if="{{loanKind !== 'combo'}}">
-      <text class="row-label">年利率</text>
-      <view class="row-value-box">
-        <input class="row-input" type="digit" placeholder="{{loanKind === 'fund' ? '2.85' : '3.95'}}" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
-        <text class="row-unit">%</text>
+    <block wx:if="{{loanKind !== 'commercial'}}">
+      <view class="form-row {{loanKind === 'combo' ? 'combo-group-start' : ''}}">
+        <text class="row-label">公积金金额</text>
+        <view class="row-value">
+          <input wx:if="{{loanKind === 'combo' || calcMode === 'loan'}}" class="row-input" type="digit" value="{{fundAmount}}" data-field="fundAmount" bindinput="onInput" />
+          <text wx:else class="row-text">{{derivedFund}}</text>
+          <text class="row-unit">万</text>
+        </view>
       </view>
-    </view>
+      <view class="form-row" bindtap="onFundYearsTap">
+        <text class="row-label">公积金年限</text>
+        <view class="row-value">
+          <text class="row-text">{{fundYears}}年</text>
+          <view class="chevron"></view>
+        </view>
+      </view>
+      <view class="form-row {{loanKind === 'combo' ? 'row-no-border' : ''}}" bindtap="onFundRateTap">
+        <text class="row-label">公积金利率</text>
+        <view class="row-value">
+          <text class="row-text">{{fundRateLabel}}</text>
+          <view class="chevron"></view>
+        </view>
+      </view>
+    </block>
 
-    <block wx:if="{{loanKind === 'combo'}}">
+    <block wx:if="{{loanKind !== 'fund'}}">
+      <view class="form-row {{loanKind === 'combo' ? 'combo-group-start' : ''}}">
+        <text class="row-label">商贷金额</text>
+        <view class="row-value">
+          <input wx:if="{{loanKind === 'commercial' && calcMode === 'loan'}}" class="row-input" type="digit" value="{{commercialInput}}" data-field="commercialInput" bindinput="onInput" />
+          <text wx:else class="row-text">{{derivedCommercial}}</text>
+          <text class="row-unit">万</text>
+        </view>
+      </view>
+      <view class="form-row" bindtap="onCommercialYearsTap">
+        <text class="row-label">商贷年限</text>
+        <view class="row-value">
+          <text class="row-text">{{commercialYears}}年</text>
+          <view class="chevron"></view>
+        </view>
+      </view>
+      <view class="form-row {{rateMode === 'lpr' ? 'row-no-border' : ''}}" bindtap="onRateModeTap">
+        <text class="row-label">利率方式</text>
+        <view class="row-value">
+          <text class="row-text">{{rateMode === 'lpr' ? '按LPR' : '按旧版基准利率'}}</text>
+          <view class="chevron"></view>
+        </view>
+      </view>
+
+      <view wx:if="{{rateMode === 'lpr'}}" class="lpr-wrap">
+        <view class="lpr-panel">
+          <text class="new-badge">NEW</text>
+          <text class="lpr-text">LPR: 一年期3%，五年期3.5%</text>
+          <text class="lpr-history">历史LPR</text>
+        </view>
+      </view>
+
       <view class="form-row">
         <text class="row-label">商贷利率</text>
-        <view class="row-value-box">
-          <input class="row-input" type="digit" placeholder="3.95" placeholder-class="input-ph" value="{{rate}}" bindinput="onInput" data-field="rate" />
-          <text class="row-unit">%</text>
+        <view class="row-value" wx:if="{{loanKind === 'combo' && rateMode === 'lpr'}}">
+          <input class="row-input combo-rate-input" type="digit" value="{{commercialRate}}" data-field="commercialRate" bindinput="onInput" />
+          <text class="rate-suffix">{{lprSuffix}}</text>
         </view>
-      </view>
-      <view class="form-row">
-        <text class="row-label">公积金利率</text>
-        <view class="row-value-box">
-          <input class="row-input" type="digit" placeholder="2.85" placeholder-class="input-ph" value="{{rateFund}}" bindinput="onInput" data-field="rateFund" />
+        <view class="row-value" wx:else>
+          <input class="row-input" type="digit" value="{{commercialRate}}" data-field="commercialRate" bindinput="onInput" />
           <text class="row-unit">%</text>
         </view>
       </view>
     </block>
-
-    <view class="form-row">
-      <text class="row-label">还款方式</text>
-      <view class="seg seg-row">
-        <view class="seg-item {{repayType === 'equal_installment' ? 'seg-active' : ''}}" hover-class="none" data-val="equal_installment" bindtap="onTypeTap">等额本息</view>
-        <view class="seg-item {{repayType === 'equal_principal' ? 'seg-active' : ''}}" hover-class="none" data-val="equal_principal" bindtap="onTypeTap">等额本金</view>
-      </view>
-    </view>
 
     <view class="calc-btn" hover-class="calc-btn-hover" bindtap="onCalc">开始计算</view>
   </view>
 
-  <!-- 结果区 -->
   <block wx:if="{{result}}">
-    <view class="result-card">
-      <view class="rc-label">{{repayType === 'equal_installment' ? '等额本息 · 每月还款' : '等额本金 · 首月还款'}}</view>
-      <view class="rc-amount">
-        {{result.monthlyNum}}<text class="rc-unit">{{result.monthlyUnit}}</text>
-        <text class="rc-per">/月</text>
-      </view>
-      <view wx:if="{{result.lastMonthlyText}}" class="rc-sub">末月还款 {{result.lastMonthlyText}} · 逐月递减</view>
+    <view class="results">
+      <view class="result-card">
+        <view class="rc-label">{{result.monthlyLabel}}</view>
+        <view class="rc-amount">
+          {{result.monthlyNum}}<text class="rc-unit">{{result.monthlyUnit}}</text>
+          <text class="rc-per">/月</text>
+        </view>
+        <view wx:if="{{result.lastMonthlyText}}" class="rc-sub">末月还款 {{result.lastMonthlyText}}{{result.decreaseHint}}</view>
 
-      <view class="rc-grid">
-        <view class="rc-cell">
-          <text class="rc-cell-val">{{result.loanText}}</text>
-          <text class="rc-cell-label">贷款总额</text>
-        </view>
-        <view class="rc-cell">
-          <text class="rc-cell-val">{{result.totalText}}</text>
-          <text class="rc-cell-label">还款总额</text>
-        </view>
-        <view class="rc-cell">
-          <text class="rc-cell-val">{{result.interestText}}</text>
-          <text class="rc-cell-label">支付利息</text>
-        </view>
-      </view>
-
-      <!-- 两种还款方式对比（点击切换） -->
-      <view class="cmp">
-        <view class="cmp-side {{repayType === 'equal_installment' ? 'cmp-on' : ''}}" hover-class="cmp-hover" data-val="equal_installment" bindtap="onTypeTap">
-          <view class="cmp-name">等额本息</view>
-          <view class="cmp-val">{{result.compare.ei.monthlyText}}/月</view>
-          <view class="cmp-sub">利息 {{result.compare.ei.interestText}}</view>
-        </view>
-        <view class="cmp-side {{repayType === 'equal_principal' ? 'cmp-on' : ''}}" hover-class="cmp-hover" data-val="equal_principal" bindtap="onTypeTap">
-          <view class="cmp-name">等额本金</view>
-          <view class="cmp-val">{{result.compare.ep.firstText}}~{{result.compare.ep.lastText}}/月</view>
-          <view class="cmp-sub">利息 {{result.compare.ep.interestText}}</view>
-        </view>
-      </view>
-
-      <!-- 本息占比条（带金额标注） -->
-      <view class="bar">
-        <view class="bar-fill" style="width: {{result.principalPct}}%;"></view>
-      </view>
-      <view class="bar-legend">
-        <view class="legend-item">
-          <view class="legend-dot dot-principal"></view>
-          <text>本金 {{result.loanText}} · {{result.principalPct}}%</text>
-        </view>
-        <view class="legend-item">
-          <view class="legend-dot dot-interest"></view>
-          <text>利息 {{result.interestText}} · {{result.interestPct}}%</text>
-        </view>
-        <text class="bar-months">{{result.monthsText}}</text>
-      </view>
-    </view>
-
-    <!-- 还款明细（按年折叠，展开看月供） -->
-    <view class="card">
-      <view class="schedule-title">还款明细<text class="schedule-hint">点击年份展开月供</text></view>
-      <view class="schedule-header">
-        <text class="col-year">年份</text>
-        <text class="col-num">月还款额</text>
-        <text class="col-num">剩余本金</text>
-        <view class="col-arrow"></view>
-      </view>
-      <block wx:for="{{result.schedule}}" wx:key="period">
-        <view class="schedule-row row-tap" hover-class="row-hover" data-period="{{item.period}}" bindtap="onToggleYear">
-          <text class="col-year">第{{item.period}}年</text>
-          <text class="col-num">{{item.monthlyText}}</text>
-          <text class="col-num">{{item.remainingText}}</text>
-          <view class="col-arrow">
-            <view class="chevron chevron-sm {{item.expanded ? 'chevron-open' : ''}}"></view>
+        <view class="rc-grid">
+          <view class="rc-cell">
+            <text class="rc-cell-val">{{result.loanText}}</text>
+            <text class="rc-cell-label">贷款总额</text>
+          </view>
+          <view class="rc-cell">
+            <text class="rc-cell-val">{{result.totalText}}</text>
+            <text class="rc-cell-label">还款总额</text>
+          </view>
+          <view class="rc-cell">
+            <text class="rc-cell-val">{{result.interestText}}</text>
+            <text class="rc-cell-label">支付利息</text>
           </view>
         </view>
-        <view wx:if="{{item.expanded}}" class="months">
-          <view class="month-head">
-            <text>期数</text>
-            <text>月供</text>
-            <text>本金</text>
-            <text>利息</text>
-            <text>剩余本金</text>
+
+        <view class="cmp">
+          <view class="cmp-side {{repayType === 'equal_installment' ? 'cmp-on' : ''}}" hover-class="cmp-hover" data-val="equal_installment" bindtap="onTypeTap">
+            <view class="cmp-name">等额本息</view>
+            <view class="cmp-val">{{result.compare.ei.monthlyText}}/月</view>
+            <view class="cmp-sub">利息 {{result.compare.ei.interestText}}</view>
           </view>
-          <view class="month-row" wx:for="{{item.months}}" wx:for-item="m" wx:key="idx">
-            <text>{{m.idx}}</text>
-            <text>{{m.monthlyText}}</text>
-            <text>{{m.principalText}}</text>
-            <text>{{m.interestText}}</text>
-            <text>{{m.remainingText}}</text>
+          <view class="cmp-side {{repayType === 'equal_principal' ? 'cmp-on' : ''}}" hover-class="cmp-hover" data-val="equal_principal" bindtap="onTypeTap">
+            <view class="cmp-name">等额本金</view>
+            <view class="cmp-val">{{result.compare.ep.firstText}}~{{result.compare.ep.lastText}}/月</view>
+            <view class="cmp-sub">利息 {{result.compare.ep.interestText}}</view>
           </view>
         </view>
-      </block>
+
+        <view class="bar">
+          <view class="bar-fill" style="width: {{result.principalPct}}%;"></view>
+        </view>
+        <view class="bar-legend">
+          <view class="legend-item">
+            <view class="legend-dot dot-principal"></view>
+            <text>本金 {{result.loanText}} · {{result.principalPct}}%</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot dot-interest"></view>
+            <text>利息 {{result.interestText}} · {{result.interestPct}}%</text>
+          </view>
+          <text class="bar-months">{{result.monthsText}}</text>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="schedule-title">还款明细<text class="schedule-hint">点击年份展开月供</text></view>
+        <view class="schedule-header">
+          <text class="col-year">年份</text>
+          <text class="col-num">月还款额</text>
+          <text class="col-num">剩余本金</text>
+          <view class="col-arrow"></view>
+        </view>
+        <block wx:for="{{result.schedule}}" wx:key="period">
+          <view class="schedule-row" data-period="{{item.period}}" bindtap="onToggleYear">
+            <text class="col-year">第{{item.period}}年</text>
+            <text class="col-num">{{item.monthlyText}}</text>
+            <text class="col-num">{{item.remainingText}}</text>
+            <view class="col-arrow">
+              <view class="chevron chevron-sm {{item.expanded ? 'chevron-open' : ''}}"></view>
+            </view>
+          </view>
+          <view wx:if="{{item.expanded}}" class="months">
+            <view class="month-head">
+              <text>期数</text>
+              <text>月供</text>
+              <text>本金</text>
+              <text>利息</text>
+              <text>剩余本金</text>
+            </view>
+            <view class="month-row" wx:for="{{item.months}}" wx:for-item="m" wx:key="idx">
+              <text>{{m.idx}}</text>
+              <text>{{m.monthlyText}}</text>
+              <text>{{m.principalText}}</text>
+              <text>{{m.interestText}}</text>
+              <text>{{m.remainingText}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
     </view>
   </block>
 
-  <!-- 底部选择器弹层 -->
+  <view class="page-footer">
+    <text>常见问题</text>
+    <text class="footer-divider">|</text>
+    <text>反馈建议</text>
+  </view>
+
   <view class="sheet-mask {{sheet.visible ? 'sheet-mask-show' : ''}}" bindtap="onSheetCancel" catchtouchmove="noop"></view>
   <view class="sheet {{sheet.visible ? 'sheet-show' : ''}}" catchtouchmove="noop">
     <view class="sheet-head">
-      <text class="sheet-btn" hover-class="sheet-btn-hover" bindtap="onSheetCancel">取消</text>
+      <text class="sheet-btn" bindtap="onSheetCancel">取消</text>
       <text class="sheet-title">{{sheet.title}}</text>
-      <text class="sheet-btn sheet-confirm" hover-class="sheet-btn-hover" bindtap="onSheetConfirm">确定</text>
+      <text class="sheet-btn" bindtap="onSheetConfirm">确定</text>
     </view>
-    <picker-view class="sheet-picker" value="{{[sheet.index]}}" bindchange="onSheetChange" indicator-style="height: 88rpx;">
+    <picker-view class="sheet-picker" value="{{[sheet.index]}}" bindchange="onSheetChange" indicator-style="height: 70rpx;">
       <picker-view-column>
-        <view class="sheet-opt" wx:for="{{sheet.options}}" wx:key="value">{{item.label}}</view>
+        <view class="sheet-opt {{sheet.index === idx ? 'sheet-opt-active' : ''}}" wx:for="{{sheet.options}}" wx:for-index="idx" wx:key="value">{{item.label}}</view>
       </picker-view-column>
     </picker-view>
   </view>
